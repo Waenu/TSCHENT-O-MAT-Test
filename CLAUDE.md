@@ -7,12 +7,27 @@ Seite: https://waenu.github.io/TSCHENT-O-MAT-Test/ . Nur für Layout-Tests (z. B
 - Nur hier im Test-Repo: `manifest.json` (Name «TSCHENT-O-MAT TEST», orange) und orange `icon-192.png`/`icon-512.png`. Diese werden NIE in die laufende App kopiert. `sw.js` ist für beide gleich (eigener Cache «tschentomat-test-…» im Test).
 - Daten (`buchungen.json`, `gaeste.json`, `einladungen.json`, `ideen.json`): Kopie vom 12.11.2026, auffrischen nur auf Wänus Wunsch. Kein Workflow für Gästenamen im Test-Repo. `belegt.json` kommt wie immer aus `/Tschentomat/` (nur lesen).
 - Übernehmen in die laufende App erst nach Wänus «übernehmen»: `index.html` und `sw.js` unverändert kopieren, Version setzen, Versionshistorie ergänzen, testen, Push erst nach «push».
-- 3.2.0.0 (nur im Test-Repo, noch nicht übernommen): Kalender als Scroll-Fenster `#calBox` mit Monaten untereinander (`KAL_LISTE`, `kalSpringen`, `kalOben`, `KAL_BIS`, `KAL_ZIEL`). `#calGrid` ist jetzt ein Behälter, jeder Monat ein eigenes `.cal-grid.kal-g`; `zeichneBalken()` ohne Angabe zeichnet alle Monate. calY/calM = Monat oben im Fenster. Wischen und ‹ › sind aus.
+- 3.2.0.0 (in die laufende App übernommen als 3.2.1.2): Kalender als Scroll-Fenster `#calBox` mit Monaten untereinander (`KAL_LISTE`, `kalSpringen`, `kalOben`, `KAL_BIS`, `KAL_ZIEL`). `#calGrid` ist jetzt ein Behälter, jeder Monat ein eigenes `.cal-grid.kal-g`; `zeichneBalken()` ohne Angabe zeichnet alle Monate. calY/calM = Monat oben im Fenster. Wischen und ‹ › sind aus.
 - 3.2.1.0: Umschalter `#calArt` neben «Heute» (⇄ zeigt «zum Blättern», ⇅ «zu untereinander»), `KAL_LISTE` ist jetzt `let`, gespeichert in `tm2_kalart` («liste»/«blatt», Standard liste). 3.2.1.1: kein Gold-Leuchten und kein Hinweis mehr (Wänu: Symbol ist eindeutig). Wischen ist immer eingerichtet, wirkt aber nur beim Blättern.
 - 3.2.1.2: Pfeile 30 px, Titel `titelHtml()` (Zusatz in `.kt-sub`), Titelschrift `min(var(--t-title), 3.9vw)`; Klasse `zieht` wird beim Wischen auch an `#cal` gesetzt (Elternteil des Rasters ist jetzt `#calBox`).
 - 3.2.1.3: Titelschrift beim Blättern = `var(--t-title)` wie die Überschriften `.kal-mt` in der Liste. `kalJahrForm()` misst «September 27»: passt es, bei allen Monaten «Monat 27», sonst bei allen «Monat» und darunter «2027» (`.kt-jahr`). Neu messen bei Grösse/Schrift (`kalTitelNeu`). Überschriften in der Liste per `titelHtml(m, y, "voll")`, Skisaison klein darunter.
 - 3.2.1.4: Jahr nie abgekürzt (Wänu). Untereinander immer «Monat 2026» (`KAL_LISTE` → "voll"); beim Blättern misst `kalJahrForm()` «September 2027»: passt es, alle «Monat 2027», sonst alle mit «2027» in neuer Zeile. ResizeObserver auf `#calTitle` misst nach Umschalten/Aufklappen neu.
+- 3.2.1.5 (12.11.2026, in einem anderen Chat direkt in der laufenden App gebaut, Testversion nachgezogen): Monatssymbol am Ende des Monatsspruchs; Angebote wechseln nur alle 60 s; Symbolzeile der Termin-Box ohne Ameisenpfad, Symbole orange unterstrichen.
 - Lokal testen: Ordner unter einem Pfad mit «TSCHENT-O-MAT-Test» ausliefern (z. B. Symlink in /tmp/www), sonst greift der Testmodus nicht.
+
+## Arbeitsweise Testversion und laufende App (Wänu, 12.11.2026)
+1. Layout, Texte und Kalender zuerst in der Testversion (`Waenu/TSCHENT-O-MAT-Test`). Am Anfang der Antwort «📍 Testversion» schreiben. Nach Wänus «push» schaut er auf dem Handy, nach «übernehmen» `index.html` und `sw.js` unverändert in die laufende App kopieren.
+2. Direkt in der laufenden App (`Waenu/TSCHENT-O-MAT-180264`) nur, was die Testversion nicht prüfen kann (Buchungen, Mails, WhatsApp, Zahlungen, speichern) oder dringende Fehlerkorrekturen. Am Anfang «📍 Laufende App» schreiben und den Grund nennen. Danach die Testversion auf denselben Stand bringen.
+3. Vor jeder Arbeit in beiden Repos den neuesten Stand holen (`git pull`), weil Wänu auch in anderen Chats ändern kann.
+4. Beide Repos im selben Chat angehängt; ein eigener Chat für die Testversion ist nicht nötig.
+
+## Offen und Hinweise nach dem Kalender-Umbau (Stand 12.11.2026, 3.2.1.5)
+1. Zurück zum Stand vor dem neuen Kalender (3.0.0.1): Commit `0ede210`. Nur `index.html`, `sw.js`, `einstellungen.json`, `versionen.json` und `CLAUDE.md` aus diesem Commit zurückholen, die Daten bleiben. Ein Git-Tag dafür gibt es nicht (Anlegen hatte nicht geklappt). Nur auf Wänus ausdrücklichen Wunsch.
+2. Geschwindigkeit: für Wänu in Ordnung (12.11.2026). Der Kalender zeichnet bei jedem Antippen alle (bis 26) Monate neu; nur bei Bedarf beschleunigen.
+3. Gäste durch Papi im Kalender eintragen: funktioniert mit dem neuen Kalender (Wänu auf dem Handy und Playwright in beiden Ansichten, Speichern nachgestellt; 12.11.2026).
+4. Scrollen am Ende des Kalenderfensters: Danach scrollt die ganze Seite weiter. Für Wänu so in Ordnung (12.11.2026).
+5. Name «TSCHENT-O-MAT TEST» unter dem Symbol auf dem Startbildschirm (vermutlich gekürzt) nicht geprüft.
+6. Umschalter ⇄/⇅: kein Leuchten und kein Hinweis, das Symbol genügt (Wänu).
 
 ---
 
