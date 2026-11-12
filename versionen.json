@@ -2,6 +2,20 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.2.1.0",
+      "datum": "2026-11-12",
+      "titel": "Kalender: Ansicht selbst wählen",
+      "arten": [
+        "Funktion"
+      ],
+      "punkte": [
+        "Neben «Heute» steht ein neuer Knopf: Mit ⇄ wechselt ihr zum seitlichen Blättern wie früher, mit ⇅ zurück zu den Monaten untereinander.",
+        "Beim Antippen leuchtet der Knopf kurz golden auf, und ein Hinweis nennt die gewählte Ansicht.",
+        "Jedes Handy merkt sich die gewählte Ansicht. Wer nichts wählt, sieht die Monate untereinander.",
+        "Beim Wechseln bleibt der Monat, den ihr gerade seht, und eine angefangene Auswahl bleibt erhalten."
+      ]
+    },
+    {
       "v": "3.2.0.0",
       "datum": "2026-11-12",
       "titel": "Kalender: Monate untereinander, wie bei Airbnb",
