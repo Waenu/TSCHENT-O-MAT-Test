@@ -1,0 +1,820 @@
+{
+  "_hinweis": "Bestätigte Aufenthalte der Familie (Vorschau 2.0.0.0, getrennt von der gültigen Version). Pro Eintrag: name, arr = Anreise, dep = Abreise (JJJJ-MM-TT), selbst = true wenn die Kinder selbst reinigen, pers = Personen mit Bett. Eintrag löschen = Storno.",
+  "buchungen": [
+    {
+      "name": "Jerome",
+      "arr": "2027-05-06",
+      "dep": "2027-05-09",
+      "selbst": false,
+      "pers": 4,
+      "betrag": 450,
+      "rechnung": "Gesendet am Mo 9.11.2026, 10:01 Uhr. App-Version 2.112.2.1.\nAnreise\tDonnerstag 6.05.2027\nAbreise\tSonntag 9.05.2027 (3 Nächte)\nFamilie\tIch, Partner/in und 2 Kinder\nFreunde\t0\nZimmer 1 unberührt\tNein\nTotal laut Rechner\tCHF 450.–\n#Preisberechnung\nFamilie pro Nacht\tCHF 70.–\nÜbernachtung (3 Nächte)\tCHF 210.–\nReinigung\tCHF 240.–",
+      "bestaetigt": "2026-11-09T21:37",
+      "pimlical": "2026-11-09T21:44",
+      "bescheid": "2026-11-10T14:57"
+    }
+  ],
+  "logbuch": [
+    {
+      "t": "2026-10-28T13:40",
+      "text": "In Airbnb gesperrt (vorher mit Vorbehalt): Miriam, Sa 19.06.2027 bis Sa 26.06.2027"
+    },
+    {
+      "t": "2026-10-28T13:42",
+      "text": "Entfernt: Miriam, Sa 19.06.2027 bis Sa 26.06.2027"
+    },
+    {
+      "t": "2026-10-28T13:47",
+      "text": "Bestätigt: Miriam, Sa 19.06.2027 bis Sa 26.06.2027, CHF 1115, mit Vorbehalt"
+    },
+    {
+      "t": "2026-10-28T13:55",
+      "text": "Entfernt: Miriam, Sa 19.06.2027 bis Sa 26.06.2027"
+    },
+    {
+      "t": "2026-10-28T14:05",
+      "text": "Bestätigt: Manuel, Fr 21.05.2027 bis So 23.05.2027, CHF 490, mit Vorbehalt"
+    },
+    {
+      "t": "2026-10-28T14:11",
+      "text": "Entfernt: Manuel, Fr 21.05.2027 bis So 23.05.2027"
+    },
+    {
+      "t": "2026-10-28T14:12",
+      "text": "Bestätigt: Manuel, Do 13.05.2027 bis So 16.05.2027, CHF 870"
+    },
+    {
+      "t": "2026-10-28T14:13",
+      "text": "Bestätigt: Miriam, Mo 10.05.2027 bis Do 13.05.2027, CHF 405"
+    },
+    {
+      "t": "2026-10-28T15:02",
+      "text": "Bestätigt: Manuel, Mi 25.11.2026 bis Fr 27.11.2026, CHF 110"
+    },
+    {
+      "t": "2026-10-28T15:07",
+      "text": "Bestätigt: Miriam, Fr 27.11.2026 bis Mo 30.11.2026, CHF 165"
+    },
+    {
+      "t": "2026-10-28T15:08",
+      "text": "Entfernt: Manuel, Mi 25.11.2026 bis Fr 27.11.2026"
+    },
+    {
+      "t": "2026-10-28T22:20",
+      "text": "Entfernt: Manuel, Do 13.05.2027 bis So 16.05.2027"
+    },
+    {
+      "t": "2026-10-28T22:21",
+      "text": "Entfernt: Miriam, Mo 10.05.2027 bis Do 13.05.2027"
+    },
+    {
+      "t": "2026-10-29T16:36",
+      "text": "Entfernt: Miriam, Fr 27.11.2026 bis Mo 30.11.2026"
+    },
+    {
+      "t": "2026-10-29T16:39",
+      "text": "Bestätigt: Miriam, Fr 27.11.2026 bis Mo 30.11.2026, CHF 165"
+    },
+    {
+      "t": "2026-10-29T16:59",
+      "text": "Bestätigt: Deborah, Mi 14.07.2027 bis Mi 21.07.2027, CHF 1640, verbindlich"
+    },
+    {
+      "t": "2026-10-29T16:59",
+      "text": "Bescheid gegeben: Miriam, Fr 27.11.2026 bis Mo 30.11.2026"
+    },
+    {
+      "t": "2026-10-29T17:23",
+      "text": "Bestätigt: Manuel, Do 19.11.2026 bis So 22.11.2026, CHF 825"
+    },
+    {
+      "t": "2026-10-29T17:26",
+      "text": "Entfernt: Manuel, Do 19.11.2026 bis So 22.11.2026"
+    },
+    {
+      "t": "2026-10-29T17:51",
+      "text": "Bestätigt: Deborah, Mo 30.11.2026 bis Mi 2.12.2026, CHF 110"
+    },
+    {
+      "t": "2026-10-29T18:17",
+      "text": "Entfernt: Deborah, Mo 30.11.2026 bis Mi 2.12.2026"
+    },
+    {
+      "t": "2026-10-29T18:18",
+      "text": "Bestätigt: Deborah, Mo 30.11.2026 bis Do 3.12.2026, CHF 165"
+    },
+    {
+      "t": "2026-10-29T18:39",
+      "text": "Entfernt: Deborah, Mi 14.07.2027 bis Mi 21.07.2027"
+    },
+    {
+      "t": "2026-10-29T18:39",
+      "text": "Entfernt: Deborah, Mo 30.11.2026 bis Do 3.12.2026"
+    },
+    {
+      "t": "2026-10-29T18:39",
+      "text": "Entfernt: Miriam, Fr 27.11.2026 bis Mo 30.11.2026"
+    },
+    {
+      "t": "2026-10-29T21:01",
+      "text": "Bestätigt: Miriam, Sa 15.05.2027 bis Sa 22.05.2027, CHF 625"
+    },
+    {
+      "t": "2026-10-30T03:21",
+      "text": "Entfernt: Miriam, Sa 15.05.2027 bis Sa 22.05.2027"
+    },
+    {
+      "t": "2026-10-30T03:49",
+      "text": "Bestätigt: Miriam, Mi 9.12.2026 bis So 13.12.2026, CHF 460"
+    },
+    {
+      "t": "2026-10-30T04:13",
+      "text": "Entfernt: Miriam, Mi 9.12.2026 bis So 13.12.2026"
+    },
+    {
+      "t": "2026-10-30T08:50",
+      "text": "Bestätigt: Deborah, Do 26.11.2026 bis So 29.11.2026, CHF 165"
+    },
+    {
+      "t": "2026-10-30T08:51",
+      "text": "Entfernt: Deborah, Do 26.11.2026 bis So 29.11.2026"
+    },
+    {
+      "t": "2026-10-30T08:54",
+      "text": "Bestätigt: Deborah, Do 26.11.2026 bis So 29.11.2026, CHF 165"
+    },
+    {
+      "t": "2026-10-30T14:25",
+      "text": "Bestätigt: Miriam, Do 19.11.2026 bis Di 24.11.2026, CHF 275, Wäsche: persönlich bringen bis Fr 27.11.2026"
+    },
+    {
+      "t": "2026-10-30T14:27",
+      "text": "Bestätigt: Manuel, Di 24.11.2026 bis Do 26.11.2026, CHF 110"
+    },
+    {
+      "t": "2026-10-30T18:27",
+      "text": "Entfernt: Miriam, Do 19.11.2026 bis Di 24.11.2026"
+    },
+    {
+      "t": "2026-10-30T21:17",
+      "text": "Entfernt: Manuel, Di 24.11.2026 bis Do 26.11.2026"
+    },
+    {
+      "t": "2026-10-30T21:18",
+      "text": "Entfernt: Deborah, Do 26.11.2026 bis So 29.11.2026"
+    },
+    {
+      "t": "2026-10-30T21:19",
+      "text": "Bestätigt: Jerome, Mo 2.11.2026 bis Fr 6.11.2026, CHF 460"
+    },
+    {
+      "t": "2026-10-30T23:00",
+      "text": "Entfernt: Jerome, Mo 2.11.2026 bis Fr 6.11.2026"
+    },
+    {
+      "t": "2026-10-30T23:15",
+      "text": "Bestätigt: Jerome, Mo 2.11.2026 bis Fr 6.11.2026, CHF 220, Wäsche: persönlich bringen bis Mo 9.11.2026"
+    },
+    {
+      "t": "2026-10-30T23:29",
+      "text": "Bescheid gegeben: Jerome, Mo 2.11.2026 bis Fr 6.11.2026"
+    },
+    {
+      "t": "2026-10-31T00:08",
+      "text": "Abgelehnt: Deborah, Fr 6.11.2026 bis So 8.11.2026"
+    },
+    {
+      "t": "2026-10-31T17:50",
+      "text": "Entfernt: Jerome, Mo 2.11.2026 bis Fr 6.11.2026"
+    },
+    {
+      "t": "2026-10-31T17:52",
+      "text": "Bestätigt: Jerome, Do 5.11.2026 bis Sa 7.11.2026, CHF 110, Wäsche: persönlich bringen bis Di 10.11.2026"
+    },
+    {
+      "t": "2026-10-31T17:54",
+      "text": "Bestätigt: Deborah, Sa 7.11.2026 bis Mo 9.11.2026, CHF 110"
+    },
+    {
+      "t": "2026-11-02T08:10",
+      "text": "Entfernt: Jerome, Do 5.11.2026 bis Sa 7.11.2026"
+    },
+    {
+      "t": "2026-11-02T08:10",
+      "text": "Entfernt: Deborah, Sa 7.11.2026 bis Mo 9.11.2026"
+    },
+    {
+      "t": "2026-11-03T12:09",
+      "text": "Bestätigt: Jerome, Mi 25.11.2026 bis Sa 28.11.2026, CHF 405"
+    },
+    {
+      "t": "2026-11-03T14:28",
+      "text": "Entfernt: Jerome, Mi 25.11.2026 bis Sa 28.11.2026"
+    },
+    {
+      "t": "2026-11-03T14:29",
+      "text": "Bestätigt: Jerome, Di 17.11.2026 bis Do 19.11.2026, CHF 110, Wäsche: persönlich bringen bis So 22.11.2026"
+    },
+    {
+      "t": "2026-11-03T15:37",
+      "text": "Bestätigt: Deborah, Di 3.11.2026 bis Do 5.11.2026, CHF 110, Wäsche: persönlich bringen bis So 8.11.2026"
+    },
+    {
+      "t": "2026-11-03T15:39",
+      "text": "Entfernt: Deborah, Di 3.11.2026 bis Do 5.11.2026"
+    },
+    {
+      "t": "2026-11-03T19:01",
+      "text": "Bestätigt: Miriam, Fr 20.11.2026 bis Mo 23.11.2026, CHF 165"
+    },
+    {
+      "t": "2026-11-03T22:47",
+      "text": "Bestätigt: Deborah, Sa 12.12.2026 bis Di 15.12.2026, CHF 870"
+    },
+    {
+      "t": "2026-11-03T22:57",
+      "text": "Bescheid gegeben: Deborah, Sa 12.12.2026 bis Di 15.12.2026"
+    },
+    {
+      "t": "2026-11-03T22:58",
+      "text": "Bescheid gegeben: Miriam, Fr 20.11.2026 bis Mo 23.11.2026"
+    },
+    {
+      "t": "2026-11-04T15:51",
+      "text": "Entfernt: Jerome, Di 17.11.2026 bis Do 19.11.2026"
+    },
+    {
+      "t": "2026-11-04T15:52",
+      "text": "Entfernt: Miriam, Fr 20.11.2026 bis Mo 23.11.2026"
+    },
+    {
+      "t": "2026-11-04T15:52",
+      "text": "Entfernt: Deborah, Sa 12.12.2026 bis Di 15.12.2026"
+    },
+    {
+      "t": "2026-11-04T17:39",
+      "text": "Bestätigt: Jerome, Mo 16.11.2026 bis Do 19.11.2026, CHF 180, Wäsche: persönlich bringen bis So 22.11.2026"
+    },
+    {
+      "t": "2026-11-04T19:30",
+      "text": "Bestätigt: Deborah, Do 17.06.2027 bis Do 24.06.2027, CHF 660, mit Vorbehalt"
+    },
+    {
+      "t": "2026-11-04T19:32",
+      "text": "Bestätigt: Deborah, Mo 14.06.2027 bis Sa 19.06.2027, CHF 540, mit Vorbehalt"
+    },
+    {
+      "t": "2026-11-04T19:32",
+      "text": "Entfernt: Deborah, Mo 14.06.2027 bis Sa 19.06.2027"
+    },
+    {
+      "t": "2026-11-04T19:37",
+      "text": "Bestätigt: Manuel, Do 26.11.2026 bis So 29.11.2026, CHF 210"
+    },
+    {
+      "t": "2026-11-04T19:42",
+      "text": "Bestätigt: Manuel, Do 26.11.2026 bis So 29.11.2026, CHF 210"
+    },
+    {
+      "t": "2026-11-04T19:45",
+      "text": "Bestätigt: Miriam, Sa 14.08.2027 bis So 22.08.2027, CHF 1840, verbindlich"
+    },
+    {
+      "t": "2026-11-04T19:48",
+      "text": "Entfernt: Jerome, Mo 16.11.2026 bis Do 19.11.2026"
+    },
+    {
+      "t": "2026-11-04T19:49",
+      "text": "Entfernt: Deborah, Do 17.06.2027 bis Do 24.06.2027"
+    },
+    {
+      "t": "2026-11-04T19:49",
+      "text": "Entfernt: Manuel, Do 26.11.2026 bis So 29.11.2026"
+    },
+    {
+      "t": "2026-11-04T19:49",
+      "text": "Entfernt: Miriam, Sa 14.08.2027 bis So 22.08.2027"
+    },
+    {
+      "t": "2026-11-04T20:05",
+      "text": "Bestätigt: Miriam, Sa 19.06.2027 bis Sa 26.06.2027, CHF 660, mit Vorbehalt"
+    },
+    {
+      "t": "2026-11-04T20:08",
+      "text": "Bestätigt: Miriam, So 11.07.2027 bis So 18.07.2027, CHF 660, mit Vorbehalt"
+    },
+    {
+      "t": "2026-11-05T06:30",
+      "text": "Bestätigt: Manuel, Di 17.11.2026 bis Fr 20.11.2026, CHF 180, Wäsche: persönlich bringen bis Mo 23.11.2026"
+    },
+    {
+      "t": "2026-11-05T06:34",
+      "text": "Bescheid gegeben: Manuel, Di 17.11.2026 bis Fr 20.11.2026"
+    },
+    {
+      "t": "2026-11-05T10:04",
+      "text": "Entfernt: Miriam, Sa 19.06.2027 bis Sa 26.06.2027"
+    },
+    {
+      "t": "2026-11-05T10:04",
+      "text": "Entfernt: Miriam, So 11.07.2027 bis So 18.07.2027"
+    },
+    {
+      "t": "2026-11-05T10:14",
+      "text": "Entfernt: Manuel, Di 17.11.2026 bis Fr 20.11.2026"
+    },
+    {
+      "t": "2026-11-05T10:16",
+      "text": "Entfernt: Manuel, Di 17.11.2026 bis Fr 20.11.2026"
+    },
+    {
+      "t": "2026-11-05T10:16",
+      "text": "Bestätigt: Manuel, Mi 12.05.2027 bis Sa 15.05.2027, CHF 630"
+    },
+    {
+      "t": "2026-11-05T10:19",
+      "text": "Entfernt: Manuel, Mi 12.05.2027 bis Sa 15.05.2027"
+    },
+    {
+      "t": "2026-11-05T17:17",
+      "text": "Bestätigt: Jerome, Mi 18.11.2026 bis Mo 23.11.2026, CHF 300, Wäsche: persönlich bringen bis Do 26.11.2026"
+    },
+    {
+      "t": "2026-11-05T17:18",
+      "text": "Bescheid gegeben: Jerome, Mi 18.11.2026 bis Mo 23.11.2026"
+    },
+    {
+      "t": "2026-11-05T17:20",
+      "text": "Bestätigt: Manuel, Mi 25.11.2026 bis Sa 28.11.2026, CHF 180"
+    },
+    {
+      "t": "2026-11-05T17:20",
+      "text": "Bescheid gegeben: Manuel, Mi 25.11.2026 bis Sa 28.11.2026"
+    },
+    {
+      "t": "2026-11-05T18:44",
+      "text": "Entfernt: Manuel, Mi 25.11.2026 bis Sa 28.11.2026"
+    },
+    {
+      "t": "2026-11-05T18:46",
+      "text": "Entfernt: Jerome, Mi 18.11.2026 bis Mo 23.11.2026"
+    },
+    {
+      "t": "2026-11-06T19:37",
+      "text": "Bestätigt: Deborah, Sa 12.12.2026 bis Di 15.12.2026, CHF 180, Wäsche: persönlich bringen bis Fr 18.12.2026"
+    },
+    {
+      "t": "2026-11-07T13:12",
+      "text": "Bestätigt: Jerome, So 8.11.2026 bis Di 10.11.2026, CHF 360"
+    },
+    {
+      "t": "2026-11-07T13:14",
+      "text": "Entfernt: Jerome, So 8.11.2026 bis Di 10.11.2026"
+    },
+    {
+      "t": "2026-11-07T15:15",
+      "text": "Bestätigt: Manuel, Do 1.04.2027 bis Sa 3.04.2027, CHF 120, Wäsche: persönlich bringen bis Di 6.04.2027"
+    },
+    {
+      "t": "2026-11-07T15:35",
+      "text": "Entfernt: Deborah, Sa 12.12.2026 bis Di 15.12.2026"
+    },
+    {
+      "t": "2026-11-07T15:36",
+      "text": "Entfernt: Manuel, Do 1.04.2027 bis Sa 3.04.2027"
+    },
+    {
+      "t": "2026-11-07T22:56",
+      "text": "Bestätigt: Miriam, Mi 18.11.2026 bis Sa 21.11.2026, CHF 420"
+    },
+    {
+      "t": "2026-11-07T23:01",
+      "text": "Bescheid gegeben: Miriam, Mi 18.11.2026 bis Sa 21.11.2026"
+    },
+    {
+      "t": "2026-11-07T23:02",
+      "text": "Bescheid gegeben: Miriam, Mi 18.11.2026 bis Sa 21.11.2026"
+    },
+    {
+      "t": "2026-11-08T02:02",
+      "text": "Bestätigt: Deborah, Sa 3.07.2027 bis Sa 10.07.2027, CHF 660, mit Vorbehalt"
+    },
+    {
+      "t": "2026-11-08T02:33",
+      "text": "In Pimlical eingetragen: Miriam, Mi 18.11.2026 bis Sa 21.11.2026"
+    },
+    {
+      "t": "2026-11-08T09:33",
+      "text": "Entfernt: Miriam, Mi 18.11.2026 bis Sa 21.11.2026"
+    },
+    {
+      "t": "2026-11-09T10:22",
+      "text": "Bestätigt: Jerome, Do 6.05.2027 bis So 9.05.2027, CHF 450"
+    },
+    {
+      "t": "2026-11-09T10:22",
+      "text": "Bescheid gegeben: Jerome, Do 6.05.2027 bis So 9.05.2027"
+    },
+    {
+      "t": "2026-11-09T10:27",
+      "text": "In Pimlical eingetragen: Jerome, Do 6.05.2027 bis So 9.05.2027"
+    },
+    {
+      "t": "2026-11-09T19:39",
+      "text": "Entfernt: Deborah, Sa 3.07.2027 bis Sa 10.07.2027"
+    },
+    {
+      "t": "2026-11-09T19:40",
+      "text": "Entfernt: Jerome, Do 6.05.2027 bis So 9.05.2027"
+    },
+    {
+      "t": "2026-11-09T21:37",
+      "text": "Bestätigt: Jerome, Do 6.05.2027 bis So 9.05.2027, CHF 450"
+    },
+    {
+      "t": "2026-11-09T21:44",
+      "text": "In Pimlical eingetragen: Jerome, Do 6.05.2027 bis So 9.05.2027"
+    },
+    {
+      "t": "2026-11-10T10:14",
+      "text": "Bestätigt: Deborah, Mi 18.11.2026 bis Sa 21.11.2026, CHF 1500"
+    },
+    {
+      "t": "2026-11-10T11:41",
+      "text": "Bestätigt: Miriam, Mi 25.11.2026 bis Sa 28.11.2026, CHF 870"
+    },
+    {
+      "t": "2026-11-10T13:46",
+      "text": "Freunde für die Kurtaxe angemeldet: Deborah, Mi 18.11.2026 bis Sa 21.11.2026"
+    },
+    {
+      "t": "2026-11-10T13:47",
+      "text": "Wieder offen: Freunde für die Kurtaxe angemeldet: Deborah, Mi 18.11.2026 bis Sa 21.11.2026"
+    },
+    {
+      "t": "2026-11-10T13:48",
+      "text": "Bescheid gegeben: Deborah, Mi 18.11.2026 bis Sa 21.11.2026"
+    },
+    {
+      "t": "2026-11-10T13:48",
+      "text": "In Airbnb gesperrt: Deborah, Mi 18.11.2026 bis Sa 21.11.2026"
+    },
+    {
+      "t": "2026-11-10T13:48",
+      "text": "In Pimlical eingetragen: Deborah, Mi 18.11.2026 bis Sa 21.11.2026"
+    },
+    {
+      "t": "2026-11-10T13:48",
+      "text": "Freunde für die Kurtaxe angemeldet: Deborah, Mi 18.11.2026 bis Sa 21.11.2026"
+    },
+    {
+      "t": "2026-11-10T13:49",
+      "text": "Bescheid gegeben: Jerome, Do 6.05.2027 bis So 9.05.2027"
+    },
+    {
+      "t": "2026-11-10T13:50",
+      "text": "Wieder offen: Bescheid gegeben: Jerome, Do 6.05.2027 bis So 9.05.2027"
+    },
+    {
+      "t": "2026-11-10T13:50",
+      "text": "Bescheid gegeben: Jerome, Do 6.05.2027 bis So 9.05.2027"
+    },
+    {
+      "t": "2026-11-10T13:53",
+      "text": "Wieder offen: Bescheid gegeben: Jerome, Do 6.05.2027 bis So 9.05.2027"
+    },
+    {
+      "t": "2026-11-10T13:59",
+      "text": "Bestätigt: Manuel, Do 10.12.2026 bis Sa 12.12.2026, CHF 120, Wäsche: persönlich bringen bis Di 15.12.2026"
+    },
+    {
+      "t": "2026-11-10T14:12",
+      "text": "Bescheid gegeben: Jerome, Do 6.05.2027 bis So 9.05.2027"
+    },
+    {
+      "t": "2026-11-10T14:57",
+      "text": "Wieder offen: Bescheid gegeben: Jerome, Do 6.05.2027 bis So 9.05.2027"
+    },
+    {
+      "t": "2026-11-10T14:57",
+      "text": "Bescheid gegeben: Jerome, Do 6.05.2027 bis So 9.05.2027"
+    },
+    {
+      "t": "2026-11-10T15:33",
+      "text": "Entfernt: Manuel, Do 10.12.2026 bis Sa 12.12.2026"
+    },
+    {
+      "t": "2026-11-10T15:33",
+      "text": "Entfernt: Miriam, Mi 25.11.2026 bis Sa 28.11.2026"
+    },
+    {
+      "t": "2026-11-10T15:34",
+      "text": "Entfernt: Deborah, Mi 18.11.2026 bis Sa 21.11.2026"
+    },
+    {
+      "t": "2026-11-10T15:42",
+      "text": "Bestätigt: Deborah, Mi 18.11.2026 bis Sa 21.11.2026, CHF 660"
+    },
+    {
+      "t": "2026-11-10T15:45",
+      "text": "Bescheid gegeben: Deborah, Mi 18.11.2026 bis Sa 21.11.2026"
+    },
+    {
+      "t": "2026-11-10T15:50",
+      "text": "In Airbnb gesperrt: Deborah, Mi 18.11.2026 bis Sa 21.11.2026"
+    },
+    {
+      "t": "2026-11-10T15:52",
+      "text": "In Pimlical eingetragen: Deborah, Mi 18.11.2026 bis Sa 21.11.2026"
+    },
+    {
+      "t": "2026-11-10T15:52",
+      "text": "Freunde für die Kurtaxe angemeldet: Deborah, Mi 18.11.2026 bis Sa 21.11.2026"
+    },
+    {
+      "t": "2026-11-10T15:57",
+      "text": "Bestätigt: Miriam, Mi 25.11.2026 bis Fr 27.11.2026, CHF 120, Wäsche: per Post senden bis Mo 30.11.2026"
+    },
+    {
+      "t": "2026-11-10T15:59",
+      "text": "Bescheid gegeben: Miriam, Mi 25.11.2026 bis Fr 27.11.2026"
+    },
+    {
+      "t": "2026-11-10T16:00",
+      "text": "In Airbnb gesperrt: Miriam, Mi 25.11.2026 bis Fr 27.11.2026"
+    },
+    {
+      "t": "2026-11-10T16:01",
+      "text": "Bescheid gegeben: Miriam, Mi 25.11.2026 bis Fr 27.11.2026"
+    },
+    {
+      "t": "2026-11-10T16:20",
+      "text": "Entfernt: Miriam, Mi 25.11.2026 bis Fr 27.11.2026"
+    },
+    {
+      "t": "2026-11-10T16:40",
+      "text": "Aufgeräumt: alte Test-Stornos von Miriam entfernt (18.–21.11., 25.–28.11., 25.–27.11.2026)"
+    },
+    {
+      "t": "2026-11-10T16:41",
+      "text": "Aufgeräumt: alte Test-Stornos entfernt (Deborah 3.–10.7.2027, Manuel 10.–12.12.2026)"
+    },
+    {
+      "t": "2026-11-10T16:45",
+      "text": "Bestätigt: Miriam, Do 10.12.2026 bis So 13.12.2026, CHF 180, Wäsche: per Post senden bis Mi 16.12.2026"
+    },
+    {
+      "t": "2026-11-10T16:46",
+      "text": "Bescheid gegeben: Miriam, Do 10.12.2026 bis So 13.12.2026"
+    },
+    {
+      "t": "2026-11-10T16:47",
+      "text": "In Airbnb gesperrt: Miriam, Do 10.12.2026 bis So 13.12.2026"
+    },
+    {
+      "t": "2026-11-10T16:47",
+      "text": "In Pimlical eingetragen: Miriam, Do 10.12.2026 bis So 13.12.2026"
+    },
+    {
+      "t": "2026-11-10T16:47",
+      "text": "Wieder offen: In Pimlical eingetragen: Miriam, Do 10.12.2026 bis So 13.12.2026"
+    },
+    {
+      "t": "2026-11-10T16:47",
+      "text": "In Pimlical eingetragen: Miriam, Do 10.12.2026 bis So 13.12.2026"
+    },
+    {
+      "t": "2026-11-10T17:09",
+      "text": "Wieder offen: In Airbnb gesperrt: Miriam, Do 10.12.2026 bis So 13.12.2026"
+    },
+    {
+      "t": "2026-11-10T17:20",
+      "text": "In Airbnb gesperrt: Miriam, Do 10.12.2026 bis So 13.12.2026"
+    },
+    {
+      "t": "2026-11-10T18:03",
+      "text": "Bestätigt: Manuel, Mo 1.03.2027 bis Do 4.03.2027, CHF 1032"
+    },
+    {
+      "t": "2026-11-10T20:16",
+      "text": "Bestätigt: David, Di 15.12.2026 bis Do 17.12.2026, CHF 120"
+    },
+    {
+      "t": "2026-11-10T20:17",
+      "text": "Bescheid gegeben: David, Di 15.12.2026 bis Do 17.12.2026"
+    },
+    {
+      "t": "2026-11-10T20:20",
+      "text": "Entfernt: David, Di 15.12.2026 bis Do 17.12.2026"
+    },
+    {
+      "t": "2026-11-10T20:24",
+      "text": "Bestätigt: David, Mi 17.03.2027 bis Fr 19.03.2027, CHF 120, Wäsche: persönlich bringen bis Mo 22.03.2027"
+    },
+    {
+      "t": "2026-11-10T20:28",
+      "text": "Entfernt: David, Mi 17.03.2027 bis Fr 19.03.2027"
+    },
+    {
+      "t": "2026-11-10T20:29",
+      "text": "Bestätigt: David, Mi 24.03.2027 bis Sa 27.03.2027, CHF 180, Wäsche: persönlich bringen bis Di 30.03.2027"
+    },
+    {
+      "t": "2026-11-10T20:46",
+      "text": "In Airbnb gesperrt: Miriam, Do 10.12.2026 bis So 13.12.2026"
+    },
+    {
+      "t": "2026-11-10T20:47",
+      "text": "Entfernt: Manuel, Mo 1.03.2027 bis Do 4.03.2027"
+    },
+    {
+      "t": "2026-11-10T20:47",
+      "text": "Entfernt: David, Mi 24.03.2027 bis Sa 27.03.2027"
+    },
+    {
+      "t": "2026-11-10T22:22",
+      "text": "Entfernt: Deborah, Mi 18.11.2026 bis Sa 21.11.2026"
+    },
+    {
+      "t": "2026-11-10T22:38",
+      "text": "Bestätigt: Deborah, Do 18.03.2027 bis Sa 20.03.2027, CHF 120, Wäsche: persönlich bringen bis Di 23.03.2027"
+    },
+    {
+      "t": "2026-11-10T22:44",
+      "text": "Bestätigt: Manuel, Mo 22.03.2027 bis Mi 24.03.2027, CHF 640"
+    },
+    {
+      "t": "2026-11-11T00:31",
+      "text": "Entfernt: Miriam, Do 10.12.2026 bis So 13.12.2026"
+    },
+    {
+      "t": "2026-11-11T10:46",
+      "text": "Entfernt: Manuel, Mo 22.03.2027 bis Mi 24.03.2027"
+    },
+    {
+      "t": "2026-11-11T10:46",
+      "text": "Entfernt: Deborah, Do 18.03.2027 bis Sa 20.03.2027"
+    },
+    {
+      "t": "2026-11-11T11:50",
+      "text": "Aufgeräumt: stornierte Testbuchungen entfernt (8)"
+    },
+    {
+      "t": "2026-11-11T14:57",
+      "text": "Bestätigt: Miriam, Mi 18.11.2026 bis Sa 21.11.2026, CHF 180, Wäsche: per Post senden bis Di 24.11.2026"
+    },
+    {
+      "t": "2026-11-11T15:05",
+      "text": "Bestätigt: Manuel, Fr 27.11.2026 bis So 29.11.2026, CHF 120"
+    },
+    {
+      "t": "2026-11-11T15:13",
+      "text": "Bestätigt: Deborah, Mo 16.11.2026 bis Mi 18.11.2026, CHF 120, Wäsche: persönlich bringen bis Sa 21.11.2026"
+    },
+    {
+      "t": "2026-11-11T15:14",
+      "text": "Bescheid gegeben: Miriam, Mi 18.11.2026 bis Sa 21.11.2026"
+    },
+    {
+      "t": "2026-11-11T15:20",
+      "text": "Entfernt: Manuel, Fr 27.11.2026 bis So 29.11.2026"
+    },
+    {
+      "t": "2026-11-11T15:20",
+      "text": "Entfernt: Miriam, Mi 18.11.2026 bis Sa 21.11.2026"
+    },
+    {
+      "t": "2026-11-11T15:21",
+      "text": "Entfernt: Deborah, Mo 16.11.2026 bis Mi 18.11.2026"
+    },
+    {
+      "t": "2026-11-11T15:31",
+      "text": "Bestätigt: Miriam, Fr 20.11.2026 bis So 22.11.2026, CHF 120, Wäsche: per Post senden bis Mi 25.11.2026"
+    },
+    {
+      "t": "2026-11-11T15:31",
+      "text": "Bescheid gegeben: Miriam, Fr 20.11.2026 bis So 22.11.2026"
+    },
+    {
+      "t": "2026-11-11T15:42",
+      "text": "Bestätigt: Manuel, Mi 25.11.2026 bis Fr 27.11.2026, CHF 120"
+    },
+    {
+      "t": "2026-11-11T15:43",
+      "text": "Bescheid gegeben: Manuel, Mi 25.11.2026 bis Fr 27.11.2026"
+    },
+    {
+      "t": "2026-11-11T15:43",
+      "text": "Wieder offen: Bescheid gegeben: Manuel, Mi 25.11.2026 bis Fr 27.11.2026"
+    },
+    {
+      "t": "2026-11-11T15:43",
+      "text": "Bescheid gegeben: Manuel, Mi 25.11.2026 bis Fr 27.11.2026"
+    },
+    {
+      "t": "2026-11-11T15:47",
+      "text": "Bestätigt: Deborah, Di 17.11.2026 bis Do 19.11.2026, CHF 120, Wäsche: persönlich bringen bis So 22.11.2026"
+    },
+    {
+      "t": "2026-11-11T15:47",
+      "text": "Bescheid gegeben: Deborah, Di 17.11.2026 bis Do 19.11.2026"
+    },
+    {
+      "t": "2026-11-11T15:48",
+      "text": "Wäsche-Info gegeben: Miriam, Fr 20.11.2026 bis So 22.11.2026"
+    },
+    {
+      "t": "2026-11-11T15:48",
+      "text": "Wäsche-Info gegeben: Miriam, Fr 20.11.2026 bis So 22.11.2026"
+    },
+    {
+      "t": "2026-11-11T16:30",
+      "text": "Storniert: Deborah, Di 17.11.2026 bis Do 19.11.2026"
+    },
+    {
+      "t": "2026-11-11T16:31",
+      "text": "Storniert: Miriam, Fr 20.11.2026 bis So 22.11.2026"
+    },
+    {
+      "t": "2026-11-11T16:31",
+      "text": "In Airbnb freigegeben: Deborah, Mo 16.11.2026 bis Mi 18.11.2026"
+    },
+    {
+      "t": "2026-11-11T16:41",
+      "text": "Endgültig gelöscht: Deborah, Mo 16.11.2026 bis Mi 18.11.2026"
+    },
+    {
+      "t": "2026-11-11T16:41",
+      "text": "Endgültig gelöscht: Deborah, Di 17.11.2026 bis Do 19.11.2026"
+    },
+    {
+      "t": "2026-11-11T16:41",
+      "text": "Endgültig gelöscht: Manuel, Mi 25.11.2026 bis Fr 27.11.2026"
+    },
+    {
+      "t": "2026-11-11T16:41",
+      "text": "Endgültig gelöscht: Manuel, Fr 27.11.2026 bis So 29.11.2026"
+    },
+    {
+      "t": "2026-11-11T16:41",
+      "text": "Endgültig gelöscht: Miriam, Fr 20.11.2026 bis So 22.11.2026"
+    },
+    {
+      "t": "2026-11-11T16:41",
+      "text": "Endgültig gelöscht: Miriam, Mi 18.11.2026 bis Sa 21.11.2026"
+    },
+    {
+      "t": "2026-11-11T16:43",
+      "text": "Bestätigt: Miriam, Fr 20.11.2026 bis So 22.11.2026, CHF 120, Wäsche: per Post senden bis Mi 25.11.2026"
+    },
+    {
+      "t": "2026-11-11T16:44",
+      "text": "Bescheid gegeben: Miriam, Fr 20.11.2026 bis So 22.11.2026"
+    },
+    {
+      "t": "2026-11-11T16:45",
+      "text": "In Pimlical eingetragen: Miriam, Fr 20.11.2026 bis So 22.11.2026"
+    },
+    {
+      "t": "2026-11-11T16:49",
+      "text": "Bestätigt: Manuel, Fr 27.11.2026 bis So 29.11.2026, CHF 120"
+    },
+    {
+      "t": "2026-11-11T16:53",
+      "text": "Abgelehnt: Sarah, Di 17.11.2026 bis Do 19.11.2026"
+    },
+    {
+      "t": "2026-11-11T16:55",
+      "text": "Bestätigt: Sarah, Mo 16.11.2026 bis Mi 18.11.2026, CHF 120, Wäsche: persönlich bringen bis Sa 21.11.2026"
+    },
+    {
+      "t": "2026-11-11T17:03",
+      "text": "Wäsche-Info gegeben: Miriam, Fr 20.11.2026 bis So 22.11.2026"
+    },
+    {
+      "t": "2026-11-11T17:12",
+      "text": "Endgültig gelöscht: Miriam, Fr 20.11.2026 bis So 22.11.2026"
+    },
+    {
+      "t": "2026-11-11T17:12",
+      "text": "Endgültig gelöscht: Sarah, Mo 16.11.2026 bis Mi 18.11.2026"
+    },
+    {
+      "t": "2026-11-11T17:12",
+      "text": "Endgültig gelöscht: Manuel, Fr 27.11.2026 bis So 29.11.2026"
+    },
+    {
+      "t": "2026-11-11T21:25",
+      "text": "Endgültig gelöscht: Sarah, Di 17.11.2026 bis Do 19.11.2026 (abgelehnte Testanfrage)"
+    },
+    {
+      "t": "2026-11-11T22:07",
+      "text": "Reinigungstag gesetzt: Do 26.11.2026"
+    },
+    {
+      "t": "2026-11-11T22:08",
+      "text": "Reinigungstag entfernt: Do 26.11.2026"
+    }
+  ],
+  "reinigung": []
+}

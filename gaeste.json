@@ -1,0 +1,88 @@
+{
+  "gaeste": [
+    {
+      "arr": "2026-11-11",
+      "dep": "2026-11-15",
+      "name": "Marianne und Yolanda",
+      "typ": "fam"
+    },
+    {
+      "arr": "2026-12-04",
+      "dep": "2026-12-08",
+      "name": "Andrea",
+      "typ": "airbnb"
+    },
+    {
+      "arr": "2026-12-21",
+      "dep": "2026-12-25",
+      "name": "Blockiert Weihnachten",
+      "typ": "block"
+    },
+    {
+      "arr": "2026-12-25",
+      "dep": "2026-12-30",
+      "name": "Stefanie",
+      "typ": "airbnb"
+    },
+    {
+      "arr": "2026-12-30",
+      "dep": "2027-01-07",
+      "name": "Marianne und ich",
+      "typ": "fam"
+    },
+    {
+      "arr": "2027-01-07",
+      "dep": "2027-01-10",
+      "name": "Manuel und Freunde",
+      "typ": "fam",
+      "quelle": "kalender",
+      "kal": "Manuel und Freunde"
+    },
+    {
+      "arr": "2027-01-15",
+      "dep": "2027-01-22",
+      "name": "Janine Collins",
+      "typ": "extern"
+    },
+    {
+      "arr": "2027-01-22",
+      "dep": "2027-01-25",
+      "name": "Marianne und ich",
+      "typ": "fam",
+      "quelle": "kalender",
+      "kal": "Marianne und ich"
+    },
+    {
+      "arr": "2027-01-25",
+      "dep": "2027-01-30",
+      "name": "Luca Banfi",
+      "typ": "airbnb"
+    },
+    {
+      "arr": "2027-01-30",
+      "dep": "2027-02-06",
+      "name": "Beat Galliker",
+      "typ": "airbnb"
+    },
+    {
+      "arr": "2027-02-06",
+      "dep": "2027-02-13",
+      "name": "Liselotte Freiburghaus",
+      "typ": "extern"
+    },
+    {
+      "arr": "2027-02-20",
+      "dep": "2027-02-27",
+      "name": "Leo van den Berg",
+      "typ": "extern"
+    },
+    {
+      "arr": "2027-03-04",
+      "dep": "2027-03-08",
+      "name": "Manuel",
+      "typ": "fam",
+      "quelle": "kalender",
+      "kal": "Manuel"
+    }
+  ]
+}

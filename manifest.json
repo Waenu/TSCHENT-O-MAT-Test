@@ -1,0 +1,26 @@
+{
+  "name": "TSCHENT-O-MAT TEST",
+  "short_name": "TSCHENT-O-MAT TEST",
+  "description": "Testversion Preisrechner Chalet Tschenten (nur für Layout-Tests)",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0E1A18",
+  "theme_color": "#D66C00",
+  "lang": "de",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
