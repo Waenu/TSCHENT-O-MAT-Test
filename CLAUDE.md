@@ -7,6 +7,7 @@ Seite: https://waenu.github.io/TSCHENT-O-MAT-Test/ . Nur für Layout-Tests (z. B
 - Nur hier im Test-Repo: `manifest.json` (Name «TSCHENT-O-MAT TEST», orange) und orange `icon-192.png`/`icon-512.png`. Diese werden NIE in die laufende App kopiert. `sw.js` ist für beide gleich (eigener Cache «tschentomat-test-…» im Test).
 - Daten (`buchungen.json`, `gaeste.json`, `einladungen.json`, `ideen.json`): Kopie vom 12.11.2026, auffrischen nur auf Wänus Wunsch. Kein Workflow für Gästenamen im Test-Repo. `belegt.json` kommt wie immer aus `/Tschentomat/` (nur lesen).
 - Übernehmen in die laufende App erst nach Wänus «übernehmen»: `index.html` und `sw.js` unverändert kopieren, Version setzen, Versionshistorie ergänzen, testen, Push erst nach «push».
+- 3.2.0.0 (nur im Test-Repo, noch nicht übernommen): Kalender als Scroll-Fenster `#calBox` mit Monaten untereinander (`KAL_LISTE`, `kalSpringen`, `kalOben`, `KAL_BIS`, `KAL_ZIEL`). `#calGrid` ist jetzt ein Behälter, jeder Monat ein eigenes `.cal-grid.kal-g`; `zeichneBalken()` ohne Angabe zeichnet alle Monate. calY/calM = Monat oben im Fenster. Wischen und ‹ › sind aus.
 - Lokal testen: Ordner unter einem Pfad mit «TSCHENT-O-MAT-Test» ausliefern (z. B. Symlink in /tmp/www), sonst greift der Testmodus nicht.
 
 ---
