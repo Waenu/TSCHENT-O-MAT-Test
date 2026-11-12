@@ -11,6 +11,7 @@ Seite: https://waenu.github.io/TSCHENT-O-MAT-Test/ . Nur für Layout-Tests (z. B
 - 3.2.1.0: Umschalter `#calArt` neben «Heute» (⇄ zeigt «zum Blättern», ⇅ «zu untereinander»), `KAL_LISTE` ist jetzt `let`, gespeichert in `tm2_kalart` («liste»/«blatt», Standard liste). 3.2.1.1: kein Gold-Leuchten und kein Hinweis mehr (Wänu: Symbol ist eindeutig). Wischen ist immer eingerichtet, wirkt aber nur beim Blättern.
 - 3.2.1.2: Pfeile 30 px, Titel `titelHtml()` (Zusatz in `.kt-sub`), Titelschrift `min(var(--t-title), 3.9vw)`; Klasse `zieht` wird beim Wischen auch an `#cal` gesetzt (Elternteil des Rasters ist jetzt `#calBox`).
 - 3.2.1.3: Titelschrift beim Blättern = `var(--t-title)` wie die Überschriften `.kal-mt` in der Liste. `kalJahrForm()` misst «September 27»: passt es, bei allen Monaten «Monat 27», sonst bei allen «Monat» und darunter «2027» (`.kt-jahr`). Neu messen bei Grösse/Schrift (`kalTitelNeu`). Überschriften in der Liste per `titelHtml(m, y, "voll")`, Skisaison klein darunter.
+- 3.2.1.4: Jahr nie abgekürzt (Wänu). Untereinander immer «Monat 2026» (`KAL_LISTE` → "voll"); beim Blättern misst `kalJahrForm()` «September 2027»: passt es, alle «Monat 2027», sonst alle mit «2027» in neuer Zeile. ResizeObserver auf `#calTitle` misst nach Umschalten/Aufklappen neu.
 - Lokal testen: Ordner unter einem Pfad mit «TSCHENT-O-MAT-Test» ausliefern (z. B. Symlink in /tmp/www), sonst greift der Testmodus nicht.
 
 ---
