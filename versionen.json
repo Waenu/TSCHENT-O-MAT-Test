@@ -2,6 +2,20 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.2.1.2",
+      "datum": "2026-11-12",
+      "titel": "Kalender beim Blättern: mehr Platz für den Monatsnamen",
+      "arten": [
+        "Layout",
+        "Fehler"
+      ],
+      "punkte": [
+        "Die Pfeile ‹ › sind schmaler. Der Monatsname steht jetzt in einer Zeile und rutscht nicht mehr in den Pfeil, Zusätze wie «Skisaison» stehen klein darunter.",
+        "Auf schmalen Handys wird der Monatsname etwas kleiner statt überzulaufen.",
+        "Fehler behoben: Beim Wischen blenden «Heute», die Pfeile und der Umschalter wieder aus, damit die Monatsnamen frei vorbeigleiten."
+      ]
+    },
+    {
       "v": "3.2.1.1",
       "datum": "2026-11-12",
       "titel": "Kalender-Umschalter ohne Leuchten",

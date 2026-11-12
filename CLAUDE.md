@@ -9,6 +9,7 @@ Seite: https://waenu.github.io/TSCHENT-O-MAT-Test/ . Nur für Layout-Tests (z. B
 - Übernehmen in die laufende App erst nach Wänus «übernehmen»: `index.html` und `sw.js` unverändert kopieren, Version setzen, Versionshistorie ergänzen, testen, Push erst nach «push».
 - 3.2.0.0 (nur im Test-Repo, noch nicht übernommen): Kalender als Scroll-Fenster `#calBox` mit Monaten untereinander (`KAL_LISTE`, `kalSpringen`, `kalOben`, `KAL_BIS`, `KAL_ZIEL`). `#calGrid` ist jetzt ein Behälter, jeder Monat ein eigenes `.cal-grid.kal-g`; `zeichneBalken()` ohne Angabe zeichnet alle Monate. calY/calM = Monat oben im Fenster. Wischen und ‹ › sind aus.
 - 3.2.1.0: Umschalter `#calArt` neben «Heute» (⇄ zeigt «zum Blättern», ⇅ «zu untereinander»), `KAL_LISTE` ist jetzt `let`, gespeichert in `tm2_kalart` («liste»/«blatt», Standard liste). 3.2.1.1: kein Gold-Leuchten und kein Hinweis mehr (Wänu: Symbol ist eindeutig). Wischen ist immer eingerichtet, wirkt aber nur beim Blättern.
+- 3.2.1.2: Pfeile 30 px, Titel `titelHtml()` (Zusatz in `.kt-sub`), Titelschrift `min(var(--t-title), 3.9vw)`; Klasse `zieht` wird beim Wischen auch an `#cal` gesetzt (Elternteil des Rasters ist jetzt `#calBox`).
 - Lokal testen: Ordner unter einem Pfad mit «TSCHENT-O-MAT-Test» ausliefern (z. B. Symlink in /tmp/www), sonst greift der Testmodus nicht.
 
 ---
