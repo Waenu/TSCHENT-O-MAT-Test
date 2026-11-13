@@ -4,7 +4,7 @@
     {
       "v": "3.3.1.1",
       "datum": "2026-11-13",
-      "titel": "Ablauf bei Buchungen neu geordnet, 🔄 beim Wunschtermin",
+      "titel": "Ablauf bei Buchungen neu geordnet, Titel «Termin finden»",
       "arten": [
         "Text",
         "Layout"
@@ -12,7 +12,7 @@
       "punkte": [
         "Verwaltung, Nachschlagen, «Ablauf bei Buchungen»: fünf nummerierte Abschnitte (Anfrage eines Kindes, eigener Aufenthalt/Extern/Blockiert, Airbnb-Gast, Name holen mit 🔄, was der Kalender zeigt).",
         "Neu mit Bildern: die vier Arten im Kalender (schraffiert oder nicht, mit oder ohne Name).",
-        "🔄 Kalender-Abgleich jetzt als viertes Symbol hinter «Wunschtermin finden» (statt bei «Verwaltung»), nur für Papi. Der Titel steht links bündig mit «Heute»."
+        "Titel heisst neu «Termin finden». Die Symbole stehen rechtsbündig; 🔄 (Kalender-Abgleich, nur für Papi) steht an erster Stelle, damit die Symbole der Kinder an ihrem Platz bleiben."
       ]
     },
     {

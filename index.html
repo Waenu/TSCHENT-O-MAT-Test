@@ -492,7 +492,10 @@ if (TEST_MODUS) {
   .sync-k.dreht { animation: syncDreh 1.2s linear infinite; }
   @keyframes syncDreh { to { transform: rotate(360deg); } }
   #syncInfo { margin: 4px 0 0; }
-  #cal > h2 { text-align: left; }
+  #cal > h2.cal-kopf { display: flex; align-items: center; gap: 6px; text-align: left; }
+  .ck-t { flex: 1 1 auto; min-width: 0; }
+  .ck-sym { flex: 0 0 auto; margin-left: auto; white-space: nowrap; }
+  .ck-sym .sym:last-child { margin-right: 0; }
   .ab-h { margin: 1.1rem 0 .3rem; font-size: 1.02em; }
   .ab-art { display: flex; gap: 10px; align-items: flex-start; margin: .5rem 0; }
   .ab-art svg { flex: 0 0 150px; }
@@ -1417,7 +1420,7 @@ if (TEST_MODUS) {
   <div id="notice" class="notice" role="status" hidden></div>
 
   <section id="cal" class="card cal" aria-label="Wunschtermin">
-    <h2>Wunschtermin finden <button type="button" class="sym" id="jahrBtn" aria-label="Jahresübersicht zeigen">🗓️</button><button type="button" class="sym" data-info="b-blick" aria-label="Regeln auf einen Blick">📊</button><button type="button" class="sym" data-film="saison" aria-label="Kurzfilm: Gleicher Wunsch, andere Regeln (die Saisons)">🎬</button><button type="button" class="sym sync-k" id="syncK" aria-label="Kalender-Abgleich starten" title="Kalender-Abgleich starten" hidden>🔄</button></h2>
+    <h2 class="cal-kopf"><span class="ck-t">Termin finden</span><span class="ck-sym"><button type="button" class="sym sync-k" id="syncK" aria-label="Kalender-Abgleich starten" title="Kalender-Abgleich starten" hidden>🔄</button><button type="button" class="sym" id="jahrBtn" aria-label="Jahresübersicht zeigen">🗓️</button><button type="button" class="sym" data-info="b-blick" aria-label="Regeln auf einen Blick">📊</button><button type="button" class="sym" data-film="saison" aria-label="Kurzfilm: Gleicher Wunsch, andere Regeln (die Saisons)">🎬</button></span></h2>
     <p class="hint" id="syncInfo" role="status" hidden></p>
     <div class="cal-nav">
       <div class="cal-links"><button type="button" id="calPrev" aria-label="Vorheriger Monat">‹</button><button type="button" id="calHeute" class="cal-heute" aria-label="Zum aktuellen Monat">Heute</button><button type="button" id="calArt" class="cal-art" aria-label="Kalenderansicht wechseln"></button></div>
@@ -5866,7 +5869,7 @@ function bestZeigen() {
     const zeig = !!(TOKEN && !ABSENDER), nA = zeig ? punkteOffen() : 0;
     an.textContent = nA ? String(nA) : "✓"; an.classList.toggle("ok", !nA); an.hidden = !zeig;
     an.title = nA ? nA + (nA === 1 ? " offener Punkt" : " offene Punkte") : "Alles erledigt";
-    const sk = document.getElementById("syncK"); if (sk) sk.hidden = !zeig || MAMI; }   // 🔄 Kalender-Abgleich hinter «Wunschtermin finden» (seit 3.3.1.1, nur Papi)
+    const sk = document.getElementById("syncK"); if (sk) sk.hidden = !zeig || MAMI; }   // 🔄 Kalender-Abgleich im Titel «Termin finden», an erster Stelle (seit 3.3.1.1, nur Papi)
   kn.hidden = false; kn.classList.toggle("on", zeigAns); kn.setAttribute("aria-expanded", zeigAns ? "true" : "false");
   k.hidden = !zeigAns;
   let s = "";
