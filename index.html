@@ -20,6 +20,7 @@ if (TEST_MODUS) {
     _sp.setItem = function (k, v) { return _ss.call(this, _sk(k), v); };
     _sp.removeItem = function (k) { return _sr.call(this, _sk(k)); };
     if (localStorage.getItem("tm2_token") === null && localStorage.getItem("tm2_absender") === null) localStorage.setItem("tm2_token", "test");   // erster Start: Papi-Ansicht
+    if (!localStorage.getItem("tm2_karteiAufger1")) { localStorage.removeItem("tm2_freundeKartei"); localStorage.setItem("tm2_karteiAufger1", "1"); }   // einmalig (3.7.0.6, Wänu): Adressbücher der Freunde aller Ansichten leeren, sie waren durch einen Fehler vermischt
     if (/[?&]b=/.test(location.search) && !localStorage.getItem("tm2_token")) {   // Bestätigungslink aus WhatsApp: gleich in die Ansicht Papi (seit 3.5.0.2), sonst geht die Anfrage in der Kind-Ansicht verloren
       localStorage.setItem("tm2_token", localStorage.getItem("tm2_papitoken") || "test"); localStorage.setItem("tm2_absender", ""); localStorage.removeItem("tm2_namefix"); localStorage.removeItem("tm2_absender_ts");
     }
@@ -1530,7 +1531,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.7.0.5";
+let VERSION = "3.7.0.6";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -1792,18 +1793,19 @@ function gmEntwurf() {   // Entwurf gehört zu Person und Termin (seit 3.7.0.2):
     const o = JSON.parse(localStorage.getItem("tm2_gmEntwurf") || "null"), k = gmEntwurfKeyJetzt();
     if (!o) return [];
     const l = Array.isArray(o) ? o : (Array.isArray(o.l) ? o.l : []);
-    if (Array.isArray(o) || o.k !== k) { if (!k) return []; karteiMerken(l); localStorage.removeItem("tm2_gmEntwurf"); GM_ENTW_GEN++; return []; }
+    if (Array.isArray(o) || o.k !== k) { if (!k) return []; if (!Array.isArray(o) && o.k) karteiMerken(l, String(o.k).split("|")[0]); localStorage.removeItem("tm2_gmEntwurf"); GM_ENTW_GEN++; return []; }   // Freunde ins Adressbuch der Person, der der Entwurf gehörte (seit 3.7.0.6)
     return l;
   } catch (e) { return []; }
 }
 // Adressbuch der Freunde (nur auf dem Handy, tm2_freundeKartei = {Person: [...]}, jede Person ihr eigenes): beim Vornamen schlägt die App bekannte Freunde vor
 function karteiAlle() { try { const o = JSON.parse(localStorage.getItem("tm2_freundeKartei") || "{}"); return o && typeof o === "object" && !Array.isArray(o) ? o : {}; } catch (e) { return {}; } }   // pro Person getrennt (seit 3.7.0.4)
-function karteiLesen() { const a = karteiAlle()[ABSENDER]; return Array.isArray(a) ? a.filter((f) => f && f.vorname) : []; }
-function karteiSchreiben(k) { if (!ABSENDER) return; const o = karteiAlle(); o[ABSENDER] = k.slice(-60); try { localStorage.setItem("tm2_freundeKartei", JSON.stringify(o)); } catch (e) {} }
-function karteiMerken(liste) {
-  const k = karteiLesen(), id = (f) => (String(f.vorname || "") + "|" + String(f.name || "")).trim().toLowerCase();
+function karteiLesen(wer) { const a = karteiAlle()[wer || ABSENDER]; return Array.isArray(a) ? a.filter((f) => f && f.vorname) : []; }
+function karteiSchreiben(k, wer) { wer = wer || ABSENDER; if (!wer) return; const o = karteiAlle(); o[wer] = k.slice(-60); try { localStorage.setItem("tm2_freundeKartei", JSON.stringify(o)); } catch (e) {} }
+function karteiMerken(liste, wer) {   // wer: Person, der die Liste gehört (Standard: angemeldete Person)
+  if (wer !== undefined && !wer) return;
+  const k = karteiLesen(wer), id = (f) => (String(f.vorname || "") + "|" + String(f.name || "")).trim().toLowerCase();
   liste.forEach((f) => { if (!f || !f.vorname || !f.name || !f.geb) return; const i = k.findIndex((x) => id(x) === id(f)), neu = { name: f.name, vorname: f.vorname, geb: f.geb, geschlecht: f.geschlecht || "", nat: f.nat || "Schweiz" }; if (i >= 0) k[i] = neu; else k.push(neu); });
-  karteiSchreiben(k);
+  karteiSchreiben(k, wer);
 }
 function gmEntwurfSetzen(a) { try { localStorage.setItem("tm2_gmEntwurf", JSON.stringify({ k: gmEntwurfKeyJetzt(), l: a })); } catch (e) {} }
 const alterAm = (geb, tag) => { const a = Number(tag.slice(0, 4)) - Number(geb.slice(0, 4)); return tag.slice(5) < geb.slice(5) ? a - 1 : a; };
