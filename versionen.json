@@ -2,6 +2,18 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.5.0.1",
+      "datum": "14.11.2026",
+      "titel": "Namen in der Anfrage",
+      "arten": [
+        "Text"
+      ],
+      "punkte": [
+        "Die WhatsApp-Anfrage nennt die Familie mit Namen, zum Beispiel «Familie: Ich, David, Mael & Yara».",
+        "Gespeichert wird weiterhin ohne Namen."
+      ]
+    },
+    {
       "v": "3.5.0.0",
       "datum": "14.11.2026",
       "titel": "Familie mit Namen",
