@@ -92,6 +92,7 @@ Bedienkonzept Wänu (14.11.2026, ersetzt wo abweichend die Punkte oben; erst nac
 - 3.9.3.1 (Wänu): Aufklapp-Pfeil `.auf-pf` am Anfang der ersten Zelle (vor dem Namen).
 - 3.9.3.2 (Wänu): `MFG_MAX()` gilt für Personen mit Bett; `S.mfg` bis `MFG_MAX() + S.mfgKK.length`; ein Kleinkind abwählen ist gesperrt, solange sonst zu viele Betten belegt wären. Darstellung: eine Familie pro Zeile (`.zchips.mfg-z`, kleinere Chips), Kleinkind-Chip mit «👶 ohne Bett», Bettenzähler `.mfg-bett`.
 - 3.9.3.3 (Wänu): Betten voll → Enkel-Chip bleibt antippbar (solange weniger als 2 Kleinkinder) und kommt gleich in `S.mfgKK`.
+- 3.9.3.4: `mfgSync()` (aus `render` ausgelagert) läuft auch am Anfang von `normalize()`; Chips bei MFG rufen `normalize(); render()`. Vorher kannte `normalize()` die Personenzahl nicht, setzte bei vollen Betten `S.gaeste` nicht auf 0 und die Leiste zeigte «Bitte wählen: Freunde» ohne Preis.
 
 ## Offen: Airbnb-Belegung ins App-Repo umziehen (Wänu «ja», 13.11.2026, nächste Woche)
 - Heute: Workflow `belegung.yml` + `belegung.py` im alten Repo `Waenu/Tschentomat` (Secret `AIRBNB_ICAL`) schreibt `belegt.json`; die App liest `/Tschentomat/belegt.json`.

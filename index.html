@@ -1537,7 +1537,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.9.3.3";
+let VERSION = "3.9.3.4";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -2061,6 +2061,7 @@ const FIELDS = [
 
 function normalize() {
   NOTICES = {};
+  mfgSync();
   if (S.staffelEnde && S.selbstOK === true) S.art = ART_S;   // Staffel endet zwangsläufig: keine Auswahl
   else if (artOpts().indexOf(S.art) < 0) S.art = "";
   if ((S.art === ART_V && S.verbOK === true) || (S.art === ART_S && S.selbstOK === true)) S.gaeste = 0;
@@ -2124,9 +2125,9 @@ function build() {
           const v = a.getAttribute("data-mfg"), sel = S.mfg || [], kk = S.mfgKK || [], enk = [].concat(...famAlle().map((h) => h.e));
           if (sel.indexOf(v) < 0 && sel.length - kk.length >= MFG_MAX() && enk.indexOf(v) >= 0 && kk.length < 2) { S.mfg = sel.concat([v]); S.mfgKK = kk.concat([v]); }   // Betten voll: Enkel kommt als Kleinkind ohne Bett dazu (seit 3.9.3.3)
           else S.mfg = tg(sel, v, MFG_MAX() + kk.length);
-          render();
+          normalize(); render();
         }
-        if (k) { S.mfgKK = tg(S.mfgKK, k.getAttribute("data-mkk"), 2); render(); }
+        if (k) { S.mfgKK = tg(S.mfgKK, k.getAttribute("data-mkk"), 2); normalize(); render(); }
       });
     }
     if (f.id === "zimmer" || f.id === "gaeste") {   // Chips für Zimmer und Zahler (seit 3.7.0.0); Zahler direkt unter der Liste der Freunde (seit 3.7.2.0)
@@ -4248,8 +4249,7 @@ function zielHinweis(r) {
 const meldSichtbar = (id) => { const w = document.getElementById("f-" + id); return !!w && !w.hidden; };
 const meldOrt = (id) => [id, "gaeste", "wer", "art"].find(meldSichtbar) || "";
 const meldZiel = (fid) => Object.keys(NOTICES).filter((id) => meldOrt(id) === fid).map((id) => NOTICES[id]).join(" ");
-function render() {
-  if (famOpts() && S.wer && !famWahl()) { S.wer = ""; S.werFam = ""; S.fam = null; }
+function mfgSync() {   // Familie aus der Auswahl in S.fam/S.kk übertragen (seit 3.9.3.4 eigene Funktion, damit normalize() die Personenzahl kennt)
   if (mfgAktiv()) {   // Familie aus der Auswahl (seit 3.9.0.0)
     const alle = [].concat(...famAlle().map((h) => h.m)).filter((x) => x !== ABSENDER), enk = [].concat(...famAlle().map((h) => h.e));
     S.mfg = (S.mfg || []).filter((x) => alle.indexOf(x) >= 0);
@@ -4257,6 +4257,11 @@ function render() {
     while (S.mfg.length - S.mfgKK.length > MFG_MAX()) { const i = S.mfg.map((x) => S.mfgKK.indexOf(x) < 0).lastIndexOf(true); S.mfg.splice(i, 1); }   // Betten: Kleinkinder ohne Bett zählen nicht (seit 3.9.3.2)
     S.fam = S.mfg.length ? 1 + S.mfg.length : null; S.kk = S.mfgKK.length;
   }
+}
+
+function render() {
+  if (famOpts() && S.wer && !famWahl()) { S.wer = ""; S.werFam = ""; S.fam = null; }
+  mfgSync();
   S.fkk = fkkZaehlen();   // Kleinkinder der Freunde zählen nicht als zahlende Freunde (seit 3.7.0.0)   // Namen-Auswahl und Rechnung immer gleich (z. B. nach Wechsel zur Lücke und zurück)
   const d = derive(S);
   {   // Hochsaison ohne Wahl: gleich oben sagen, dass der Termin mit Vorbehalt gilt und warum (seit 2.125.6.0)
