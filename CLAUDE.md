@@ -58,6 +58,13 @@ Entscheide Wänu (13.11.2026 spät, nach Mockup im privaten Design-Artefakt «TS
 - «Wer kommt?»: die buchende Person fest, Partner und jedes Kind als Chips zum An- und Abwählen (jede Kombination, z. B. ohne Partner mit Kindern).
 - Mehrere Familien zusammen (z. B. zwei Geschwister mit Familie) und Freunde mit mehreren Jugendlichen sind im Mockup skizziert; ab etwa drei Jugendlichen Chip-Zeilen einklappbar.
 
+Bedienkonzept Wänu (14.11.2026, ersetzt wo abweichend die Punkte oben; erst nach dem sauberen Austesten der Gästeliste umsetzen):
+- (a) «Wer von der Familie kommt?» zeigt auf dem Handy die echten Namen statt «Ich und Partner/in», z. B. bei Deborah «Ich und David» oder «Ich, David, Mael & Yara». Namen nur aus dem persönlichen Link/localStorage, nie in index.html oder im Repo.
+- (b) Für die Familie keine Geburtsdaten (Kurtaxe zahlen die Eltern).
+- (c) Sobald Freunde dabei sind, fragt der Rechner pro Freund Vorname, Name, Geschlecht und Geburtsdatum (An-/Abreise kennt Wänu). Das Kind kann die Liste nachträglich ändern.
+- (d) Erst wenn ein Freund unter 18 ist, kommt bei der Bezahlung die Zuordnung, wer für ihn zahlt.
+- Nationalität: seit 3.4.1.0 nicht mehr gefragt (Wänu unsicher, eher weglassen). Ältere Listen zeigen sie noch. Google-Skript: kein Standard «Schweiz» mehr, Nationalität in der Mail nur, wenn vorhanden (Wänu muss das Skript bei Google nachführen).
+
 ## Offen: Airbnb-Belegung ins App-Repo umziehen (Wänu «ja», 13.11.2026, nächste Woche)
 - Heute: Workflow `belegung.yml` + `belegung.py` im alten Repo `Waenu/Tschentomat` (Secret `AIRBNB_ICAL`) schreibt `belegt.json`; die App liest `/Tschentomat/belegt.json`.
 - Plan (mit Wänu abgesprochen 13.11.2026, Testzeit etwa 4 Wochen, altes Repo am Schluss nur stilllegen, nicht löschen):
