@@ -261,6 +261,8 @@ if (TEST_MODUS) {
   .storno-warn { border-left: 4px solid var(--hoch-line); margin: 8px 0; }
   .gm-zu > summary { cursor: pointer; list-style: none; display: block; background: none; color: inherit; padding: 0; margin: 0; border: 0; font-weight: 400; white-space: normal; }
   .gm-zu > summary::-webkit-details-marker { display: none; }
+  .gm-zu > summary { padding-left: 1.6em; text-indent: -1.6em; }   /* zweite Zeile bündig unter dem Text nach dem Symbol (seit 3.7.0.5) */
+  .gm-zu > summary .gm-ico { display: inline-block; width: 1.6em; text-indent: 0; }
   .gm-zu > summary::after { content: " ▾"; color: var(--akzent, inherit); }
   .gm-zu[open] > summary::after { content: " ▴"; }
   .gm-knoepfe { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
@@ -1528,7 +1530,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.7.0.4";
+let VERSION = "3.7.0.5";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -6024,8 +6026,8 @@ function gmKindZeigen() {
     const key = bKey(b), n = freundeVon(b), alt = lok[key] || {}, fr = Array.isArray(alt.freunde) ? alt.freunde : [], auf = !alt.gesendet || GM_AUF.has(key), msg = GM_MSG[key] || "";
     const bereit = !alt.gesendet && fr.length >= n && fr.slice(0, n).every((f) => f && f.name && f.vorname && f.geb && f.geschlecht);   // schon im Rechner ausgefüllt (seit 3.6.0.1)
     const kopf = alt.gesendet
-      ? '<b>✅ Liste deiner Freunde gesendet</b> am ' + esc(fmtTag(alt.gesendet.slice(0, 10))) + ", " + esc(alt.gesendet.slice(11, 16)) + " Uhr. Danke!"
-      : bereit ? "<b>👥 Bitte sende die Liste deiner Freunde</b>" : "<b>👥 Wichtig: Bitte fülle die Liste deiner Freunde aus</b>";
+      ? '<span class="gm-ico">✅</span><b>Liste deiner Freunde gesendet</b> am ' + esc(fmtTag(alt.gesendet.slice(0, 10))) + ", " + esc(alt.gesendet.slice(11, 16)) + " Uhr. Danke!"
+      : bereit ? '<span class="gm-ico">👥</span><b>Bitte sende uns nun noch die Liste deiner Freunde zu</b>' : '<span class="gm-ico">👥</span><b>Wichtig: Bitte fülle die Liste deiner Freunde aus</b>';
     let h = '<details class="note h gm-k gm-zu' + (alt.gesendet ? " gm-ok" : " gm-offen") + '" data-gmk="' + esc(key) + '"' + (GM_AUF.has(key) || GM_OPEN.has(key) ? " open" : "") + '><summary><span>' + kopf + '</span></summary><p class="hint">Aufenthalt vom ' + esc(fmtTag(b.arr)) + " bis " + esc(fmtTag(b.dep)) + ", " + n + " " + gastWort(n) + "." + (bereit ? " Die Liste ist schon ausgefüllt. Prüfe sie kurz und tippe auf «Senden»." : " Die Eltern brauchen die Liste, damit sie die Reservation abschliessen und deine Freunde für die Kurtaxe in Adelboden anmelden können.") + " Die Angaben gehen direkt an die Eltern und sind nicht öffentlich.</p>";
     if (!auf) return '<details class="note h gm-k gm-ok gm-zu" data-gmk="' + esc(key) + '"><summary><span>' + kopf + '</span></summary><p class="hint">Aufenthalt vom ' + esc(fmtTag(b.arr)) + " bis " + esc(fmtTag(b.dep)) + ", " + n + " " + gastWort(n) + '. Die Liste ist bei den Eltern. Ändern kannst du sie bis zwei Tage vor der Abreise, dann verschwindet dieser Kasten.</p><div class="gm-knoepfe"><button type="button" class="btn" data-gmauf="' + esc(key) + '">✏️ Liste ändern</button><button type="button" class="btn" data-gmweg="' + esc(key) + '">🙈 Ausblenden</button></div>' + (msg ? '<p class="hint">' + msg + "</p>" : "") + "</details>";
     for (let i = 0; i < n; i++) {
@@ -6047,6 +6049,11 @@ function gmFormLesen(div) {
     return { name: v("name"), vorname: v("vorname"), gebText: v("geb"), geb: gmIso(v("geb")), geschlecht: g ? g.value : "", nat: v("nat") || "Schweiz" };
   });
 }
+document.addEventListener("input", (e) => {   // Name und Vorname der Freunde: keine Ziffern (seit 3.7.0.5)
+  const t = e.target; if (!t.matches || !t.matches('.gm-f [data-gf="name"], .gm-f [data-gf="vorname"]') || !/[0-9]/.test(t.value)) return;
+  const pos = t.selectionStart, vor = t.value.slice(0, pos).replace(/[0-9]/g, "").length;
+  t.value = t.value.replace(/[0-9]/g, ""); try { t.setSelectionRange(vor, vor); } catch (er) {}
+}, true);
 document.getElementById("gmBox").addEventListener("change", (e) => {   // Datum aus dem Kalender ins Textfeld übernehmen
   const k = e.target.closest(".gm-kal"); if (!k || !k.value) return;
   const t = k.parentNode.querySelector('[data-gf="geb"]'); t.value = gmDatum(k.value);
