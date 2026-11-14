@@ -1522,7 +1522,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.6.0.0";
+let VERSION = "3.6.0.1";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -3824,8 +3824,7 @@ function anfrageText(r) {
   z.push("Familie: " + S.wer + (S.wer === MFG ? " (" + S.fam + " Personen)" : "") + kkTxt);
   const iFam = z.length - 1, fw = famWahl(), famTxt = fw && fw.l !== MFG ? "Familie: " + fw.l + kkTxt : "";   // Namen nur in der WhatsApp, gespeichert (Bestätigungslink → buchungen.json) bleibt die neutrale Zeile (seit 3.5.0.1)
   z.push("Freunde: " + x.GE);
-  if (x.GE > 0 && listeModus()) { const al = freundeAlter(x.GE); if (al) z.push("Liste der Freunde: vollständig, " + al.length + (al.length === 1 ? " Person" : " Personen") + (al.some((a) => a < 18) ? ", davon " + al.filter((a) => a < 18).length + " unter 18" : "")); }   // ohne Namen (seit 3.6.0.0)
-  else if (x.GE > 0 && typeof S.kinder === "number") z.push("Davon Kinder von 6 bis 15 Jahren: " + S.kinder);
+  if (x.GE > 0 && !listeModus() && typeof S.kinder === "number") z.push("Davon Kinder von 6 bis 15 Jahren: " + S.kinder);
   if (x.GE > 0 && !x.lock) z.push("Freund im selben Zimmer: " + x.ZE);
   z.push("Mit den Bedingungen einverstanden: ja");
   if (stornoStreng(x)) z.push("Verbindlich: Absage spätestens am " + fmtTagV(stornoBis()) + " (" + STORNO_TAGE + " Tage vor der Anreise)");
@@ -5902,10 +5901,11 @@ function gmKindZeigen() {
   box.hidden = !l.length;
   box.innerHTML = l.map((b) => {
     const key = bKey(b), n = freundeVon(b), alt = lok[key] || {}, fr = Array.isArray(alt.freunde) ? alt.freunde : [], auf = !alt.gesendet || GM_AUF.has(key), msg = GM_MSG[key] || "";
+    const bereit = !alt.gesendet && fr.length >= n && fr.slice(0, n).every((f) => f && f.name && f.vorname && f.geb && f.geschlecht);   // schon im Rechner ausgefüllt (seit 3.6.0.1)
     const kopf = alt.gesendet
       ? '<b>✅ Liste deiner Freunde gesendet</b> am ' + esc(fmtTag(alt.gesendet.slice(0, 10))) + ", " + esc(alt.gesendet.slice(11, 16)) + " Uhr. Danke!"
-      : "<b>👥 Wichtig: Bitte fülle die Liste deiner Freunde aus</b>";
-    let h = '<details class="note h gm-k gm-zu' + (alt.gesendet ? " gm-ok" : " gm-offen") + '" data-gmk="' + esc(key) + '"' + (GM_AUF.has(key) || GM_OPEN.has(key) ? " open" : "") + '><summary><span>' + kopf + '</span></summary><p class="hint">Aufenthalt vom ' + esc(fmtTag(b.arr)) + " bis " + esc(fmtTag(b.dep)) + ", " + n + " " + gastWort(n) + ". Die Eltern brauchen die Liste, damit sie die Reservation abschliessen und deine Freunde für die Kurtaxe in Adelboden anmelden können. Die Angaben gehen direkt an die Eltern und sind nicht öffentlich.</p>";
+      : bereit ? "<b>👥 Bitte sende die Liste deiner Freunde</b>" : "<b>👥 Wichtig: Bitte fülle die Liste deiner Freunde aus</b>";
+    let h = '<details class="note h gm-k gm-zu' + (alt.gesendet ? " gm-ok" : " gm-offen") + '" data-gmk="' + esc(key) + '"' + (GM_AUF.has(key) || GM_OPEN.has(key) ? " open" : "") + '><summary><span>' + kopf + '</span></summary><p class="hint">Aufenthalt vom ' + esc(fmtTag(b.arr)) + " bis " + esc(fmtTag(b.dep)) + ", " + n + " " + gastWort(n) + "." + (bereit ? " Die Liste ist schon ausgefüllt. Prüfe sie kurz und tippe auf «Senden»." : " Die Eltern brauchen die Liste, damit sie die Reservation abschliessen und deine Freunde für die Kurtaxe in Adelboden anmelden können.") + " Die Angaben gehen direkt an die Eltern und sind nicht öffentlich.</p>";
     if (!auf) return '<details class="note h gm-k gm-ok gm-zu" data-gmk="' + esc(key) + '"><summary><span>' + kopf + '</span></summary><p class="hint">Aufenthalt vom ' + esc(fmtTag(b.arr)) + " bis " + esc(fmtTag(b.dep)) + ", " + n + " " + gastWort(n) + '. Die Liste ist bei den Eltern. Ändern kannst du sie bis zwei Tage vor der Abreise, dann verschwindet dieser Kasten.</p><div class="gm-knoepfe"><button type="button" class="btn" data-gmauf="' + esc(key) + '">✏️ Liste ändern</button><button type="button" class="btn" data-gmweg="' + esc(key) + '">🙈 Ausblenden</button></div>' + (msg ? '<p class="hint">' + msg + "</p>" : "") + "</details>";
     for (let i = 0; i < n; i++) {
       const f = fr[i] || {};
