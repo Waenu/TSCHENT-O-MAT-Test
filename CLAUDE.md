@@ -88,6 +88,7 @@ Bedienkonzept Wänu (14.11.2026, ersetzt wo abweichend die Punkte oben; erst nac
 - 3.9.1.0 (Wänu): Zeilen von «Aufteilung unter euch» aufklappbar (`tr.auf-z` + `tr.auf-d`, Zustand `AUF_AUF`, `aufKlapp`), Aufschlüsselung aus `zpl.base/gs/kt/extra` bzw. Familie `r.FZ − x.FA` und `FA2` (bei `famAufB` nach Anteil); nur `who` (Handy), `whoN`/Schnappschuss unverändert. Tipp auf die Leiste («Details») klappt Buchungsübersicht und alle Zeilen auf/zu. Glossar (Bild goldene Leiste) ergänzt.
 - 3.9.1.1 (Wänu): `gmVorZeigen` zeigt erst ab dem ersten Buchstaben Vorschläge (Anfang des jeweiligen Feldes, alphabetisch); leeres Feld zeigt keine mehr (ersetzt 3.6.0.2).
 - 3.9.2.0 (Wänu): Partei muss gewählt werden: `zu` = -1 heisst «eigene Partei» gewählt, undefined = offen; `ptZiele()`, `ptOffen()`, `zpl.parteiOffen` sperrt die Anfrage (rote Meldung), Feld `.gm-pt.missing`; Erklärungstext unter dem Titel. Name/Vorname: Anfangsbuchstaben (auch nach Leerzeichen und Bindestrich) automatisch gross.
+- 3.9.3.0 (Wänu, Vorschlag 1): Partei mit mehreren Personen (`parteiKopf`) = eine Zeile in der Aufteilung (Summe der Erwachsenen, Kinder der Partei ohne eigene Zeile), neutral mit «Freund/in N»; `zRows` merkt die Zeilentypen für die Aufschlüsselung (pro Person: Übernachtung, Reinigung, Kurtaxe aus `zpl.eigen`).
 
 ## Offen: Airbnb-Belegung ins App-Repo umziehen (Wänu «ja», 13.11.2026, nächste Woche)
 - Heute: Workflow `belegung.yml` + `belegung.py` im alten Repo `Waenu/Tschentomat` (Secret `AIRBNB_ICAL`) schreibt `belegt.json`; die App liest `/Tschentomat/belegt.json`.
