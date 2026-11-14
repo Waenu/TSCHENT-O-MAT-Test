@@ -16,10 +16,6 @@
   ],
   "logbuch": [
     {
-      "t": "2026-10-28T15:02",
-      "text": "Bestätigt: Manuel, Mi 25.11.2026 bis Fr 27.11.2026, CHF 110"
-    },
-    {
       "t": "2026-10-28T15:07",
       "text": "Bestätigt: Miriam, Fr 27.11.2026 bis Mo 30.11.2026, CHF 165"
     },
@@ -814,6 +810,10 @@
     {
       "t": "2026-11-14T11:05",
       "text": "Bestätigt: Miriam, Mi 18.11.2026 bis So 22.11.2026, CHF 1429"
+    },
+    {
+      "t": "2026-11-14T11:15",
+      "text": "Endgültig gelöscht: Miriam, Mi 18.11.2026 bis So 22.11.2026"
     }
   ],
   "reinigung": []
