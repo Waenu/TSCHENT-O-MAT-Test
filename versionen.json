@@ -2,6 +2,22 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.7.0.0",
+      "datum": "14.11.2026",
+      "titel": "Wer zahlt für Freunde unter 18",
+      "arten": [
+        "Neu"
+      ],
+      "punkte": [
+        "Ist ein Freund unter 18 dabei, fragt der Rechner nach der Reinigung: «Wer übernimmt die Kosten für Lena (14)?» Chips: Ich, jeder erwachsene Freund, der Jugendliche selbst. Mehrere gewählt: gleich verteilt.",
+        "Wer übernommen wird, trägt keinen Reinigungsanteil. Das Total bleibt gleich.",
+        "Kleinkinder von Freunden bis 2½ Jahre stehen in der Liste, schlafen ohne Bett und sind gratis.",
+        "«Schläft ein Freund im selben Zimmer wie ich?»: Mit «Ja» tippt man an, wer es ist.",
+        "Die Tabelle «Aufteilung unter euch» zeigt auf dem Handy die Vornamen. Die WhatsApp-Anfrage nennt Zimmer und Zahler mit Vornamen. Gespeichert wird ohne Namen.",
+        "Die Knöpfe ✕ und 📅 in der Liste sind gleich gross."
+      ]
+    },
+    {
       "v": "3.6.0.2",
       "datum": "14.11.2026",
       "titel": "Vorschläge beim Namen und Vornamen",
