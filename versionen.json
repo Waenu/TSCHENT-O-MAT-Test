@@ -2,6 +2,19 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.9.3.5",
+      "datum": "14.11.2026",
+      "titel": "Kinderbettchen statt «ohne Bett»",
+      "arten": [
+        "Text"
+      ],
+      "punkte": [
+        "Die Frage heisst neu «Wer schläft im Kinderbettchen?», der Chip zeigt «🛏️ Kinderbettchen» und der Zähler «dazu 1 Kinderbettchen».",
+        "Hinweis: Ganz Kleine, die bei den Eltern im Bett schlafen, kommen einfach mit und müssen nicht angegeben werden.",
+        "Überall sonst ebenfalls «im Kinderbettchen» statt «im Kinderbettchen oder bei den eigenen Eltern». Es hat zwei Kinderbettchen."
+      ]
+    },
+    {
       "v": "3.9.3.4",
       "datum": "14.11.2026",
       "titel": "Preis bei voller Familie",
