@@ -371,7 +371,7 @@ if (TEST_MODUS) {
   .total .big { font-family: var(--display); font-weight: 700; font-size: calc(2.4rem / var(--fs)); line-height: 1; font-variant-numeric: tabular-nums; }
   .total .small { color: var(--muted); font-size: var(--t-small); }
   small.ktk { display: block; color: var(--muted); font-size: 0.78em; font-weight: 400; margin-top: 2px; }
-  tr.auf-z { cursor: pointer; } tr.auf-z .auf-pf { color: var(--muted); font-size: 0.85em; display: inline-block; transition: transform .15s; } tr.auf-z.auf .auf-pf { transform: rotate(180deg); }
+  tr.auf-z { cursor: pointer; } tr.auf-z .auf-pf { color: var(--muted); font-size: 0.85em; display: inline-block; margin-right: 4px; transition: transform .15s; } tr.auf-z.auf .auf-pf { transform: rotate(180deg); }
   tr.auf-d td { padding-top: 0; } tr.auf-d ul { list-style: none; margin: 0; padding: 0 0 6px 12px; border-left: 3px solid var(--line, #444); }
   tr.auf-d li { display: flex; justify-content: space-between; gap: 10px; font-size: 0.9em; padding: 3px 0; } tr.auf-d li > span:last-child { white-space: nowrap; }
   table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
@@ -1535,7 +1535,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.9.3.0";
+let VERSION = "3.9.3.1";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -4413,7 +4413,7 @@ function render() {
       });
     } else for (let g = 1; g <= x.GE; g++) bd.push("");
     const rows = who.match(/<tr>[\s\S]*?<\/tr>/g) || [];
-    if (rows.length === bd.length) who = rows.map((rw, k) => !bd[k] ? rw : rw.replace("<tr>", '<tr class="auf-z' + (AUF_AUF.has(k) ? " auf" : "") + '" data-auf="' + k + '" role="button" tabindex="0" aria-expanded="' + (AUF_AUF.has(k) ? "true" : "false") + '">').replace("</td>", ' <span class="auf-pf" aria-hidden="true">▾</span></td>') +
+    if (rows.length === bd.length) who = rows.map((rw, k) => !bd[k] ? rw : rw.replace("<tr>", '<tr class="auf-z' + (AUF_AUF.has(k) ? " auf" : "") + '" data-auf="' + k + '" role="button" tabindex="0" aria-expanded="' + (AUF_AUF.has(k) ? "true" : "false") + '">').replace("<td>", '<td><span class="auf-pf" aria-hidden="true">▾</span> ') +
       '<tr class="auf-d"' + (AUF_AUF.has(k) ? "" : " hidden") + '><td colspan="2"><ul>' + bd[k] + "</ul></td></tr>").join("");
   }
   let det = "";
