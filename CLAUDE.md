@@ -63,7 +63,7 @@ Bedienkonzept Wänu (14.11.2026, ersetzt wo abweichend die Punkte oben; erst nac
 - (b) Für die Familie keine Geburtsdaten (Kurtaxe zahlen die Eltern).
 - (c) Sobald Freunde dabei sind, fragt der Rechner pro Freund Vorname, Name, Geschlecht und Geburtsdatum (An-/Abreise kennt Wänu). Das Kind kann die Liste nachträglich ändern.
 - (d) Erst wenn ein Freund unter 18 ist, kommt bei der Bezahlung die Zuordnung, wer für ihn zahlt.
-- Nationalität: seit 3.4.1.0 nicht mehr gefragt (Wänu unsicher, eher weglassen). Ältere Listen zeigen sie noch. Google-Skript: kein Standard «Schweiz» mehr, Nationalität in der Mail nur, wenn vorhanden (Wänu muss das Skript bei Google nachführen).
+- Nationalität: bleibt in der Liste, vorausgefüllt mit «Schweiz» (Wänu 14.11.2026; 3.4.1.0 hatte sie entfernt, 3.4.2.0 stellt den alten Stand wieder her). Google-Skript unverändert.
 
 ## Offen: Airbnb-Belegung ins App-Repo umziehen (Wänu «ja», 13.11.2026, nächste Woche)
 - Heute: Workflow `belegung.yml` + `belegung.py` im alten Repo `Waenu/Tschentomat` (Secret `AIRBNB_ICAL`) schreibt `belegt.json`; die App liest `/Tschentomat/belegt.json`.
