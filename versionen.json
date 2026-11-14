@@ -2,6 +2,18 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.9.0.1",
+      "datum": "14.11.2026",
+      "titel": "Aufteilung der Familie: wer für die Kinder zahlt",
+      "arten": [
+        "Text"
+      ],
+      "punkte": [
+        "Kommt ein Enkelkind ohne seine Eltern mit, steht in der Aufteilung zum Beispiel «Jerome zahlt für Malik».",
+        "Sonst zum Beispiel «Du zahlst», «Du und David zahlen inkl. Mael» oder «Jerome und Rahel zahlen inkl. Jon». Die Parteien unter der Auswahl heissen gleich."
+      ]
+    },
+    {
       "v": "3.9.0.0",
       "datum": "14.11.2026",
       "titel": "Meine Familie und Geschwister: alle zum Antippen",
