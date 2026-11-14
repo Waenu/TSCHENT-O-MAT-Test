@@ -12,23 +12,9 @@
       "bestaetigt": "2026-11-09T21:37",
       "pimlical": "2026-11-09T21:44",
       "bescheid": "2026-11-10T14:57"
-    },
-    {
-      "name": "Deborah",
-      "arr": "2026-11-18",
-      "dep": "2026-11-21",
-      "selbst": false,
-      "pers": 1,
-      "betrag": 1290,
-      "rechnung": "Gesendet am Sa 14.11.2026, 15:29 Uhr. App-Version 3.7.2.2.\nAnreise\tMittwoch 18.11.2026\nAbreise\tSamstag 21.11.2026 (3 Nächte)\nFamilie\tNur ich\nFreunde\t4\nFreund im selben Zimmer\tNein\nKosten Freund/in 2 (unter 18)\tFreund/in 1\nKosten Freund/in 3 (unter 18)\tFreund/in 1\nBedingungen akzeptiert\tJa\nZimmer 1 unberührt\tNein\nReinigung\tNach Personen: jede Person zählt gleich (ohne Kleinkinder)\nTotal laut Rechner\tCHF 1’290.–\nDazu Kurtaxe Adelboden für die Freunde: CHF 43.80\n#Preisberechnung\nDu pro Nacht\tCHF 70.–\nFreund/in 1 pro Nacht\tCHF 70.–\nFreund/in 2 pro Nacht\tCHF 70.–\nFreund/in 3 pro Nacht\tCHF 70.–\nFreund/in 4 pro Nacht\tCHF 70.–\nÜbernachtung (3 Nächte)\tCHF 1’050.–\nReinigung\tCHF 240.–\nReinigung: dein Anteil\tCHF 48.00\nReinigung: Anteil pro Freund\tCHF 48.00\nKurtaxe Adelboden (dazu) 2 Freunde ab 16 Jahren zu CHF 5.20 pro Nacht, 2 Kinder von 6 bis 15 Jahren zu CHF 2.10 pro Nacht, 3 Nächte\tCHF 43.80\nTotal mit Kurtaxe\tCHF 1’333.80\n#Aufteilung unter den Freunden\nDu zahlst\tCHF 258.00\nFreund/in 1 zahlt davon Kurtaxe CHF 15.60 (ab 16 Jahren) inkl. CHF 264.30 für Freund/in 2, CHF 264.30 für Freund/in 3\tCHF 802.20\nFreund/in 2 übernommen von Freund/in 1\tCHF 0.–\nFreund/in 3 übernommen von Freund/in 1\tCHF 0.–\nFreund/in 4 zahlt davon Kurtaxe CHF 15.60 (ab 16 Jahren)\tCHF 273.60\nReinigung aufgeteilt: Nach Personen: jede Person zählt gleich (ohne Kleinkinder).",
-      "bestaetigt": "2026-11-14T15:30"
     }
   ],
   "logbuch": [
-    {
-      "t": "2026-10-30T08:54",
-      "text": "Bestätigt: Deborah, Do 26.11.2026 bis So 29.11.2026, CHF 165"
-    },
     {
       "t": "2026-10-30T14:25",
       "text": "Bestätigt: Miriam, Do 19.11.2026 bis Di 24.11.2026, CHF 275, Wäsche: persönlich bringen bis Fr 27.11.2026"
@@ -824,6 +810,10 @@
     {
       "t": "2026-11-14T15:30",
       "text": "Bestätigt: Deborah, Mi 18.11.2026 bis Sa 21.11.2026, CHF 1290"
+    },
+    {
+      "t": "2026-11-14T15:38",
+      "text": "Endgültig gelöscht: Deborah, Mi 18.11.2026 bis Sa 21.11.2026"
     }
   ],
   "reinigung": []
