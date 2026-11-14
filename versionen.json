@@ -2,6 +2,34 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.9.3.8",
+      "datum": "14.11.2026",
+      "titel": "«Storniert» statt «abgesagt»",
+      "arten": [
+        "Text"
+      ],
+      "punkte": [
+        "Wo ein Kind seinen Aufenthalt zurückzieht, heisst es überall «stornieren» bzw. «storniert» statt «absagen» bzw. «abgesagt», auch «Stornierung spätestens am …». Die «Absage» der Eltern auf eine Anfrage bleibt."
+      ]
+    },
+    {
+      "v": "3.9.3.7",
+      "datum": "14.11.2026",
+      "titel": "WhatsApp-Nachrichten aufgeräumt",
+      "arten": [
+        "Text"
+      ],
+      "punkte": [
+        "Alle Nachrichten der Eltern: «Hoi Name» auf eigener Zeile, danach ein Satz, die Angaben (Aufenthalt, Betrag, Frist …) je auf einer eigenen Zeile und Absätze.",
+        "Bescheid: Vorbehalt als eigener Absatz direkt nach den Angaben.",
+        "Endreinigung: «bei ihr» bzw. «bei ihm» statt «bei ihr oder ihm».",
+        "Einladung: Gruss wie bei den anderen Nachrichten der Eltern, Kinder im Kinderbettchen mit Namen.",
+        "Anfrage, Umfrage und Stornierung der Kinder enden mit «Liebe Grüsse, Name».",
+        "Umfrage: Daten in einer Zeile, «TSCHENT-O-MAT» einheitlich geschrieben.",
+        "Erinnerung an die Liste der Freunde: bitte ausfüllen und «Senden» tippen."
+      ]
+    },
+    {
       "v": "3.9.3.6",
       "datum": "14.11.2026",
       "titel": "Anfrage klarer",
