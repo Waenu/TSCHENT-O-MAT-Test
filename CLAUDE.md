@@ -81,6 +81,7 @@ Bedienkonzept Wänu (14.11.2026, ersetzt wo abweichend die Punkte oben; erst nac
 - 3.7.2.0 (Wänu): `#zahlRech` direkt nach `#gmRech` (sichtbar bei `listeVoll` und Minderjährigen); Minderjährige nie Zahler, kein «selbst»; Zahler übernimmt Nachtpreis, Kurtaxe und Reinigungsanteil. Reinigung: `ER = FP` (Kinder und Enkel zählen nach Personen, nur Kleinkinder nicht; gilt auch bei MFG über Personenzahl minus Kleinkinder); «Nach Parteien» mit Minderjährigen in `zahlPlan`: Teil = RE/(1 + erwachsene Freunde), Minderjährige 0.
 - 3.7.2.1: Buchungsübersicht (`det`) mit Vornamen über Platzhalter `\u0001i\u0002` (Reihenfolge `zpl.ord`, Kleinkinder mit 0), `detN` neutral «Freund/in N» für `SNAP_BER`; Reinigungszeilen aus `zpl.FA2`/`zpl.gs`, bei Parteien Zeile «Freunde unter 18».
 - 3.7.2.2 (Wänu): Freund unter 18 darf im selben Zimmer schlafen (Zahler trägt den Zimmerpreis); Hinweis unter `#zimmerRech`, nur wenn ein Minderjähriger dabei ist.
+- 3.7.2.3 (Wänu: «Neue Buchung ist neue Buchung»): `tm2_gm[key].gesendet` älter als `b.bestaetigt` wird in `gmAltAufraeumen()` (vor `gmKindZeigen`) entfernt, auch aus `tm2_gmWeg`; `gmEntwurfUebernehmen()` überschreibt die Liste immer und löscht `gesendet`. Ursache: gleiche Buchungsnummer (Name|Anreise|Abreise) nach Löschen und Neubuchen.
 
 ## Offen: Airbnb-Belegung ins App-Repo umziehen (Wänu «ja», 13.11.2026, nächste Woche)
 - Heute: Workflow `belegung.yml` + `belegung.py` im alten Repo `Waenu/Tschentomat` (Secret `AIRBNB_ICAL`) schreibt `belegt.json`; die App liest `/Tschentomat/belegt.json`.
