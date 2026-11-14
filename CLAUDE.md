@@ -91,6 +91,7 @@ Bedienkonzept Wänu (14.11.2026, ersetzt wo abweichend die Punkte oben; erst nac
 - 3.9.3.0 (Wänu, Vorschlag 1): Partei mit mehreren Personen (`parteiKopf`) = eine Zeile in der Aufteilung (Summe der Erwachsenen, Kinder der Partei ohne eigene Zeile), neutral mit «Freund/in N»; `zRows` merkt die Zeilentypen für die Aufschlüsselung (pro Person: Übernachtung, Reinigung, Kurtaxe aus `zpl.eigen`).
 - 3.9.3.1 (Wänu): Aufklapp-Pfeil `.auf-pf` am Anfang der ersten Zelle (vor dem Namen).
 - 3.9.3.2 (Wänu): `MFG_MAX()` gilt für Personen mit Bett; `S.mfg` bis `MFG_MAX() + S.mfgKK.length`; ein Kleinkind abwählen ist gesperrt, solange sonst zu viele Betten belegt wären. Darstellung: eine Familie pro Zeile (`.zchips.mfg-z`, kleinere Chips), Kleinkind-Chip mit «👶 ohne Bett», Bettenzähler `.mfg-bett`.
+- 3.9.3.3 (Wänu): Betten voll → Enkel-Chip bleibt antippbar (solange weniger als 2 Kleinkinder) und kommt gleich in `S.mfgKK`.
 
 ## Offen: Airbnb-Belegung ins App-Repo umziehen (Wänu «ja», 13.11.2026, nächste Woche)
 - Heute: Workflow `belegung.yml` + `belegung.py` im alten Repo `Waenu/Tschentomat` (Secret `AIRBNB_ICAL`) schreibt `belegt.json`; die App liest `/Tschentomat/belegt.json`.
