@@ -16,34 +16,6 @@
   ],
   "logbuch": [
     {
-      "t": "2026-10-28T13:40",
-      "text": "In Airbnb gesperrt (vorher mit Vorbehalt): Miriam, Sa 19.06.2027 bis Sa 26.06.2027"
-    },
-    {
-      "t": "2026-10-28T13:42",
-      "text": "Entfernt: Miriam, Sa 19.06.2027 bis Sa 26.06.2027"
-    },
-    {
-      "t": "2026-10-28T13:47",
-      "text": "Bestätigt: Miriam, Sa 19.06.2027 bis Sa 26.06.2027, CHF 1115, mit Vorbehalt"
-    },
-    {
-      "t": "2026-10-28T13:55",
-      "text": "Entfernt: Miriam, Sa 19.06.2027 bis Sa 26.06.2027"
-    },
-    {
-      "t": "2026-10-28T14:05",
-      "text": "Bestätigt: Manuel, Fr 21.05.2027 bis So 23.05.2027, CHF 490, mit Vorbehalt"
-    },
-    {
-      "t": "2026-10-28T14:11",
-      "text": "Entfernt: Manuel, Fr 21.05.2027 bis So 23.05.2027"
-    },
-    {
-      "t": "2026-10-28T14:12",
-      "text": "Bestätigt: Manuel, Do 13.05.2027 bis So 16.05.2027, CHF 870"
-    },
-    {
       "t": "2026-10-28T14:13",
       "text": "Bestätigt: Miriam, Mo 10.05.2027 bis Do 13.05.2027, CHF 405"
     },
@@ -814,6 +786,34 @@
     {
       "t": "2026-11-11T22:08",
       "text": "Reinigungstag entfernt: Do 26.11.2026"
+    },
+    {
+      "t": "2026-11-13T11:07",
+      "text": "Bestätigt: Miriam, Fr 9.04.2027 bis So 11.04.2027, CHF 120, Wäsche: persönlich bringen bis Mi 14.04.2027"
+    },
+    {
+      "t": "2026-11-13T11:08",
+      "text": "Bescheid gegeben: Miriam, Fr 9.04.2027 bis So 11.04.2027"
+    },
+    {
+      "t": "2026-11-13T11:10",
+      "text": "Bestätigt: Manuel, Mi 14.04.2027 bis So 18.04.2027, CHF 240"
+    },
+    {
+      "t": "2026-11-13T11:14",
+      "text": "Bestätigt: Miriam, Di 20.04.2027 bis Fr 23.04.2027, CHF 180"
+    },
+    {
+      "t": "2026-11-13T11:16",
+      "text": "Endgültig gelöscht: Miriam, Di 20.04.2027 bis Fr 23.04.2027"
+    },
+    {
+      "t": "2026-11-13T11:16",
+      "text": "Endgültig gelöscht: Miriam, Fr 9.04.2027 bis So 11.04.2027"
+    },
+    {
+      "t": "2026-11-13T11:16",
+      "text": "Endgültig gelöscht: Manuel, Mi 14.04.2027 bis So 18.04.2027"
     }
   ],
   "reinigung": []

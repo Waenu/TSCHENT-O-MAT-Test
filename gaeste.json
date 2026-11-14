@@ -31,12 +31,20 @@
       "typ": "fam"
     },
     {
-      "arr": "2027-01-07",
+      "arr": "2027-01-04",
       "dep": "2027-01-10",
       "name": "Manuel und Freunde",
       "typ": "fam",
       "quelle": "kalender",
       "kal": "Manuel und Freunde"
+    },
+    {
+      "arr": "2027-01-11",
+      "dep": "2027-01-15",
+      "name": "Marianne und ich",
+      "typ": "fam",
+      "quelle": "kalender",
+      "kal": "Marianne und ich"
     },
     {
       "arr": "2027-01-15",
