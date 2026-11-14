@@ -2,6 +2,19 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.9.1.0",
+      "datum": "14.11.2026",
+      "titel": "Aufteilung unter euch: jede Zeile aufklappbar",
+      "arten": [
+        "Funktion"
+      ],
+      "punkte": [
+        "Jede Zeile der Aufteilung lässt sich antippen und zeigt die genaue Aufschlüsselung: Übernachtung, Reinigungsanteil, Kurtaxe und was jemand für Freunde unter 18 übernimmt.",
+        "Bei mehreren Familien steht der Anteil am Familienpreis, zum Beispiel «2 von 5 Personen mit Bett».",
+        "«Details» in der Leiste unten klappt die Buchungsübersicht und alle Zeilen der Aufteilung auf. Das Glossar erklärt das beim Bild der goldenen Leiste."
+      ]
+    },
+    {
       "v": "3.9.0.1",
       "datum": "14.11.2026",
       "titel": "Aufteilung der Familie: wer für die Kinder zahlt",
