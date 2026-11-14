@@ -2,6 +2,19 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.9.2.0",
+      "datum": "14.11.2026",
+      "titel": "Partei muss gewählt werden, Namen mit grossem Anfangsbuchstaben",
+      "arten": [
+        "Funktion"
+      ],
+      "punkte": [
+        "Bei «Gehört zur Partei von» steht zuerst «Bitte wählen». Die Anfrage geht erst, wenn bei jedem Freund die Partei gewählt ist («Niemandem, eigene Partei» oder ein Freund).",
+        "Eine kurze Erklärung sagt, was eine Partei ist.",
+        "Name und Vorname der Freunde beginnen automatisch mit einem Grossbuchstaben, zum Beispiel wird «müller» zu «Müller»."
+      ]
+    },
+    {
       "v": "3.9.1.1",
       "datum": "14.11.2026",
       "titel": "Vorschläge erst ab dem ersten Buchstaben",
