@@ -20,6 +20,9 @@ if (TEST_MODUS) {
     _sp.setItem = function (k, v) { return _ss.call(this, _sk(k), v); };
     _sp.removeItem = function (k) { return _sr.call(this, _sk(k)); };
     if (localStorage.getItem("tm2_token") === null && localStorage.getItem("tm2_absender") === null) localStorage.setItem("tm2_token", "test");   // erster Start: Papi-Ansicht
+    if (/[?&]b=/.test(location.search) && !localStorage.getItem("tm2_token")) {   // Bestätigungslink aus WhatsApp: gleich in die Ansicht Papi (seit 3.5.0.2), sonst geht die Anfrage in der Kind-Ansicht verloren
+      localStorage.setItem("tm2_token", localStorage.getItem("tm2_papitoken") || "test"); localStorage.setItem("tm2_absender", ""); localStorage.removeItem("tm2_namefix"); localStorage.removeItem("tm2_absender_ts");
+    }
   } catch (e) {}
   (function () {
     var f = window.fetch;   // GitHub-Schnittstelle nur für das Test-Repo; alle anderen Repos (laufende App, privater Speicher) gesperrt
@@ -1518,7 +1521,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.5.0.1";
+let VERSION = "3.5.0.2";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
