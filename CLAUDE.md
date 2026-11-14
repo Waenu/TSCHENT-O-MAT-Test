@@ -77,6 +77,7 @@ Bedienkonzept Wänu (14.11.2026, ersetzt wo abweichend die Punkte oben; erst nac
 - 3.7.0.3: Anfrage «Bedingungen akzeptiert: Ja»; Bestätigung mit Absätzen und «Liste ist schon ausgefüllt, bitte mit «Senden» bestätigen». 3.7.0.4: Adressbuch pro Person (`tm2_freundeKartei` = {Person: [...]}, `karteiLesen`/`karteiSchreiben` nach ABSENDER); altes Format (Liste) wird ignoriert.
 - 3.7.0.5: Kasten-Titel «Bitte sende uns nun noch die Liste deiner Freunde zu» (Wänu schrieb «mir», Wir-Form gewählt), zweite Zeile bündig (`.gm-ico`, hängender Einzug); Name/Vorname der Freunde ohne Ziffern (Eingabe-Filter auf dem Dokument, Rechner und Startseite).
 - 3.7.0.6: `karteiMerken(liste, wer)`/`karteiLesen(wer)`/`karteiSchreiben(k, wer)`; verworfener Entwurf geht ins Adressbuch des Besitzers (Name aus `o.k`), altes Format ohne Besitzer wird verworfen. Vorher landeten Manuels Freunde bei Miriam. Testversion: einmalige Aufräumung im Kopf-Skript (`tm2_karteiAufger1`) leert `tm2_freundeKartei` (Wänu «2»).
+- 3.7.1.0 (Wänu): Partner/in als Zahler für Freunde unter 18 (`partnerDa()`: aus `famWahl().p` bzw. «Partner/in» in `S.wer`; Schlüssel "partner", eigene Zeile «Andreas zahlt …» in der Tabelle, neutral «Partner/in»). Enkel nie als Zahler.
 
 ## Offen: Airbnb-Belegung ins App-Repo umziehen (Wänu «ja», 13.11.2026, nächste Woche)
 - Heute: Workflow `belegung.yml` + `belegung.py` im alten Repo `Waenu/Tschentomat` (Secret `AIRBNB_ICAL`) schreibt `belegt.json`; die App liest `/Tschentomat/belegt.json`.
