@@ -2,6 +2,21 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.7.2.0",
+      "datum": "14.11.2026",
+      "titel": "Wer zahlt für Freunde unter 18: direkt unter der Liste, Reinigung nach Parteien",
+      "arten": [
+        "Regel"
+      ],
+      "punkte": [
+        "Die Frage «Wer übernimmt die Kosten für …?» steht direkt unter der Liste der Freunde, sobald sie vollständig ist, also vor der Reinigung.",
+        "Wählbar sind nur Erwachsene: ich, Partner/in und die erwachsenen Freunde. Minderjährige zahlen nie selbst.",
+        "Wer für ein Kind zahlt, übernimmt Nachtpreis, Kurtaxe und Reinigungsanteil.",
+        "Reinigung «Nach Personen»: jede Person zählt gleich, auch Kinder und Enkel, nur Kleinkinder ohne Bett nicht.",
+        "Reinigung «Nach Parteien»: Familie und jeder erwachsene Freund zahlen gleich viel, Kinder gehören zu der Person, die für sie zahlt."
+      ]
+    },
+    {
       "v": "3.7.1.0",
       "datum": "14.11.2026",
       "titel": "Partner/in kann Kosten für Freunde unter 18 übernehmen",

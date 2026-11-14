@@ -1531,7 +1531,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.7.1.0";
+let VERSION = "3.7.2.0";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -1600,7 +1600,7 @@ const WERL = ["Nur ich", "Ich und Partner/in", "Ich und 1 Kind", "Ich und 2 Kind
 const LWERL = ["Nur ich", "Ich und 1 Familienmitglied", "Ich und Kleinkind", "Ich, Familienmitglied, Kleinkind"];
 const W_BR = "Ich bringe sie persönlich zu den Eltern", W_SE = "Ich sende sie per Post", W_OPTS = [W_BR, W_SE];
 const REINIG = [
-  "Nach Personen: ab 18 Jahren zählt jede Person gleich",
+  "Nach Personen: jede Person zählt gleich (ohne Kleinkinder)",
   "Nach Parteien: Familie und jeder Freund zahlen gleich viel",
   "Freunde zahlen die ganze Reinigung",
   "Familie zahlt die ganze Reinigung"
@@ -1660,11 +1660,11 @@ function derive(s) {
   const SM = s.selbstOK === true && GE === 0 && !LG && !LUE;
   const SB = SM && s.selbst === "Ja";
   const RE = SB ? P.reinigungSelbst : P.reinigung;
-  const ER = wer === MFG ? FP : (/Partner|Familienmitglied/.test(wer) ? 2 : 1);   // Erwachsene der Familie für «Nach Personen»; bei «Meine Familie und Geschwister» kennt die App die Enkel nicht, dort zählen alle ausser den Kleinkindern
+  const ER = FP;   // Personen der Familie für «Nach Personen»: alle ausser Kleinkindern, auch Kinder und Enkel (seit 3.7.2.0, vorher nur Erwachsene)   // Erwachsene der Familie für «Nach Personen»; bei «Meine Familie und Geschwister» kennt die App die Enkel nicht, dort zählen alle ausser den Kleinkindern
   const ri = REINIG.indexOf(s.reinig);
   let FA = RE;
   if (GE > 0) {
-    if (ri === 0) FA = RE * ER / (ER + GE);   // nach Personen: nur Erwachsene ab 18, Enkel zählen nicht (seit 2.120.1.0)
+    if (ri === 0) FA = RE * ER / (ER + GE);   // nach Personen: jede Person ausser Kleinkindern (seit 3.7.2.0)
     else if (ri === 1) FA = RE / (1 + GE);   // Parteien: die Familie zählt als eine, jeder Freund als eine weitere Partei
     else if (ri === 2) FA = 0;
     else if (ri === 3) FA = RE;
@@ -1823,7 +1823,7 @@ function partnerDa() {   // kommt Partner/in mit? Name aus dem persönlichen Lin
 }
 function zahlerVon(i, zi, l) {   // gültige Zahler eines Jugendlichen: "ich", "f<Zeile>" (erwachsener Freund), "self"
   const z = (S.zahler && S.zahler[i]) || [];
-  return z.filter((k) => k === "ich" || k === "self" || (k === "partner" && !!partnerDa()) || (/^f\d+$/.test(k) && zi.indexOf(Number(k.slice(1))) >= 0 && alterAm(l[Number(k.slice(1))].geb, ARR) >= 18));
+  return z.filter((k) => k === "ich" ||  (k === "partner" && !!partnerDa()) || (/^f\d+$/.test(k) && zi.indexOf(Number(k.slice(1))) >= 0 && alterAm(l[Number(k.slice(1))].geb, ARR) >= 18));
 }
 function zahlPlan(r, x) {   // Umverteilung der fertigen Beträge: Zimmerpreis, Zahler für Freunde unter 18, Reinigung nur für Selbstzahler; Total bleibt gleich
   if (!listeModus() || !r || !r.ok || r.VERB || x.GE < 1) return null;
@@ -1834,14 +1834,12 @@ function zahlPlan(r, x) {   // Umverteilung der fertigen Beträge: Zimmerpreis, 
   const sE = Math.round((P.kurtaxe + P.kurtaxeBeherb) * 100) / 100, kt = {}, alt = {};
   zi.forEach((i) => { alt[i] = alterAm(l[i].geb, ARR); kt[i] = (alt[i] >= 16 ? sE : alt[i] >= 6 ? P.kurtaxeKind : 0) * x.nights; });
   const minder = zi.filter((i) => alt[i] < 18), zahler = {}; minder.forEach((i) => { zahler[i] = zahlerVon(i, zi, l); });
-  const covered = minder.filter((i) => zahler[i].length && zahler[i].indexOf("self") < 0), G2 = x.GE - covered.length;
-  let FA2 = x.FA, GS2 = x.GS;
-  if (covered.length) {
-    const ri = REINIG.indexOf(S.reinig), RE = x.RE;
-    if (G2 === 0) FA2 = RE; else if (ri === 0) FA2 = RE * x.ER / (x.ER + G2); else if (ri === 1) FA2 = RE / (1 + G2); else if (ri === 2) FA2 = 0; else FA2 = RE;
-    GS2 = G2 > 0 ? (RE - FA2) / G2 : 0;
+  const covered = minder.filter((i) => zahler[i].length);
+  let FA2 = x.FA; const gs = {}; zi.forEach((i) => { gs[i] = x.GS; });   // nach Personen und «Freunde zahlen»: Anteil der Minderjährigen trägt, wer für sie zahlt
+  if (minder.length && REINIG.indexOf(S.reinig) === 1) {   // nach Parteien: Familie und jeder erwachsene Freund je ein Teil, Minderjährige gehören zu ihrem Zahler (seit 3.7.2.0)
+    const teil = x.RE / (1 + zi.length - minder.length); FA2 = teil; zi.forEach((i) => { gs[i] = minder.indexOf(i) >= 0 ? 0 : teil; });
   }
-  const eigen = {}; zi.forEach((i) => { eigen[i] = base[i] - x.GS + (covered.indexOf(i) >= 0 ? 0 : GS2) + kt[i]; });
+  const eigen = {}; zi.forEach((i) => { eigen[i] = base[i] - x.GS + gs[i] + kt[i]; });
   const zahlt = { ich: r.FZ - x.FA + FA2, partner: 0 }, extra = { ich: [], partner: [] }; zi.forEach((i) => { zahlt["f" + i] = 0; extra["f" + i] = []; });
   zi.forEach((i) => { const z = minder.indexOf(i) >= 0 && zahler[i].length ? zahler[i] : ["self"]; z.forEach((k) => { const key = k === "self" ? "f" + i : k; zahlt[key] += eigen[i] / z.length; if (key !== "f" + i) extra[key].push({ i, b: eigen[i] / z.length }); }); });
   return { n, l, zi, ord, zr, alt, kt, minder, zahler, covered, zahlt, extra, kk: l.map((f, i) => i).filter((i) => zi.indexOf(i) < 0), offen: minder.filter((i) => !zahler[i].length), zimmerOffen: zr === -2 };
@@ -1910,17 +1908,17 @@ function zahlUiZeigen(d) {   // Chips: wer im selben Zimmer schläft, wer die Ko
     zb.innerHTML = "<label>💤 Wer schläft im selben Zimmer wie du?</label><div class=\"zchips\">" + zi.map((i) => chip('data-zw="' + i + '"', S.zimmerWer === i, esc(l[i].vorname))).join("") + '</div><p class="hint">Diese Person zahlt den günstigeren Preis im selben Zimmer.</p>';
   } else zb.innerHTML = "";
   const minder = zi ? zi.filter((i) => alterAm(l[i].geb, ARR) < 18) : [];
-  pb.hidden = !minder.length || document.getElementById("f-reinig").hidden;
+  pb.hidden = !minder.length || !listeVoll(n);
   if (pb.hidden) { pb.innerHTML = ""; return; }
   const erw = zi.filter((i) => alterAm(l[i].geb, ARR) >= 18);
   pb.innerHTML = minder.map((i) => {
-    const z = zahlerVon(i, zi, l), ok = z.length > 0;
-    return '<div class="field zrech ' + (ok ? "done" : "missing") + '"><label>💸 Wer übernimmt die Kosten für ' + esc(l[i].vorname) + " (" + alterAm(l[i].geb, ARR) + ")?</label><div class=\"zchips\">" +
+    const z = zahlerVon(i, zi, l), ok = z.length > 0, al = alterAm(l[i].geb, ARR);   // Minderjährige zahlen nie selbst (seit 3.7.2.0)
+    return '<div class="field zrech ' + (ok ? "done" : "missing") + '"><label>💸 Wer übernimmt die Kosten für ' + esc(l[i].vorname) + " (" + al + ")?</label><div class=\"zchips\">" +
       chip('data-zz="' + i + '|ich"', z.indexOf("ich") >= 0, !ABSENDER ? "Ich" : 'Ich<small>(' + esc(ABSENDER) + ')</small>') +
       (partnerDa() ? chip('data-zz="' + i + '|partner"', z.indexOf("partner") >= 0, esc(partnerDa())) : "") +
       erw.map((j) => chip('data-zz="' + i + "|f" + j + '"', z.indexOf("f" + j) >= 0, esc(l[j].vorname))).join("") +
-      chip('data-zz="' + i + '|self"', z.indexOf("self") >= 0, esc(l[i].vorname) + " selbst") +
-      '</div><p class="hint">' + (ok ? (z.length > 1 ? "Mehrere gewählt: gleich verteilt." : "") : "Bitte antippen. Mehrere sind möglich, dann wird gleich verteilt.") + " Zahlt " + esc(l[i].vorname) + " selbst, trägt " + (l[i].geschlecht === "w" ? "sie" : "er") + " auch einen Reinigungsanteil, sonst nicht.</p></div>";
+      '</div><p class="hint">' + "Wer zahlt, übernimmt " + (al < 6 ? "Nachtpreis" : "Nachtpreis, Kurtaxe") + " und Reinigungsanteil von " + esc(l[i].vorname) + ". " + (ok ? (z.length > 1 ? "Mehrere gewählt: gleich verteilt." : "") : "Bitte antippen. Mehrere sind möglich, dann wird gleich verteilt.") +
+"</p></div>";
   }).join("");
 }
 function gmRechLesen(box) {   // Eingaben sofort im Entwurf sichern (auch unvollständige)
@@ -1981,7 +1979,7 @@ const FIELDS = [
     hint: () => "Ihr beginnt die Staffel: Ihr findet das Chalet gereinigt und bezogen vor und bringt keine Wäsche mit. Dafür besorgt ihr, dass die benutzte Wäsche zurückkommt. Beim Abreisen zieht ihr die Betten ab (die Moltons bleiben) und nehmt die Wäsche mit. Spätestens " + WAESCHE_TAGE + " Tage nach eurer Rückreise bringt oder sendet ihr sie den Eltern, {{ungewaschen}}: Wascht sie nie selbst. Das Porto zahlt, wer sendet. Mit der Wahl bestätigt ihr diese Bedingung.",
     visible: (d) => d.SM && S.selbst === "Ja" && !!ARR && istStaffelStart(ARR), opts: () => W_OPTS },
   { id: "reinig", label: "🍰 Wie werden die Reinigungskosten (" + chf(P.reinigung) + ") aufgeteilt?", type: "str",
-    hint: () => "Das entscheidet ihr selbst. Das Total ändert sich nicht, nur wer wie viel zahlt. Die Familie gilt immer als ein Block. Bei «Nach Personen» zählen alle ab 18 Jahren gleich. Kinder und Enkel unter 18 zählen nicht mit, ihren Anteil tragen die Erwachsenen. Bei «Nach Parteien» ist die Familie eine Partei und jeder Freund eine weitere: bei 3 Freunden zahlt die Familie ¼, bei 4 Freunden ⅕. Das ist nur fair, wenn alle Parteien gleich gross sind. Sonst teilt nach Personen." + (minderDa() ? " Wer von anderen übernommen wird (Freunde unter 18), trägt keinen Reinigungsanteil." : ""),
+    hint: () => "Das entscheidet ihr selbst. Das Total ändert sich nicht, nur wer wie viel zahlt. Die Familie gilt immer als ein Block. Bei «Nach Personen» zählt jede Person gleich, auch Kinder und Enkel. Nur Kleinkinder ohne Bett zählen nicht. Bei «Nach Parteien» ist die Familie eine Partei und jeder Freund eine weitere: bei 3 Freunden zahlt die Familie ¼, bei 4 Freunden ⅕. Das ist nur fair, wenn alle Parteien gleich gross sind. Sonst teilt nach Personen." + (minderDa() ? " Freunde unter 18 sind keine eigene Partei: Ihren Anteil trägt, wer für sie zahlt." : ""),
     visible: (d) => d.GE > 0, opts: () => REINIG }
 ];
 {   // Lücke mit Freunden: Hinweis, wie viele Freunde «Ja» braucht
@@ -2053,7 +2051,7 @@ function build() {
     });
     wrap.append(lab, sel, hint);
     form.appendChild(wrap);
-    if (f.id === "zimmer" || f.id === "reinig") {   // Chips für Zimmer und Zahler (seit 3.7.0.0)
+    if (f.id === "zimmer" || f.id === "gaeste") {   // Chips für Zimmer und Zahler (seit 3.7.0.0); Zahler direkt unter der Liste der Freunde (seit 3.7.2.0)
       const zb = document.createElement("div"); zb.id = f.id === "zimmer" ? "zimmerRech" : "zahlRech"; zb.hidden = true; form.appendChild(zb);
       zb.addEventListener("click", (e) => {
         const w = e.target.closest("[data-zw]"), z = e.target.closest("[data-zz]");
@@ -2062,7 +2060,7 @@ function build() {
       });
     }
     if (f.id === "gaeste") {   // Liste der Freunde (seit 3.6.0.0)
-      const gb = document.createElement("div"); gb.id = "gmRech"; gb.className = "field gm-k gm-rech"; gb.hidden = true; form.appendChild(gb);
+      const gb = document.createElement("div"); gb.id = "gmRech"; gb.className = "field gm-k gm-rech"; gb.hidden = true; form.insertBefore(gb, form.querySelector("#zahlRech"));
       const vorFeld = (t) => t.matches('[data-gf="vorname"]') ? "vorname" : t.matches('[data-gf="name"]') ? "name" : "";
       gb.addEventListener("input", (e) => { gmRechLesen(gb); const fd = vorFeld(e.target); if (fd) gmVorZeigen(e.target.closest(".gm-f"), fd); });
       gb.addEventListener("focusin", (e) => {   // Feld Name oder Vorname angetippt: Vorschläge zeigen; anderes Feld: Vorschläge zu
