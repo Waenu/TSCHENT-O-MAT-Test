@@ -1537,7 +1537,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.9.3.5";
+let VERSION = "3.9.3.6";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -3938,9 +3938,10 @@ function famOpts() {   // alle Kombinationen mit Namen; w = Antwort für die Rec
   const out = subs.map((sb) => {
     const nm = sb.map((x) => x.n), p = sb.some((x) => x.p), k = sb.length - (p ? 1 : 0);
     const l = !nm.length ? "Nur ich" : nm.length === 1 ? "Ich und " + nm[0] : "Ich, " + nm.slice(0, -1).join(", ") + " & " + nm[nm.length - 1];
-    if (k > 2) return { l, w: MFG, fam: 1 + sb.length, p };
+    const kn = sb.filter((x) => !x.p).map((x) => x.n);   // Namen der Enkel in dieser Auswahl (seit 3.9.3.6, für «Im Kinderbettchen: …»)
+    if (k > 2) return { l, w: MFG, fam: 1 + sb.length, p, kn };
     const w = k === 0 ? (p ? "Ich und Partner/in" : "Nur ich") : p ? "Ich, Partner/in und " + (k === 1 ? "1 Kind" : "2 Kinder") : "Ich und " + (k === 1 ? "1 Kind" : "2 Kinder");
-    return { l, w, p };
+    return { l, w, p, kn };
   });
   out.push({ l: MFG, w: MFG, p: false });
   return out;
@@ -4027,7 +4028,8 @@ function anfrageText(r) {
   z.push("");
   const kkTxt = x.KK > 0 ? ", davon " + x.KK + " im Kinderbettchen" : "";
   z.push("Familie: " + S.wer + (S.wer === MFG ? " (" + S.fam + " Personen)" : "") + kkTxt);
-  const iFam = z.length - 1, fw = famWahl(), famTxt = fw && fw.l !== MFG ? "Familie: " + fw.l + kkTxt : mfgAktiv() && (S.mfg || []).length ? "Familie: Ich, " + S.mfg.join(", ") + kkTxt : "";   // Namen nur in der WhatsApp, gespeichert (Bestätigungslink → buchungen.json) bleibt die neutrale Zeile (seit 3.5.0.1)
+  const iFam = z.length - 1, fw = famWahl(), kkNm = mfgAktiv() ? (S.mfgKK || []) : (fw && fw.kn && fw.kn.length === x.KK ? fw.kn : []), kkZ = x.KK > 0 ? (kkNm.length === x.KK ? "\nIm Kinderbettchen: " + kkNm.join(", ") : kkTxt) : "";   // Namen statt «davon 1 im Kinderbettchen», wenn eindeutig (seit 3.9.3.6)
+  const famTxt = fw && fw.l !== MFG ? "Familie: " + fw.l + kkZ : mfgAktiv() && (S.mfg || []).length ? "Familie: Ich, " + S.mfg.join(", ") + kkZ : "";   // Namen nur in der WhatsApp, gespeichert (Bestätigungslink → buchungen.json) bleibt die neutrale Zeile (seit 3.5.0.1)
   const zpA = zahlPlan(r, x), ersetz = [];   // Namen nur in der WhatsApp, gespeichert wird die neutrale Zeile (seit 3.7.0.0)
   z.push("Freunde: " + (listeModus() ? listeN(x) : x.GE));
   if (zpA && zpA.kk.length) z.push("Davon Kleinkinder ohne Bett: " + zpA.kk.length);
@@ -4036,21 +4038,23 @@ function anfrageText(r) {
   if (zpA) zpA.minder.forEach((i) => {
     const zk = zpA.zahler[i]; if (!zk.length) return;
     const w = (k, nm) => k === "ich" ? (nm ? "ich" : "Familie") : k === "partner" ? (nm ? partnerDa() : "Partner/in") : k === "self" ? (nm ? zpA.l[i].vorname + " selbst" : "selbst") : nm ? zpA.l[Number(k.slice(1))].vorname : "Freund/in " + (Number(k.slice(1)) + 1);
-    z.push("Kosten Freund/in " + (i + 1) + " (unter 18): " + zk.map((k) => w(k, false)).join(", "));
-    ersetz.push([z.length - 1, "Kosten " + zpA.l[i].vorname + " (" + zpA.alt[i] + "): " + zk.map((k) => w(k, true)).join(", ")]);
+    const und = (a) => a.length > 1 ? a.slice(0, -1).join(", ") + " und " + a[a.length - 1] : a[0], verb = (a) => a.length > 1 ? "zahlen" : "zahlt";   // «Für Gabi (8) zahlen: Therese und Rolf» (seit 3.9.3.6)
+    const zN = zk.map((k) => w(k, false)), zV = zk.map((k) => w(k, true));
+    z.push("Für Freund/in " + (i + 1) + " (unter 18) " + verb(zN) + ": " + und(zN));
+    ersetz.push([z.length - 1, "Für " + zpA.l[i].vorname + " (" + zpA.alt[i] + ") " + (zV.length === 1 && zV[0] === "ich" ? "zahle ich" : verb(zV) + ": " + und(zV))]);
   });
   z.push("Bedingungen akzeptiert: Ja");
   if (stornoStreng(x)) z.push("Verbindlich: Absage spätestens am " + fmtTagV(stornoBis()) + " (" + STORNO_TAGE + " Tage vor der Anreise)");
   if (!x.VERB) z.push("Zimmer 1 unberührt: " + (S.spar === "Ja" ? "Ja" : "Nein"));
   if (S.inLuecke) { const lv = lueckeVon(ARR); z.push("Lücke: " + (!lv ? "Lücke wegen Vorlaufzeit" : (lv[0] === ARR && lv[1] === DEP ? "die ganze Lücke" : "ein Teil der Lücke vom " + fmtTagV(lv[0]) + " bis " + fmtTagV(lv[1]))) + ", ohne Vorbehalt."); }
   if (x.LG) { z.push("Ganze Lücke: nur Zimmer 2 mit blauem Bad" + (x.KK > 0 ? ", das Kleinkind im Kinderbettchen in Zimmer 3 oder bei den Erwachsenen in Zimmer 2" : "") + ", ohne Freunde, eigene Bettwäsche, Handtücher und Küchentücher, Reinigung durch die Eltern " + chf(P.reinigung)); }
-  if (x.GE > 0) z.push("Reinigung: " + S.reinig);
+  if (x.GE > 0) z.push(/^Nach /.test(S.reinig) ? "Reinigung n" + S.reinig.slice(1) : "Reinigung: " + S.reinig);   // «Reinigung nach Parteien: …» statt zwei Doppelpunkten (seit 3.9.3.6)
   if (x.SB) z.push("Selbstreinigung: Ja");
   z.push("");
   if (x.LR > 0 && !spitzTermin()) z.push("Lückenpreis (" + x.LR + " % auf die Übernachtungen)");
   const spA = spitzTermin();
   if (spA) z.push("Spitzenzeit" + (spA[2] ? " (" + spA[2] + ")" : "") + ": Preis auf Anfrage");
-  else { z.push("Total laut Rechner: " + chf(r.TOT)); const ktA = kurtaxeRechnen(x.GE, S.kinder, x.nights, zahlendeAlter(listeN(x))); if (ktA.summe > 0) z.push("Dazu Kurtaxe Adelboden für die Freunde: " + chf2(ktA.summe)); }
+  else { const ktA = kurtaxeRechnen(x.GE, S.kinder, x.nights, zahlendeAlter(listeN(x))); z.push(ktA.summe > 0 ? "Total: " + chf2(r.TOT + ktA.summe) + ", davon Kurtaxe Adelboden für die Freunde " + chf2(ktA.summe) : "Total laut Rechner: " + chf(r.TOT)); }   // ein Gesamtbetrag mit Kurtaxe (seit 3.9.3.6)
   if (x.SB) z.push("Reinigungskosten sind erst nach Ablauf der Familienstaffel bekannt und werden nachbelastet.");
   if (x.SM && S.selbst === "Nein") { const u = staffelUnterbruch(ARR); if (u.length) z.push("Achtung: Unterbricht die Familienstaffel von " + u.join(", ") + ".") ; }
   if (festStay(ARR, DEP)) z.push("Fester Termin (" + festTxt() + "): bitte in Airbnb sperren.");
