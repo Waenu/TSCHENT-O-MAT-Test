@@ -12,23 +12,9 @@
       "bestaetigt": "2026-11-09T21:37",
       "pimlical": "2026-11-09T21:44",
       "bescheid": "2026-11-10T14:57"
-    },
-    {
-      "name": "Manuel",
-      "arr": "2026-11-24",
-      "dep": "2026-11-28",
-      "selbst": false,
-      "pers": 2,
-      "betrag": 1040,
-      "rechnung": "Gesendet am Sa 14.11.2026, 12:59 Uhr. App-Version 3.6.0.0.\nAnreise\tDienstag 24.11.2026\nAbreise\tSamstag 28.11.2026 (4 Nächte)\nFamilie\tIch und Partner/in\nFreunde\t2\nListe der Freunde\tvollständig, 2 Personen\nMit den Bedingungen einverstanden: ja\nZimmer 1 unberührt\tJa\nReinigung\tNach Personen: ab 18 Jahren zählt jede Person gleich\nTotal laut Rechner\tCHF 1’040.–\nDazu Kurtaxe Adelboden für die Freunde: CHF 41.60\n#Preisberechnung\nFamilie pro Nacht\tCHF 60.–\nFreund 1 pro Nacht\tCHF 70.–\nFreund 2 pro Nacht\tCHF 70.–\nÜbernachtung (4 Nächte)\tCHF 800.–\nReinigung\tCHF 240.–\nReinigung: Anteil Familie\tCHF 120.–\nReinigung: Anteil pro Freund\tCHF 60.–\nKurtaxe Adelboden (dazu) 2 Freunde ab 16 Jahren zu CHF 5.20 pro Nacht, 4 Nächte\tCHF 41.60\nTotal mit Kurtaxe\tCHF 1’081.60\n#Aufteilung unter den Freunden\nFamilie zahlt\tCHF 360.–\nFreund 1 zahlt davon Kurtaxe CHF 20.80 (ab 16 Jahren)\tCHF 360.80\nFreund 2 zahlt davon Kurtaxe CHF 20.80 (ab 16 Jahren)\tCHF 360.80\nZimmer 1 und rotes Bad bleiben unberührt: CHF 10.– weniger pro Nacht, die Familie zahlt CHF 60.– statt CHF 70.–.\nReinigung aufgeteilt: Nach Personen: ab 18 Jahren zählt jede Person gleich.",
-      "bestaetigt": "2026-11-14T13:01"
     }
   ],
   "logbuch": [
-    {
-      "t": "2026-10-29T16:59",
-      "text": "Bescheid gegeben: Miriam, Fr 27.11.2026 bis Mo 30.11.2026"
-    },
     {
       "t": "2026-10-29T17:23",
       "text": "Bestätigt: Manuel, Do 19.11.2026 bis So 22.11.2026, CHF 825"
@@ -824,6 +810,10 @@
     {
       "t": "2026-11-14T13:01",
       "text": "Bestätigt: Manuel, Di 24.11.2026 bis Sa 28.11.2026, CHF 1040"
+    },
+    {
+      "t": "2026-11-14T13:09",
+      "text": "Endgültig gelöscht: Manuel, Di 24.11.2026 bis Sa 28.11.2026"
     }
   ],
   "reinigung": []
