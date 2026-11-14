@@ -64,6 +64,8 @@ Bedienkonzept Wänu (14.11.2026, ersetzt wo abweichend die Punkte oben; erst nac
 - (c) Sobald Freunde dabei sind, fragt der Rechner pro Freund Vorname, Name, Geschlecht und Geburtsdatum (An-/Abreise kennt Wänu). Das Kind kann die Liste nachträglich ändern.
 - (d) Erst wenn ein Freund unter 18 ist, kommt bei der Bezahlung die Zuordnung, wer für ihn zahlt.
 - Nationalität: bleibt in der Liste, vorausgefüllt mit «Schweiz» (Wänu 14.11.2026; 3.4.1.0 hatte sie entfernt, 3.4.2.0 stellt den alten Stand wieder her). Google-Skript unverändert.
+- Gebaut 14.11.2026 als 3.5.0.0 (Testversion): (a) umgesetzt. `famOpts()` erzeugt alle Kombinationen aus Partner/in und Kindern (Labels «Ich und David», «Ich, David, Mael & Yara») plus MFG; `S.werFam` = gewähltes Label, `S.wer` bleibt die alte Antwort für `derive()` (bei mehr als 2 Kindern MFG mit automatischer Personenzahl, Feld «fam» ausgeblendet). Namen: Papi in der Verwaltung (Persönliche Links, «Namen speichern», `tm2_famListe` nur auf seinem Handy), Link `#ich=Name.CODE&fp=Partner&fk=Kind1,Kind2`, beim Kind `tm2_famIch`. Testversion: Ansicht nimmt die Namen aus `tm2_famListe`. Ohne Namen, in der Lücke, bei Papi und Mami: alte Liste. Kleinkind-Frage unverändert.
+- Anzeige «Ich» (Wänu 14.11.2026): Im Rechner bei «Wer von der Familie kommt?» genügt «Ich». Später bei Chips und Personen-Kreisen (Bezahlung, «Wer zahlt was») steht «Ich» und darunter klein «(Deborah)», also der Name der buchenden Person.
 
 ## Offen: Airbnb-Belegung ins App-Repo umziehen (Wänu «ja», 13.11.2026, nächste Woche)
 - Heute: Workflow `belegung.yml` + `belegung.py` im alten Repo `Waenu/Tschentomat` (Secret `AIRBNB_ICAL`) schreibt `belegt.json`; die App liest `/Tschentomat/belegt.json`.
