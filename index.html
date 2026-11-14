@@ -240,6 +240,7 @@ if (TEST_MODUS) {
   .gm-k .gm-geb { display: flex; gap: 6px; align-items: center; position: relative; }
   .gm-k .gm-geb input[type=text] { flex: 1; }
   .gm-k .gm-kal { position: absolute; right: 0; bottom: 0; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+  .gm-k .gm-vor { display: flex; flex-direction: column; gap: 6px; } .gm-k .gm-vor .gv { display: flex; gap: 6px; } .gm-k .gm-vor .gv-w { flex: 1; text-align: left; justify-content: flex-start; } .gm-k .gm-vor .gv-x { flex: none; min-width: 44px; }
   .gm-k .gm-gs { display: flex; gap: 18px; } .gm-k .gm-gs label { display: flex; align-items: center; gap: 6px; min-height: 40px; }
   .gm-k.gm-ok { border-left: 4px solid var(--gruen); }
   .gm-k.gm-offen { border-left: 4px solid var(--hoch-line); }
@@ -1521,7 +1522,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.5.0.2";
+let VERSION = "3.6.0.0";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -1761,13 +1762,91 @@ const range = (a, b) => { const r = []; for (let i = a; i <= b; i++) r.push(i); 
 const chf = (n) => "CHF " + Math.round(n).toLocaleString("de-CH").replace(/[’']/g, "’") + ".–";
 const chf2 = (n) => "CHF " + (Math.round(n * 100) / 100).toLocaleString("de-CH", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/[’']/g, "’");
 // Kurtaxe Adelboden nur für Freunde (die Familie ist über die Jahrespauschale der Eltern abgedeckt); verändert keine Preisregel und nicht den Gesamtpreis
-function kurtaxeRechnen(GE, kinder, nights) {
-  const kd = Math.max(0, Math.min(nz(kinder), nz(GE))), er = Math.max(0, nz(GE) - kd), n = Math.max(0, nz(nights));
+function kurtaxeRechnen(GE, kinder, nights, alter) {   // alter: Alter jedes Freundes am Anreisetag (Liste im Rechner, seit 3.6.0.0); ohne: wie bisher nach Anzahl Kinder 6 bis 15
   const sE = Math.round((P.kurtaxe + P.kurtaxeBeherb) * 100) / 100, sK = P.kurtaxeKind;
+  if (Array.isArray(alter) && alter.length === nz(GE)) {
+    const n0 = Math.max(0, nz(nights)), er0 = alter.filter((a) => a >= 16).length, kd0 = alter.filter((a) => a >= 6 && a < 16).length;
+    const bE0 = Math.round(er0 * sE * n0 * 100) / 100, bK0 = Math.round(kd0 * sK * n0 * 100) / 100;
+    return { er: er0, kd: kd0, k0: alter.length - er0 - kd0, alt: alter, sE, sK, bE: bE0, bK: bK0, summe: Math.round((bE0 + bK0) * 100) / 100 };
+  }
+  const kd = Math.max(0, Math.min(nz(kinder), nz(GE))), er = Math.max(0, nz(GE) - kd), n = Math.max(0, nz(nights));
   const bE = Math.round(er * sE * n * 100) / 100, bK = Math.round(kd * sK * n * 100) / 100;
   return { er, kd, sE, sK, bE, bK, summe: Math.round((bE + bK) * 100) / 100 };
 }
 const gastWort = (n) => n === 1 ? "Freund" : "Freunde";
+// Liste der Freunde im Rechner (seit 3.6.0.0): nur für Kinder und Partner (persönlicher Link), Entwurf nur auf dem Handy (tm2_gmEntwurf).
+// Beim Senden der Anfrage kommt sie unter die Buchungsnummer (tm2_gm), damit der Kasten auf der Startseite nach der Bestätigung ausgefüllt ist. Nie ins Repo.
+function listeModus() { try { return gmAktiv() && !!ABSENDER && !MAMI; } catch (e) { return false; } }
+var GM_ENTW_GEN = 0;   // zählt hoch, wenn der Entwurf geleert wird (Liste im Rechner neu zeichnen)
+function gmEntwurf() {
+  try {
+    const k = localStorage.getItem("tm2_gmEntwurfKey");   // Anfrage schon gesendet: bei einem anderen Termin beginnt die Liste leer (Wänu 14.11.2026)
+    if (k && ARR && DEP && k !== bKey({ name: ABSENDER, arr: ARR, dep: DEP })) { localStorage.removeItem("tm2_gmEntwurf"); localStorage.removeItem("tm2_gmEntwurfKey"); GM_ENTW_GEN++; }
+    const a = JSON.parse(localStorage.getItem("tm2_gmEntwurf") || "[]"); return Array.isArray(a) ? a : [];
+  } catch (e) { return []; }
+}
+// Adressbuch der Freunde (nur auf dem Handy des Kindes, tm2_freundeKartei): beim Vornamen schlägt die App bekannte Freunde vor
+function karteiLesen() { try { const a = JSON.parse(localStorage.getItem("tm2_freundeKartei") || "[]"); return Array.isArray(a) ? a.filter((f) => f && f.vorname) : []; } catch (e) { return []; } }
+function karteiMerken(liste) {
+  const k = karteiLesen(), id = (f) => (String(f.vorname || "") + "|" + String(f.name || "")).trim().toLowerCase();
+  liste.forEach((f) => { if (!f || !f.vorname || !f.name || !f.geb) return; const i = k.findIndex((x) => id(x) === id(f)), neu = { name: f.name, vorname: f.vorname, geb: f.geb, geschlecht: f.geschlecht || "", nat: f.nat || "Schweiz" }; if (i >= 0) k[i] = neu; else k.push(neu); });
+  try { localStorage.setItem("tm2_freundeKartei", JSON.stringify(k.slice(-60))); } catch (e) {}
+}
+function gmEntwurfSetzen(a) { try { localStorage.setItem("tm2_gmEntwurf", JSON.stringify(a)); } catch (e) {} }
+const alterAm = (geb, tag) => { const a = Number(tag.slice(0, 4)) - Number(geb.slice(0, 4)); return tag.slice(5) < geb.slice(5) ? a - 1 : a; };
+function freundeListe(n) { const a = gmEntwurf(); return Array.from({ length: Math.max(0, n) }, (_, i) => a[i] || {}); }   // immer n Einträge, fehlende leer
+function listeVoll(n) { const l = freundeListe(n); return n > 0 && l.length === n && l.every((f) => f.name && f.vorname && f.geb && f.geschlecht); }
+function freundeAlter(n) { if (!listeModus() || !ARR || !n) return null; const l = freundeListe(n); if (l.length < n || l.some((f) => !f.geb)) return null; return l.map((f) => alterAm(f.geb, ARR)); }
+function gmEntwurfUebernehmen() {   // beim Senden der Anfrage: Liste unter die Buchungsnummer (nur auf dem Handy)
+  if (!listeModus() || !ARR || !DEP) return;
+  const n = Math.min(derive(S).GE, GM_MAX); if (!n || !listeVoll(n)) return;
+  const key = bKey({ name: ABSENDER, arr: ARR, dep: DEP }), alt = gmLokal()[key] || {};
+  if (alt.gesendet) return;
+  const fr = freundeListe(n).map((f) => ({ name: f.name, vorname: f.vorname, geb: f.geb, geschlecht: f.geschlecht, nat: f.nat || "Schweiz" }));
+  gmLokalSetzen(key, Object.assign({}, alt, { freunde: fr }));
+  karteiMerken(fr);
+  try { localStorage.setItem("tm2_gmEntwurfKey", key); } catch (e) {}
+}
+function gmRechZeigen(d) {
+  const box = document.getElementById("gmRech"); if (!box) return;
+  const n = listeModus() && !document.getElementById("f-gaeste").hidden ? Math.min(nz(d.GE), GM_MAX) : 0;
+  box.hidden = !n;
+  const l0 = gmEntwurf();   // prüft auch, ob der Entwurf zu einem anderen Termin gehört
+  if (box.dataset.sig !== n + "|" + GM_ENTW_GEN) {
+    box.dataset.sig = n + "|" + GM_ENTW_GEN;
+    if (!n) { box.innerHTML = ""; return; }
+    const l = l0;
+    let h = '<p><b>👥 Liste deiner Freunde</b></p><p class="hint">Für die Kurtaxe in Adelboden. Die Kurtaxe rechnet die App aus dem Geburtsdatum. Die Liste bleibt auf deinem Handy. Nach der Bestätigung durch die Eltern sendest du sie auf der Startseite mit einem Tippen.</p>';
+    for (let i = 0; i < n; i++) {
+      const f = l[i] || {};
+      h += '<fieldset class="gm-f"><legend>Freund/in ' + (i + 1) + "</legend>" +
+        '<input type="text" data-gf="name" maxlength="60" autocomplete="off" placeholder="Name" aria-label="Name" value="' + esc(f.name || "") + '">' +
+        '<input type="text" data-gf="vorname" maxlength="60" autocomplete="off" placeholder="Vorname" aria-label="Vorname" value="' + esc(f.vorname || "") + '"><div class="gm-vor" hidden></div>' +
+        '<div class="gm-geb"><input type="text" data-gf="geb" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="Geburtsdatum TT.MM.JJJJ" aria-label="Geburtsdatum (TT.MM.JJJJ)" value="' + esc(f.gebText || gmDatum(f.geb || "")) + '"><button type="button" class="btn" data-gmkal="1" aria-label="Im Kalender wählen">📅</button><input type="date" class="gm-kal" tabindex="-1" aria-hidden="true" max="' + heuteKey() + '"></div>' +
+        '<div class="gm-gs" role="radiogroup" aria-label="Geschlecht"><label><input type="radio" name="grs' + i + '" data-gf="geschlecht" value="w"' + (f.geschlecht === "w" ? " checked" : "") + '> weiblich</label><label><input type="radio" name="grs' + i + '" data-gf="geschlecht" value="m"' + (f.geschlecht === "m" ? " checked" : "") + "> männlich</label></div>" +
+        '<input type="text" data-gf="nat" maxlength="40" autocomplete="off" placeholder="Nationalität" aria-label="Nationalität" value="' + esc(f.nat || "Schweiz") + '"><p class="hint gm-alt"></p></fieldset>';
+    }
+    box.innerHTML = h + '<p class="gm-r-st"></p>';
+  }
+  if (!n) return;
+  const l = freundeListe(n), fs = box.querySelectorAll(".gm-f");
+  l.forEach((f, i) => { const p = fs[i] && fs[i].querySelector(".gm-alt"); if (p) p.textContent = f.geb && ARR ? alterAm(f.geb, ARR) + " Jahre am Anreisetag" + (alterAm(f.geb, ARR) < 18 ? ", minderjährig" : "") : ""; });
+  const offen = l.map((f, i) => !f.name || !f.vorname || !f.geb || !f.geschlecht ? i + 1 : 0).filter(Boolean);
+  const st = box.querySelector(".gm-r-st");
+  st.className = "gm-r-st " + (offen.length ? "notice" : "note h");
+  st.textContent = offen.length ? "Noch offen: Freund/in " + offen.join(", ") + ". Erst wenn die Liste vollständig ist, kannst du die Anfrage senden." : "✅ Liste vollständig.";
+}
+function gmVorZeigen(fs) {   // Vorschläge aus dem Adressbuch zum eingetippten Vornamen
+  const v = fs.querySelector('[data-gf="vorname"]').value.trim().toLowerCase(), d = fs.querySelector(".gm-vor");
+  const nm = fs.querySelector('[data-gf="name"]').value.trim().toLowerCase(), k = karteiLesen();
+  const tr = v ? k.map((f, i) => ({ f, i })).filter((x) => { const vn = String(x.f.vorname).toLowerCase(); return vn.indexOf(v) === 0 && !(vn === v && String(x.f.name).toLowerCase() === nm); }) : [];   // schon übernommen: kein Vorschlag mehr
+  d.hidden = !tr.length;
+  d.innerHTML = tr.slice(0, 5).map((x) => '<div class="gv"><button type="button" class="btn gv-w" data-gmvor="' + x.i + '">' + esc(x.f.vorname + " " + x.f.name) + (x.f.geb ? ", " + esc(gmDatum(x.f.geb)) : "") + '</button><button type="button" class="btn gv-x" data-gmvorx="' + x.i + '" aria-label="' + esc(x.f.vorname + " " + x.f.name) + ' aus den Vorschlägen entfernen">✕</button></div>').join("");
+}
+function gmRechLesen(box) {   // Eingaben sofort im Entwurf sichern (auch unvollständige)
+  const neu = gmFormLesen(box).map((f) => ({ name: f.name, vorname: f.vorname, geb: f.geb, gebText: f.geb ? "" : f.gebText, geschlecht: f.geschlecht, nat: f.nat }));
+  const alt = gmEntwurf(); neu.forEach((f, i) => { alt[i] = f; }); gmEntwurfSetzen(alt);
+}
 
 // Ersparnis für die Familie, wenn Zimmer 1 unberührt bleibt (echte Rechnung: Unterschied zwischen «Ja» und «Nein»); nur wenn Zimmer 1 in Gebrauch ist
 function sparBetrag(d) {
@@ -1806,7 +1885,7 @@ const FIELDS = [
     visible: (d) => d.frei > 0 && !(d.LUE && P.lueckeGastNacht > 0 && d.nights < P.lueckeGastMinNaechte), opts: (d) => (S.staffelOffen && S.art === ART_N && !S.festMin && !(d.LUE && P.lueckeGastNacht > 0)) ? range(1, d.frei) : (S.festMin && d.frei >= P.festMinGaeste) ? range(P.festMinGaeste, d.frei) : (d.LUE && P.lueckeGastNacht > 0 ? [0].concat(range(lueckeGaesteMin(d), d.frei)) : range(0, d.frei)) },
   { id: "kinder", label: "🎟️ Wie viele deiner Freunde sind Kinder von 6 bis 15 Jahren?", type: "num",
     hint: () => "Für Freunde fällt in Adelboden die Kurtaxe an, die Gästekarte ist inbegriffen: " + chf2(P.kurtaxe + P.kurtaxeBeherb) + " pro Nacht ab 16 Jahren, " + chf2(P.kurtaxeKind) + " für Kinder von 6 bis 15 Jahren, Kinder unter 6 Jahren zahlen nichts. Es zählt das Alter am Anreisetag. Die Kurtaxe kommt am Schluss zum Preis dazu. Für die Familie ist sie mit der Jahrespauschale der Eltern abgegolten." + (nz(S.kinder) > 0 ? " ⚠️ {{Minderjährig}}: Freunde unter 18 sind minderjährig. Kläre mit ihren Eltern, wer für sie zahlt. Bei der Reinigung «nach Personen» zählen sie voll." : ""),
-    visible: (d) => d.GE > 0, opts: (d) => range(0, d.GE) },
+    visible: (d) => d.GE > 0 && !listeModus(), opts: (d) => range(0, d.GE) },
   { id: "zimmer", label: "💤 Schläft ein Freund oder eine Freundin im selben Zimmer wie ich?", type: "str",
     hint: (d) => (S.wer === "Nur ich" && d.base + d.GE <= P.sparMaxPers)
       ? "Ein Freund oder eine Freundin im selben Zimmer zahlt " + chf(P.gastZimmer) + " statt " + chf(P.gast) + " pro Nacht, du dann nur " + chf(P.famAnteil) + " statt " + chf(P.famPausch) + ". Ihr teilt dann Zimmer 2 und das blaue Bad, Zimmer 1 und das rote Bad bleiben unberührt. Es sind ein Zimmer und ein Doppelbett weniger zu beziehen und zu reinigen."
@@ -1894,6 +1973,33 @@ function build() {
     });
     wrap.append(lab, sel, hint);
     form.appendChild(wrap);
+    if (f.id === "gaeste") {   // Liste der Freunde (seit 3.6.0.0)
+      const gb = document.createElement("div"); gb.id = "gmRech"; gb.className = "field gm-k gm-rech"; gb.hidden = true; form.appendChild(gb);
+      gb.addEventListener("input", (e) => { gmRechLesen(gb); if (e.target.matches('[data-gf="vorname"]')) gmVorZeigen(e.target.closest(".gm-f")); });
+      gb.addEventListener("change", (e) => {
+        const k = e.target.closest(".gm-kal"); if (k && k.value) k.parentNode.querySelector('[data-gf="geb"]').value = gmDatum(k.value);
+        gmRechLesen(gb); render();
+      });
+      gb.addEventListener("click", async (e) => {
+        const vw = e.target.closest("[data-gmvor]"), vx = e.target.closest("[data-gmvorx]");
+        if (vw) {   // Freund aus dem Adressbuch übernehmen
+          const f = karteiLesen()[Number(vw.getAttribute("data-gmvor"))], fs = vw.closest(".gm-f"); if (!f) return;
+          const set = (n, v) => { const el = fs.querySelector('[data-gf="' + n + '"]'); if (el) el.value = v; };
+          set("name", f.name); set("vorname", f.vorname); set("geb", gmDatum(f.geb)); set("nat", f.nat || "Schweiz");
+          fs.querySelectorAll('[data-gf="geschlecht"]').forEach((r) => { r.checked = r.value === f.geschlecht; });
+          fs.querySelector(".gm-vor").hidden = true; gmRechLesen(gb); render(); return;
+        }
+        if (vx) {
+          const k = karteiLesen(), i = Number(vx.getAttribute("data-gmvorx")), f = k[i]; if (!f) return;
+          if (!(await appFrage(f.vorname + " " + f.name + " aus deinen Vorschlägen entfernen? In bereits gesendeten Listen bleibt er stehen.", "Ja, entfernen"))) return;
+          k.splice(i, 1); try { localStorage.setItem("tm2_freundeKartei", JSON.stringify(k)); } catch (er) {}
+          gmVorZeigen(vx.closest(".gm-f")); return;
+        }
+        const kal = e.target.closest("[data-gmkal]"); if (!kal) return;
+        const k = kal.parentNode.querySelector(".gm-kal"), t = kal.parentNode.querySelector('[data-gf="geb"]'); k.value = gmIso(t.value) || "1990-01-01";
+        try { k.showPicker(); } catch (er) { k.focus(); k.click(); }
+      });
+    }
   });
 }
 
@@ -2510,8 +2616,8 @@ function begriffeFuellen() {
       "<ul><li>Ab 16 Jahren: " + chf2(P.kurtaxe) + " Kurtaxe plus " + chf2(P.kurtaxeBeherb) + " Beherbergungsabgabe, zusammen <b>" + chf2(bsp.sE) + "</b> pro Nacht.</li><li>Kinder von 6 bis 15 Jahren: <b>" + chf2(bsp.sK) + "</b> pro Nacht.</li><li>Kinder unter 6 Jahren: nichts.</li><li>Es zählt das Alter am Anreisetag.</li></ul>" +
       "<p><b>Wozu die Beherbergungsabgabe dient:</b> Der Kanton Bern erhebt sie in allen Unterkünften, ob Hotel, Ferienwohnung oder Gruppenhaus, " + chf2(P.kurtaxeBeherb) + " pro Nacht für jeden Gast ab 16 Jahren. Mit dem Geld stärken die Berner Tourismusregionen zum Beispiel ihre Werbung. Geregelt ist das im kantonalen Tourismusentwicklungsgesetz und in der dazugehörigen Verordnung.</p>" +
       "<p>Beispiel: 3 Freunde, davon 1 Kind, 3 Nächte: 2 × " + chf2(bsp.sE) + " × 3 + 1 × " + chf2(bsp.sK) + " × 3 = <b>" + chf2(bsp.summe) + "</b>.</p>" +
-      "<p>Im Rechner fragt die App, wie viele deiner Freunde Kinder von 6 bis 15 Jahren sind, und zeigt die Kurtaxe unter dem Preis an.</p>" +
-      (gmAktiv() ? "<p>Nach der Bestätigung füllst du in der App die Liste deiner Freunde aus (Name, Geburtsdatum, Nationalität). Die Eltern brauchen sie, um deine Freunde in Adelboden anzumelden und die Reservation abzuschliessen.</p>" : "") + "</details>"); }
+      "<p>Im Rechner trägst du deine Freunde mit Geburtsdatum ein. Die App rechnet daraus die Kurtaxe und zeigt sie unter dem Preis an.</p>" +
+      (gmAktiv() ? "<p>Die Liste deiner Freunde (Name, Geburtsdatum, Geschlecht, Nationalität) füllst du schon im Rechner aus. Nach der Bestätigung sendest du sie auf der Startseite mit einem Tippen. Die Eltern brauchen sie, um deine Freunde in Adelboden anzumelden und die Reservation abzuschliessen.</p>" : "") + "</details>"); }
   set("bc-prov", "<p>" + filmGlossar() + "</p><p><b>Mit Vorbehalt</b> heisst: Der Termin ist in Airbnb nicht gesperrt. Meldet sich ein Airbnb-Gast für dieselben Tage, hat er Vorrang und ihr weicht.</p><p>Habt ihr noch nicht begonnen, fällt nichts an. Seid ihr schon im Chalet, bleibt ihr bis zum Anreisetag des Gastes und seid um " + ZEIT_AB + " draussen. Ihr zahlt die normalen Kosten für die Tage, die ihr dort wart, und die Reinigung. Plant deshalb eine Alternative ein.</p><p><b>Gesichert:</b> Ein Airbnb-Gast braucht " + VORLAUF + " Tage Vorlauf. Der Teil bis dahin ist gesichert (Balken voll), der Rest noch offen (gestrichelt). Der volle Teil wächst jeden Tag.</p>" + festUndVorbehaltTxt() + bildVorbehalt());
   set("bc-sicht", "<p>" + filmGlossar("luecke") + "</p><p><b>Lücke wegen Vorlaufzeit ⏸️</b> Airbnb kann diese Nächte nicht mehr verkaufen: Ein Gast braucht " + VORLAUF + " Tage Vorlauf, bleibt mindestens " + AIRBNB_MIN + " Nächte, und sonntags gibt es keinen Check-in. Darum steht diese Zeit euch offen: zum normalen Familienpreis, <b>ohne Vorbehalt</b>, auch in der Hochsaison. Mindestens " + Math.max(P.minNaechte, P.sichtMinNaechte) + " Nächte" + (P.hochMinNaechte > Math.max(P.minNaechte, P.sichtMinNaechte) ? ", in der Hochsaison mindestens " + P.hochMinNaechte : "") + ".</p><p>Im Kalender ist diese Zeit <b>gelb</b> und wandert täglich mit: Mit jedem Tag kann Airbnb weniger verkaufen, es kommen Nächte dazu, die vergangenen fallen weg. Das gilt auch bei nur 2 oder 3 Nächten, solange Airbnb dahinter noch verkaufen kann.</p>");
   set("bc-luecke", "<p>" + filmGlossar("luecke") + "</p><p><b>Lücken 🧩</b> Eine Lücke ist freie Zeit zwischen zwei Airbnb-Gästen von höchstens " + LUECKE_MAX + " Nächten. Ihr bucht sie zum normalen Familienpreis, <b>fest und ohne Vorbehalt</b>: ganz oder teilweise, ab " + P.minNaechte + " Nächten, an jedem Tag der Lücke. Auch <b>Freunde</b> sind willkommen, ab <b>3 Nächten</b>, bis " + P.maxPersonen + " Personen, alle Zimmer. Die Eltern reinigen und stellen die Wäsche, ihr bringt keine mit und reinigt nicht selber.</p><p><b>Wann buchbar:</b> Bis " + (AIRBNB_MIN - 1) + " Nächte sofort, Airbnb kann sie nie verkaufen. " + AIRBNB_MIN + " Nächte sind <b>gesperrt</b>, solange der Vorlauf (" + VORLAUF + " Tage) es Airbnb erlaubt, danach gelb und buchbar. Das Datum steht in der Info-Box. In der Tiefsaison ist sie sofort buchbar. Längere freie Zeit bleibt normal buchbar. Lücken bis " + (AIRBNB_MIN - 1) + " Nächte könnt ihr schon lange im Voraus buchen. Storniert ein Airbnb-Gast, bleibt euer Termin. Das Risiko tragen die Eltern.</p><p><b>Sonntag:</b> Endet ein Gast am Samstag, kann Airbnb den Sonntag nicht vergeben. Ihr reist schon am Sonntag an, die Lücke hat eine Nacht mehr.</p><p><b>Später entstandene Lücke:</b> Auch Zeit, die erst durch den Vorlauf und den Mindestaufenthalt von Airbnb übrig bleibt, wird zur Lücke, sobald höchstens " + LUECKE_MAX + " Nächte bleiben (siehe «Lücke wegen Vorlaufzeit» " + symBtn("b-sicht", "⏸️") + "). Es gelten dieselben Regeln und derselbe Preis.</p>" + (P.lueckeGastNacht > 0 ? "<p><b>Freunde in der Lücke:</b> Ohne Freunde buchst du die Lücke ganz oder teilweise, ab " + P.minNaechte + " Nächten. Mit Freunden geht sie ab <b>" + P.lueckeGastMinNaechte + " Nächten</b>, schon mit 1 Freund. Bei weniger Nächten erscheint das Feld für Freunde nicht. Ein Freund zahlt " + chf(P.gast) + " pro Nacht, die Familie " + chf(P.famPausch) + ". Bringen die Freunde mehr, sinkt der Anteil der Familie bis auf 0, das Total aber nie unter " + chf(P.lueckeGastNacht) + " pro Nacht plus Endreinigung (" + chf(P.reinigung) + "), bei " + P.lueckeGastMinNaechte + " Nächten also " + chf(lueckeMin(P.lueckeGastMinNaechte) + P.reinigung) + ".</p>" + lueckenBeispiel() : ""));
@@ -3718,7 +3824,8 @@ function anfrageText(r) {
   z.push("Familie: " + S.wer + (S.wer === MFG ? " (" + S.fam + " Personen)" : "") + kkTxt);
   const iFam = z.length - 1, fw = famWahl(), famTxt = fw && fw.l !== MFG ? "Familie: " + fw.l + kkTxt : "";   // Namen nur in der WhatsApp, gespeichert (Bestätigungslink → buchungen.json) bleibt die neutrale Zeile (seit 3.5.0.1)
   z.push("Freunde: " + x.GE);
-  if (x.GE > 0 && typeof S.kinder === "number") z.push("Davon Kinder von 6 bis 15 Jahren: " + S.kinder);
+  if (x.GE > 0 && listeModus()) { const al = freundeAlter(x.GE); if (al) z.push("Liste der Freunde: vollständig, " + al.length + (al.length === 1 ? " Person" : " Personen") + (al.some((a) => a < 18) ? ", davon " + al.filter((a) => a < 18).length + " unter 18" : "")); }   // ohne Namen (seit 3.6.0.0)
+  else if (x.GE > 0 && typeof S.kinder === "number") z.push("Davon Kinder von 6 bis 15 Jahren: " + S.kinder);
   if (x.GE > 0 && !x.lock) z.push("Freund im selben Zimmer: " + x.ZE);
   z.push("Mit den Bedingungen einverstanden: ja");
   if (stornoStreng(x)) z.push("Verbindlich: Absage spätestens am " + fmtTagV(stornoBis()) + " (" + STORNO_TAGE + " Tage vor der Anreise)");
@@ -3731,7 +3838,7 @@ function anfrageText(r) {
   if (x.LR > 0 && !spitzTermin()) z.push("Lückenpreis (" + x.LR + " % auf die Übernachtungen)");
   const spA = spitzTermin();
   if (spA) z.push("Spitzenzeit" + (spA[2] ? " (" + spA[2] + ")" : "") + ": Preis auf Anfrage");
-  else { z.push("Total laut Rechner: " + chf(r.TOT)); const ktA = kurtaxeRechnen(x.GE, S.kinder, x.nights); if (ktA.summe > 0) z.push("Dazu Kurtaxe Adelboden für die Freunde: " + chf2(ktA.summe)); }
+  else { z.push("Total laut Rechner: " + chf(r.TOT)); const ktA = kurtaxeRechnen(x.GE, S.kinder, x.nights, freundeAlter(x.GE)); if (ktA.summe > 0) z.push("Dazu Kurtaxe Adelboden für die Freunde: " + chf2(ktA.summe)); }
   if (x.SB) z.push("Reinigungskosten sind erst nach Ablauf der Familienstaffel bekannt und werden nachbelastet.");
   if (x.SM && S.selbst === "Nein") { const u = staffelUnterbruch(ARR); if (u.length) z.push("Achtung: Unterbricht die Familienstaffel von " + u.join(", ") + ".") ; }
   if (festStay(ARR, DEP)) z.push("Fester Termin (" + festTxt() + "): bitte in Airbnb sperren.");
@@ -3867,7 +3974,8 @@ function anfrageKasten(r) {
   const t = anfrageText(r);
   LETZTE_ANFRAGE = t;
   const prov = provSel(), rok = !prov || RISIKO_OK === risikoKey(), hok = BED_OK === risikoKey();
-  const ok = ABSENDER !== "" && rok && hok;
+  const lok = !listeModus() || r.d.GE === 0 || listeVoll(Math.min(r.d.GE, GM_MAX));   // Liste der Freunde vollständig (seit 3.6.0.0)
+  const ok = ABSENDER !== "" && rok && hok && lok;
   let h = '<div class="pay"><strong>💬 Anfrage an die Eltern senden</strong>' +
     '<span class="hint">Das ist nur eine Anfrage und noch keine Buchung. Die Eltern bestätigen den Termin. WhatsApp öffnet sich mit dem fertigen Text. Wähle dort den <b>«Adelboden Airbnb Chat»</b>, nicht den Familien-Chat.</span>' + (provStay(ARR, DEP) ? '<span class="hint"><b>Mit Vorbehalt:</b> Der Termin wird nicht in Airbnb gesperrt. Ein Airbnb-Gast hat Vorrang. ' + symBtn('b-prov', '⏳') + '</span>' : '') +
     (NAME_FIX && !TOKEN && ABSENDER ? '<div class="field"><label>Wer schickt die Anfrage?</label><p class="namefest">' + esc(ABSENDER) + ' ' + lockSvg(false) + '</p></div>' : '<div class="field"><label for="absender">Wer schickt die Anfrage?</label><select id="absender" class="' + (ok ? "done" : "missing") + '"><option value="">– wählen –</option>' +
@@ -3876,6 +3984,7 @@ function anfrageKasten(r) {
     (stornoStreng(r.d) ? '<div class="note h storno-warn"><b>⚠️ Verbindlich:</b> ' + "Mit Freunden ist die Buchung in dieser Zeit verbindlich. Absagen kannst du bis spätestens <b>" + esc(fmtTag(stornoBis())) + "</b> (" + STORNO_TAGE + " Tage vor der Anreise). Sagt ein Freund ab, rechnen die Eltern neu, die übrigen zahlen dann etwas mehr. " + symBtn("b-storno", "📅") + "</div>" : "") +
     '<label class="risiko"><input type="checkbox" id="bedOk"' + (hok ? " checked" : "") + '> <span>Ich bin mit den <b>Bedingungen</b> einverstanden ' + symBtn("b-bedingungen", "📜") + ".</span></label>" +
     (prov ? '<label class="risiko"><input type="checkbox" id="risikoOk"' + (rok ? " checked" : "") + '> <span><b>Ich habe das Risiko verstanden:</b> Für diesen Termin gilt ein Vorbehalt. Kommt eine Airbnb-Buchung, muss ich weichen oder gar nicht erst reisen. Das Risiko trage ich selbst.</span></label>' + (rok ? "" : '<p class="hint">Erst das Risiko bestätigen, dann sind die Knöpfe aktiv.</p>') : "") + '<div class="btns">';
+  if (!lok) h += '<p class="hint rot-txt">Erst die Liste deiner Freunde oben im Rechner vollständig ausfüllen, dann sind die Knöpfe aktiv.</p>';
   h += ok ? '<a class="btn" id="waReq" href="https://wa.me/?text=' + encodeURIComponent(t) + '" target="_blank" rel="noopener">' + WA_SVG + 'Per WhatsApp an den «Adelboden Airbnb Chat» senden</a>' : '<span class="btn off" aria-disabled="true">' + WA_SVG + 'Per WhatsApp an den «Adelboden Airbnb Chat» senden</span>';
   h += '<button type="button" class="btn" id="copyReq"' + (ok ? "" : " disabled") + '>📋 Anfrage kopieren</button></div><div class="note h" id="aufHinweis" hidden></div>';
   if (r.d.SB) {
@@ -3974,7 +4083,9 @@ function render() {
   const uebrig = Object.keys(NOTICES).filter((id) => !meldOrt(id)).map((id) => NOTICES[id]).join(" ");
   nb.hidden = !uebrig; nb.textContent = uebrig;
 
-  const r = calc(Object.assign({}, S, { kinderPflicht: true }));
+  if (listeModus()) { const al = freundeAlter(Math.min(d.GE, GM_MAX)); S.kinder = al ? al.filter((a) => a >= 6 && a < 16).length : null; }
+  gmRechZeigen(d);
+  const r = calc(Object.assign({}, S, { kinderPflicht: !listeModus() }));
   const tip = Math.max(0, parseInt(TRINK, 10) || 0);
   const res = document.getElementById("result");
   const bar = document.getElementById("bar");
@@ -4001,7 +4112,8 @@ function render() {
   const sb = sparBetrag(r.d);
   if (sb > 0) lab.innerHTML += '<br><small class="spar"><span class="stern s1" aria-hidden="true">⭐</span>Bleibt Zimmer 1 zu, sparst du ' + chf(sb) + '<span class="stern s2" aria-hidden="true">⭐</span></small>';
   const x = r.d;
-  const kt = kurtaxeRechnen(x.GE, S.kinder, x.nights), ktS = kt.summe > 0 ? chf2(kt.summe) : "";   // Kurtaxe nur für Freunde, kommt am Schluss zum Preis dazu
+  const ktAl = freundeAlter(x.GE), ktFolgt = listeModus() && x.GE > 0 && !ktAl;   // Liste noch unvollständig: Kurtaxe folgt
+  const kt = ktFolgt ? kurtaxeRechnen(0, 0, 0) : kurtaxeRechnen(x.GE, S.kinder, x.nights, ktAl), ktS = kt.summe > 0 ? chf2(kt.summe) : "";   // Kurtaxe nur für Freunde, kommt am Schluss zum Preis dazu
   const spR = spitzTermin();
   if (spR) {
     SNAP_BER = [];
@@ -4017,8 +4129,8 @@ function render() {
   // Preis pro Freund steht samt Kurtaxe; die Kurtaxe steht klein darunter (die ersten Freunde zählen als ab 16 Jahren, die letzten als Kinder von 6 bis 15 Jahren)
   const whoF = (g, betrag) => {
     if (kt.summe <= 0) return '<tr><td>Freund ' + g + ' zahlt</td><td>' + chf(betrag) + '</td></tr>';
-    const kind = g > kt.er, k = (kind ? kt.sK : kt.sE) * x.nights;
-    return '<tr><td>Freund ' + g + ' zahlt <small class="ktk">davon Kurtaxe ' + chf2(k) + (kind ? ' (Kind von 6 bis 15 Jahren)' : ' (ab 16 Jahren)') + '</small></td><td>' + chf2(betrag + k) + '</td></tr>';
+    const st = kt.alt ? (kt.alt[g - 1] >= 16 ? "E" : kt.alt[g - 1] >= 6 ? "K" : "0") : (g > kt.er ? "K" : "E"), k = (st === "E" ? kt.sE : st === "K" ? kt.sK : 0) * x.nights;   // keine Namen: die Tabelle wird mit der Anfrage gespeichert
+    return '<tr><td>Freund ' + g + ' zahlt <small class="ktk">davon Kurtaxe ' + chf2(k) + (st === "K" ? ' (Kind von 6 bis 15 Jahren)' : st === "0" ? ' (unter 6 Jahren)' : ' (ab 16 Jahren)') + '</small></td><td>' + chf2(betrag + k) + '</td></tr>';
   };
   if (x.GE >= 1) who += whoF(1, r.HZ);
   for (let g = 2; g <= x.GE; g++) who += whoF(g, r.WZ / (x.GE - 1));
@@ -4062,7 +4174,7 @@ function render() {
     '<div class="acc">' + symBtn('b-rechnen', '🧮') + '<button type="button" class="acc-t" id="rechTgl" data-body="rechBody" aria-expanded="' + (RECH_OFFEN ? 'true' : 'false') + '" aria-controls="rechBody">Buchungsübersicht</button></div>' +
     '<div class="total"><span class="small">für ' + x.nights + ' ' + (x.nights === 1 ? "Nacht" : "Nächte") + ', ' + x.PT + ' ' + (x.PT === 1 ? "Person" : "Personen") + ' mit Bett' + (x.KK > 0 ? ', ' + x.KK + (x.KK === 1 ? ' Kind' : ' Kinder') + ' im Kinderbettchen oder bei den eigenen Eltern' : '') + '</span>' +
     (ARR && DEP ? '<span class="small">vom ' + esc(fmtTag(ARR)) + ' bis ' + esc(fmtTag(DEP)) + '</span><span class="small">' + esc(zeitenKurz()) + '</span>' : '') +
-    '<span class="big">' + chf(r.TOT) + '</span>' + (kt.summe > 0 ? '<span class="small">dazu Kurtaxe Adelboden ' + ktS + ' für die Freunde</span>' : '') + '</div>' +
+    '<span class="big">' + chf(r.TOT) + '</span>' + (kt.summe > 0 ? '<span class="small">dazu Kurtaxe Adelboden ' + ktS + ' für die Freunde</span>' : (ktFolgt ? '<span class="small">dazu Kurtaxe Adelboden für die Freunde: folgt, sobald die Geburtsdaten in der Liste stehen</span>' : '')) + '</div>' +
     (zh && !zh.frei && zh.zeilen.length ? '<div class="zielbox">' + zh.zeilen.map((z) => '<p' + (z.frei ? ' class="frei"' : '') + '>' + esc(z.t) + '</p>').join("") + '</div>' : '') +
     (x.LR > 0 ? '<p class="note"><b>Lückenpreis:</b> ' + x.LR + ' % günstiger auf die Übernachtungen, die Reinigung bleibt gleich.</p>' : '') +
     '<div id="rechBody" class="rows"' + (RECH_OFFEN ? '' : ' hidden') + '><table><tbody>' + det + '</tbody></table>' + notes + (x.SB ? endreinigungInfo(r) : '') + '</div>' +
@@ -4179,7 +4291,7 @@ document.getElementById("result").addEventListener("click", (e) => {
   if (ce) { kopiere(LETZTE_EINLADUNG, ce, "Einladung kopiert", "Einladung kopieren"); return; }
   const q = e.target.closest("#copyReq");
   if (q) kopiere(LETZTE_ANFRAGE, q, "Anfrage kopiert", "Anfrage kopieren");
-  if (q || e.target.closest("#waReq")) { aufentSpeichern(); aufHinweisZeigen(); }
+  if (q || e.target.closest("#waReq")) { gmEntwurfUebernehmen(); aufentSpeichern(); aufHinweisZeigen(); }
   if (e.target.closest("#zuKnoepfe")) {
     setRechner(false);
     const z = document.getElementById("btnAnreise").hidden ? document.getElementById("btnCheck") : document.getElementById("btnAnreise");
@@ -5840,6 +5952,7 @@ document.getElementById("gmBox").addEventListener("click", async (e) => {
   try {
     const j = await gmPost({ a: "senden", buchung: key, freunde: daten });
     gmLokalSetzen(key, { gesendet: j.gesendet || jetztStr(), freunde: daten });
+    karteiMerken(daten);   // Adressbuch der Freunde nachführen (seit 3.6.0.0)
     GM_AUF.delete(key); GM_MSG[key] = "";
   } catch (err) {
     gmLokalSetzen(key, Object.assign({}, gmLokal()[key] || {}, { freunde: daten }));   // Eingaben behalten, damit nichts verloren geht
@@ -6040,7 +6153,7 @@ function bestWaLink(text, key, label) { return ' <a class="btn" data-bescheid="'
 function bestText(x, abgelehnt) {
   return abgelehnt
     ? "Hoi " + x.name + ", deine Anfrage vom " + fmtTagV(x.arr) + " bis " + fmtTagV(x.dep) + " können wir leider nicht bestätigen. Melde dich bei uns, dann suchen wir zusammen eine Lösung."
-    : "Hoi " + x.name + ", danke für deine Buchung! Dein Aufenthalt vom " + fmtTagV(x.arr) + " bis " + fmtTagV(x.dep) + " ist bestätigt. 🎉" + (gmAktiv() && freundeVon(x) > 0 ? " Wichtig: Bitte fülle im TSCHENT-O-MAT noch die Liste deiner Freunde für die Kurtaxe aus (Name, Geburtsdatum, Nationalität). Wir brauchen sie, damit wir die Reservation abschliessen können. Das dauert nur kurz." : "") + " Im TSCHENT-O-MAT findest du jetzt " + (((x.sb || x.selbst) && !istStaffelStart(x.arr, x)) || x.luecke ? "die Wäsche-Liste für die Anreise und " : "") + "die Checkliste für die Abreise. " + zeitenSatz() + (provVon(x) ? " Achtung: Der Termin steht mit Vorbehalt und ist nicht in Airbnb gesperrt. Kommt ein Airbnb-Gast, hat er Vorrang, dann müsst ihr ausweichen." : "") + ((x.sb || x.selbst) && istStaffelStart(x.arr, x) ? " Du beginnst die Staffel: Das Chalet ist gereinigt und bezogen, du bringst keine Wäsche mit. Dafür nimmst du die benutzte Wäsche mit und " + (x.waesche === "senden" ? "sendest sie uns" : "bringst sie uns") + " bis spätestens " + fmtTagV(addDays(x.dep, WAESCHE_TAGE)) + "." : "");
+    : "Hoi " + x.name + ", danke für deine Buchung! Dein Aufenthalt vom " + fmtTagV(x.arr) + " bis " + fmtTagV(x.dep) + " ist bestätigt. 🎉" + (gmAktiv() && freundeVon(x) > 0 ? " Wichtig: Bitte sende im TSCHENT-O-MAT noch die Liste deiner Freunde für die Kurtaxe, sie steht zuoberst auf der Startseite. Wir brauchen sie, damit wir die Reservation abschliessen können. Das dauert nur kurz." : "") + " Im TSCHENT-O-MAT findest du jetzt " + (((x.sb || x.selbst) && !istStaffelStart(x.arr, x)) || x.luecke ? "die Wäsche-Liste für die Anreise und " : "") + "die Checkliste für die Abreise. " + zeitenSatz() + (provVon(x) ? " Achtung: Der Termin steht mit Vorbehalt und ist nicht in Airbnb gesperrt. Kommt ein Airbnb-Gast, hat er Vorrang, dann müsst ihr ausweichen." : "") + ((x.sb || x.selbst) && istStaffelStart(x.arr, x) ? " Du beginnst die Staffel: Das Chalet ist gereinigt und bezogen, du bringst keine Wäsche mit. Dafür nimmst du die benutzte Wäsche mit und " + (x.waesche === "senden" ? "sendest sie uns" : "bringst sie uns") + " bis spätestens " + fmtTagV(addDays(x.dep, WAESCHE_TAGE)) + "." : "");
 }
 // Hinweis an eine Familie, deren Aufenthalt nicht mehr der Beginn der Staffel ist (vor ihr wurde eine Staffel eingetragen)
 // Staffel endet bei dieser Buchung, weil die Eltern reinigen müssen: Grund als Text (nur für Aufenthalte mit Selbstreinigung)

@@ -2,6 +2,22 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.6.0.0",
+      "datum": "14.11.2026",
+      "titel": "Liste der Freunde im Rechner",
+      "arten": [
+        "Neu"
+      ],
+      "punkte": [
+        "Mit Freunden erscheint im Rechner die Liste der Freunde: Name, Vorname, Geburtsdatum, Geschlecht, Nationalität (vorausgefüllt mit Schweiz).",
+        "Die Frage nach Kindern von 6 bis 15 Jahren fällt weg. Die Kurtaxe rechnet die App aus dem Alter am Anreisetag (unter 6 Jahren keine Kurtaxe).",
+        "Die Anfrage geht erst, wenn die Liste vollständig ist. In der Anfrage steht nur die Anzahl und wie viele unter 18 sind, keine Namen.",
+        "Nach der Bestätigung ist der Kasten «Liste deiner Freunde» auf der Startseite schon ausgefüllt, ein Tippen sendet ihn.",
+        "Jede neue Anfrage beginnt mit einer leeren Liste. Gesendete Freunde merkt sich das Handy: Beim Vornamen schlägt die App sie vor, ein Tippen füllt Name, Geburtsdatum, Geschlecht und Nationalität aus. Mit ✕ lässt sich ein Vorschlag entfernen.",
+        "Bei Papi und Mami bleibt die bisherige Frage."
+      ]
+    },
+    {
       "v": "3.5.0.2",
       "datum": "14.11.2026",
       "titel": "Testversion: Bestätigungslink gleich als Papi",
