@@ -2,6 +2,17 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.7.0.4",
+      "datum": "14.11.2026",
+      "titel": "Vorschläge der Freunde pro Person",
+      "arten": [
+        "Fehler"
+      ],
+      "punkte": [
+        "Jede Person hat ihr eigenes Adressbuch der Freunde. Deborah sieht keine Freunde von Manuel, auch wenn mehrere Ansichten auf demselben Handy laufen."
+      ]
+    },
+    {
       "v": "3.7.0.3",
       "datum": "14.11.2026",
       "titel": "Texte in Anfrage und Bestätigung",

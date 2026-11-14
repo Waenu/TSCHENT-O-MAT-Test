@@ -1528,7 +1528,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.7.0.3";
+let VERSION = "3.7.0.4";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -1794,12 +1794,14 @@ function gmEntwurf() {   // Entwurf gehört zu Person und Termin (seit 3.7.0.2):
     return l;
   } catch (e) { return []; }
 }
-// Adressbuch der Freunde (nur auf dem Handy des Kindes, tm2_freundeKartei): beim Vornamen schlägt die App bekannte Freunde vor
-function karteiLesen() { try { const a = JSON.parse(localStorage.getItem("tm2_freundeKartei") || "[]"); return Array.isArray(a) ? a.filter((f) => f && f.vorname) : []; } catch (e) { return []; } }
+// Adressbuch der Freunde (nur auf dem Handy, tm2_freundeKartei = {Person: [...]}, jede Person ihr eigenes): beim Vornamen schlägt die App bekannte Freunde vor
+function karteiAlle() { try { const o = JSON.parse(localStorage.getItem("tm2_freundeKartei") || "{}"); return o && typeof o === "object" && !Array.isArray(o) ? o : {}; } catch (e) { return {}; } }   // pro Person getrennt (seit 3.7.0.4)
+function karteiLesen() { const a = karteiAlle()[ABSENDER]; return Array.isArray(a) ? a.filter((f) => f && f.vorname) : []; }
+function karteiSchreiben(k) { if (!ABSENDER) return; const o = karteiAlle(); o[ABSENDER] = k.slice(-60); try { localStorage.setItem("tm2_freundeKartei", JSON.stringify(o)); } catch (e) {} }
 function karteiMerken(liste) {
   const k = karteiLesen(), id = (f) => (String(f.vorname || "") + "|" + String(f.name || "")).trim().toLowerCase();
   liste.forEach((f) => { if (!f || !f.vorname || !f.name || !f.geb) return; const i = k.findIndex((x) => id(x) === id(f)), neu = { name: f.name, vorname: f.vorname, geb: f.geb, geschlecht: f.geschlecht || "", nat: f.nat || "Schweiz" }; if (i >= 0) k[i] = neu; else k.push(neu); });
-  try { localStorage.setItem("tm2_freundeKartei", JSON.stringify(k.slice(-60))); } catch (e) {}
+  karteiSchreiben(k);
 }
 function gmEntwurfSetzen(a) { try { localStorage.setItem("tm2_gmEntwurf", JSON.stringify({ k: gmEntwurfKeyJetzt(), l: a })); } catch (e) {} }
 const alterAm = (geb, tag) => { const a = Number(tag.slice(0, 4)) - Number(geb.slice(0, 4)); return tag.slice(5) < geb.slice(5) ? a - 1 : a; };
@@ -2076,7 +2078,7 @@ function build() {
         if (vx) {
           const k = karteiLesen(), i = Number(vx.getAttribute("data-gmvorx")), f = k[i]; if (!f) return;
           if (!(await appFrage(f.vorname + " " + f.name + " aus deinen Vorschlägen entfernen? In bereits gesendeten Listen bleibt er stehen.", "Ja, entfernen"))) return;
-          k.splice(i, 1); try { localStorage.setItem("tm2_freundeKartei", JSON.stringify(k)); } catch (er) {}
+          k.splice(i, 1); karteiSchreiben(k);
           const fs2 = vx.closest(".gm-f"), fd2 = fs2.querySelector('[data-gf="vorname"]').value.trim() || !fs2.querySelector('[data-gf="name"]').value.trim() ? "vorname" : "name";
           gmVorZeigen(fs2, fd2); return;
         }
