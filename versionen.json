@@ -2,6 +2,18 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.9.7.1",
+      "datum": "15.11.2026",
+      "titel": "Noch offene Wahl: Chips mit orangem Rand",
+      "arten": [
+        "Layout"
+      ],
+      "punkte": [
+        "Wo noch etwas gewählt werden muss, haben die Chips einen orangen Rand, wie früher die orangen Auswahlfelder. Ist gewählt, wird der Chip grün und der orange Rand verschwindet.",
+        "Die orange Kugel bei «Wer kommt mit?» und bei «Wer gehört zusammen?» fällt weg."
+      ]
+    },
+    {
       "v": "3.9.7.0",
       "datum": "15.11.2026",
       "titel": "Eigener Bereich «Wer gehört zusammen?» unter der Liste der Freunde",
