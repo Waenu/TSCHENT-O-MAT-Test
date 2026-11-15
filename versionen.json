@@ -2,6 +2,20 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.10.0.0",
+      "datum": "15.11.2026",
+      "titel": "Preis: Übersicht mit Balken, Rechnung in der Aufteilung",
+      "arten": [
+        "Funktion"
+      ],
+      "punkte": [
+        "«Details» in der Leiste zeigt pro Person oder Partei einen Balken mit dem Endpreis: Übernachtung, Reinigung und Kurtaxe in eigenen Farben.",
+        "Die ganze Rechnung steht jetzt bei der Aufteilung: jede Zeile klappt auf. Zuunterst das Total, darunter die Hinweise.",
+        "Ohne Freunde heisst der Teil «So setzt sich der Preis zusammen».",
+        "Die gespeicherte Preisberechnung (Bestätigungslink, Verwaltung) bleibt unverändert."
+      ]
+    },
+    {
       "v": "3.9.7.3",
       "datum": "15.11.2026",
       "titel": "Glossar nachgeführt",
