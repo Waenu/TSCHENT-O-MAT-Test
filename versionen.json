@@ -2,6 +2,20 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.9.4.0",
+      "datum": "15.11.2026",
+      "titel": "Eigene Familie als Chips",
+      "arten": [
+        "Funktion"
+      ],
+      "punkte": [
+        "«Wer von der Familie kommt?» hat nur noch zwei Einträge: «Ich und meine Familie» und «Meine Familie und Geschwister».",
+        "Bei «Ich und meine Familie» tippst du an, wer mitkommt. Du selbst bist immer dabei, sonst ist am Anfang niemand angetippt.",
+        "Darunter «Wer schläft im Kinderbettchen?» mit den angetippten Enkeln, höchstens zwei.",
+        "Preis und Rechnung bleiben gleich wie mit der bisherigen Liste."
+      ]
+    },
+    {
       "v": "3.9.3.8",
       "datum": "14.11.2026",
       "titel": "«Storniert» statt «abgesagt»",
