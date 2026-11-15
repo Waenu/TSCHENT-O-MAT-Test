@@ -2,6 +2,17 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.10.2.1",
+      "datum": "15.11.2026",
+      "titel": "Aufteilung: Pfeil rechts und grün",
+      "arten": [
+        "Layout"
+      ],
+      "punkte": [
+        "Die Zeilen der Aufteilung haben den Pfeil jetzt rechts und grün (▾ zu, ▴ offen), wie überall in der App."
+      ]
+    },
+    {
       "v": "3.10.2.0",
       "datum": "15.11.2026",
       "titel": "Fragen Schritt für Schritt",
