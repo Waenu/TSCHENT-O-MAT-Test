@@ -2,6 +2,17 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.10.2.2",
+      "datum": "15.11.2026",
+      "titel": "Parteien mit Anfangsbuchstaben des Namens",
+      "arten": [
+        "Layout"
+      ],
+      "punkte": [
+        "Bei «Wer gehört zusammen?», in der Übersicht der Parteien und bei «Wer übernimmt die Kosten …» stehen die Freunde mit Vorname und Anfangsbuchstaben des Namens, zum Beispiel «Nadine M.»."
+      ]
+    },
+    {
       "v": "3.10.2.1",
       "datum": "15.11.2026",
       "titel": "Aufteilung: Pfeil rechts und grün",
