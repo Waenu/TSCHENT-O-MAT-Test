@@ -2,6 +2,17 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.9.7.2",
+      "datum": "15.11.2026",
+      "titel": "Allein auch bei «Meine Familie und Geschwister»",
+      "arten": [
+        "Fehler"
+      ],
+      "punkte": [
+        "Ist bei «Meine Familie und Geschwister» nur «Ich» angetippt, gilt das jetzt als allein, gleich wie «Nur ich». Vorher blieb das Feld orange und die Leiste verlangte die Anzahl Personen."
+      ]
+    },
+    {
       "v": "3.9.7.1",
       "datum": "15.11.2026",
       "titel": "Noch offene Wahl: Chips mit orangem Rand",

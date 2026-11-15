@@ -1550,7 +1550,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.9.7.1";
+let VERSION = "3.9.7.2";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -1990,7 +1990,7 @@ function mfgZeigen() {
   const chip = (attr, an, html, aus) => '<button type="button" class="zchip" ' + attr + ' aria-pressed="' + (an ? "true" : "false") + '"' + (aus ? " disabled" : "") + ">" + html + "</button>";
   const reihe = (h) => '<div class="zchips mfg-z">' + (h === eig ? chip('data-ich="1"', ichDa(), 'Ich<small>(' + esc(ABSENDER) + ")</small>", false) : "") + h.m.filter((x) => x !== ABSENDER).map((x) => chip('data-mfg="' + esc(x) + '"', sel.indexOf(x) >= 0, esc(x) + (kk.indexOf(x) >= 0 ? "<small>🛏️ Kinderbettchen</small>" : ""), voll && sel.indexOf(x) < 0 && (h.e.indexOf(x) < 0 || kk.length >= 2))).join("") + "</div>";
   const betten = (ichDa() ? 1 : 0) + sel.length - kk.length, fehlt = famErwFehlt();
-  let h = '<div class="field zrech ' + (sel.length && !fehlt ? "done" : "missing") + '"><label>👨‍👩‍👧‍👦 Wer kommt mit?</label>' + reihe(eig) + hs.filter((x) => x !== eig).map(reihe).join("") +
+  let h = '<div class="field zrech ' + ((sel.length || ichDa()) && !fehlt ? "done" : "missing") + '"><label>👨‍👩‍👧‍👦 Wer kommt mit?</label>' + reihe(eig) + hs.filter((x) => x !== eig).map(reihe).join("") +
     '<p class="mfg-bett">🛏️ ' + betten + " von " + P.maxPersonen + " Betten belegt" + (kk.length ? ", dazu " + kk.length + " Kinderbettchen" : "") + "</p>" +
     (erwWarnZeigen() ? '<p class="hint" style="color:var(--error-line);font-weight:600">Mindestens eine erwachsene Person muss mitkommen.</p>' : "") +
     '<p class="hint">Bitte antippen, höchstens ' + MFG_MAX() + ' Personen mit Bett' + (ichDa() ? " ausser dir" : "") + ' (' + P.maxPersonen + " Betten). Kommst du selbst nicht mit, tippe «Ich» ab. Kleinkinder im Kinderbettchen kommen dazu, bis zwei (es hat zwei Kinderbettchen). Sind alle Betten belegt, kommt ein Enkelkind beim Antippen gleich ins Kinderbettchen. Den Preis pro Nacht zahlt ihr wie immer gemeinsam, die App teilt ihn unter euren Familien auf.</p></div>";
@@ -4018,7 +4018,7 @@ function famAlle() {   // ganze Familie als Haushalte [{m: [Kind, Partner, Enkel
   else { try { const a = JSON.parse(localStorage.getItem("tm2_famAlle") || "[]"); roh = Array.isArray(a) ? a : []; } catch (e) { roh = []; } }
   return roh.filter((h) => h && h.k).map((h) => { const e = (Array.isArray(h.e) ? h.e : []).map(String).filter(Boolean).slice(0, 6); return { m: [String(h.k)].concat(h.p ? [String(h.p)] : [], e), e }; });
 }
-function mfgAktiv() { const fw = famWahl(); return !!(fw && fw.l === MFG && ABSENDER && famAlle().some((h) => h.m.indexOf(ABSENDER) >= 0)); }   // «Meine Familie und Geschwister» mit Namen zum Antippen
+function mfgAktiv() { return !!(famOpts() && S.werArt === MFG && ABSENDER && famAlle().some((h) => h.m.indexOf(ABSENDER) >= 0)); }   // seit 3.9.7.2 über S.werArt: bei nur «Ich» gilt intern «Nur ich»   // «Meine Familie und Geschwister» mit Namen zum Antippen
 const ichDa = () => S.ichMit !== false;   // die buchende Person kommt mit (abwählbar seit 3.9.5.0)
 const MFG_MAX = () => P.maxPersonen - (ichDa() ? 1 : 0);   // ausser «Ich» höchstens so viele (Betten); kommt «Ich» nicht mit, ein Bett mehr
 let ERW_WARN = false;   // rote Meldung erst, wenn nur Kinder angetippt sind und weitergemacht wird (Wänu 15.11.2026)
@@ -4039,7 +4039,7 @@ function famLabel() {   // Text für WhatsApp und Übersicht: «Ich, Rahel & Mal
   return und(sel) + " (ich komme nicht mit)";
 }
 function famParteien() {   // Parteien der Familie aus den Haushalten (seit 3.9.0.0); null ohne Auswahl
-  if (!mfgAktiv()) return null;
+  if (!mfgAktiv() || !(S.mfg || []).length) return null;   // nur «Ich»: keine Parteien der Familie (seit 3.9.7.2)
   const sel = S.mfg || [], kk = S.mfgKK || [], hs = famAlle(), eig = hs.find((h) => h.m.indexOf(ABSENDER) >= 0);
   const out = [{ namen: (ichDa() ? [ABSENDER] : []).concat(eig.m.filter((x) => x !== ABSENDER && sel.indexOf(x) >= 0)), h: eig, eigen: true }];
   if (!out[0].namen.length) out.length = 0;   // eigener Haushalt kommt nicht mit (seit 3.9.5.0)
@@ -4350,6 +4350,8 @@ function mfgSync() {   // Familie aus der Auswahl in S.fam/S.kk übertragen (sei
     S.mfg = (S.mfg || []).filter((x) => alle.indexOf(x) >= 0);
     S.mfgKK = (S.mfgKK || []).filter((x) => S.mfg.indexOf(x) >= 0 && enk.indexOf(x) >= 0).slice(0, 2);
     while (S.mfg.length - S.mfgKK.length > MFG_MAX()) { const i = S.mfg.map((x) => S.mfgKK.indexOf(x) < 0).lastIndexOf(true); S.mfg.splice(i, 1); }   // Betten: Kleinkinder ohne Bett zählen nicht (seit 3.9.3.2)
+    if (ichDa() && !S.mfg.length) { S.werFam = "Nur ich"; S.wer = "Nur ich"; S.fam = null; S.kk = 0; return; }   // nur «Ich» angetippt: allein, wie «Nur ich» (seit 3.9.7.2, Wänu)
+    S.werFam = MFG; S.wer = MFG;
     S.fam = famErwFehlt() || !S.mfg.length ? null : (ichDa() ? 1 : 0) + S.mfg.length; S.kk = S.mfgKK.length;
   }
 }
