@@ -375,7 +375,7 @@ if (TEST_MODUS) {
   small.ktk { display: block; color: var(--muted); font-size: 0.78em; font-weight: 400; margin-top: 2px; }
   tr.auf-z { cursor: pointer; } tr.auf-z .auf-pf { color: var(--muted); font-size: 0.85em; display: inline-block; margin-right: 4px; transition: transform .15s; } tr.auf-z.auf .auf-pf { transform: rotate(180deg); }
   tr.auf-d td { padding-top: 0; } tr.auf-d ul { list-style: none; margin: 0; padding: 0 0 6px 12px; border-left: 3px solid var(--line, #444); }
-  tr.auf-d li { display: flex; justify-content: space-between; gap: 10px; font-size: 0.9em; padding: 3px 0; } tr.auf-d li > span:last-child { white-space: nowrap; }
+  tr.auf-d li { display: flex; justify-content: space-between; gap: 10px; font-size: 0.9em; padding: 3px 0; } tr.auf-d li > span:last-child { white-space: nowrap; } tr.auf-d li > span:first-child { text-align: left; flex: 1; }   /* Rechnung klein darunter linksbündig (seit 3.9.5.4) */
   table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
   th, td { padding: 8px 0; border-top: 1px solid var(--line); text-align: left; }
   td:last-child, th:last-child { text-align: right; }
@@ -1537,7 +1537,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.9.5.3";
+let VERSION = "3.9.5.4";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -4474,6 +4474,10 @@ function render() {
     const nTxt = x.nights + " " + (x.nights === 1 ? "Nacht" : "Nächte");
     const famUeb = r.FZ - x.FA, famRei = zpl ? zpl.FA2 : x.FA;
     const vn = (i) => esc(zpl.l[i].vorname);
+    const proN = (b) => x.nights > 1 && b > 0 ? x.nights + " × " + chf2(b / x.nights) : "";   // Rechnung klein in der Zeile (seit 3.9.5.4)
+    const reTxt = (b) => { const RE = x.RE || P.reinigung, w = REINIG.indexOf(S.reinig) === 1 ? "Parteien" : "Personen"; if (!(b > 0) || !RE || Math.abs(b - RE) < 0.005) return "";
+      for (let q = 2; q <= 12; q++) { const pz = Math.round(b / RE * q); if (pz > 0 && Math.abs(pz / q * RE - b) < 0.005) return pz === 1 ? chf(RE) + " ÷ " + q + " " + w : pz + " von " + q + " " + w + " (" + chf(RE) + ")"; }
+      return "Anteil an " + chf(RE); };
     const anteil = (k) => zpl && zpl.zahler[k] ? zpl.zahler[k].length : 1;
     const extraL = (key) => zpl ? zpl.extra[key].map((e) => { const z = zpl.zahler[e.i].length, t = z > 1 ? " (" + (z === 2 ? "Hälfte" : "1/" + z) + ")" : "";
       return L("Für " + vn(e.i) + t, e.b, "Übernachtung " + chf2((zpl.base[e.i] - x.GS) / z) + (zpl.gs[e.i] > 0 ? ", Reinigung " + chf2(zpl.gs[e.i] / z) : "") + (zpl.kt[e.i] > 0 ? ", Kurtaxe " + chf2(zpl.kt[e.i] / z) : "")); }).join("") : "";
@@ -4481,7 +4485,7 @@ function render() {
     if (famAufB) { const sum = famAufB.reduce((a, pp) => a + pp.n, 0) || 1, pro = REINIG.indexOf(S.reinig) === 1;
       famAufB.forEach((pp, k) => { const f = 1 / famAufB.length, g = pro ? f : pp.n / sum;
         bd.push(L("Anteil am Familienpreis", famUeb * g, pro ? "1 von " + famAufB.length + " Familien" : pp.n + " von " + sum + " Personen mit Bett") + (famRei ? L("Reinigungsanteil", famRei * g) : "") + (k === 0 ? extraL("ich") : "")); }); }
-    else bd.push(L("Übernachtung (" + nTxt + ")", famUeb) + (famRei ? L("Reinigungsanteil", famRei) : "") + extraL("ich"));
+    else bd.push(L("Übernachtung (" + nTxt + ")", famUeb, proN(famUeb)) + (famRei ? L("Reinigungsanteil", famRei, reTxt(famRei)) : "") + extraL("ich"));
     if (zpl) {
       if (zpl.extra.partner.length) bd.push(extraL("partner"));
       const pers = (j) => L(vn(j) + (zpl.alt[j] < 18 ? " (" + zpl.alt[j] + ")" : ""), zpl.eigen[j], "Übernachtung " + chf2(zpl.base[j] - x.GS) + (j === zpl.zr && zpl.zi.length > 1 ? " (im selben Zimmer)" : "") + (zpl.gs[j] > 0 ? ", Reinigung " + chf2(zpl.gs[j]) : "") + (zpl.kt[j] > 0 ? ", Kurtaxe " + chf2(zpl.kt[j]) : ""));
@@ -4490,7 +4494,7 @@ function render() {
         if (zr.typ === "partei") { const fr = []; zr.erw.forEach((j) => zpl.extra["f" + j].forEach((e) => { if (zr.gl.indexOf(e.i) < 0) fr.push(e); })); const g = {}; fr.forEach((e) => { g[e.i] = (g[e.i] || 0) + e.b; });
           bd.push(zr.gl.map(pers).join("") + Object.keys(g).map((ii) => L("Anteil für " + vn(Number(ii)), g[ii])).join("")); return; }
         const i = zr.i, z = anteil(i) > 1 && zpl.minder.indexOf(i) >= 0 ? anteil(i) : 1;
-        bd.push(L("Übernachtung (" + nTxt + ")" + (i === zpl.zr && zpl.zi.length > 1 ? ", im selben Zimmer" : ""), (zpl.base[i] - x.GS) / z) + L("Reinigungsanteil", zpl.gs[i] / z) + (zpl.kt[i] > 0 ? L("Kurtaxe", zpl.kt[i] / z) : "") + extraL("f" + i));
+        bd.push(L("Übernachtung (" + nTxt + ")" + (i === zpl.zr && zpl.zi.length > 1 ? ", im selben Zimmer" : ""), (zpl.base[i] - x.GS) / z, proN((zpl.base[i] - x.GS) / z)) + L("Reinigungsanteil", zpl.gs[i] / z, reTxt(zpl.gs[i] / z)) + (zpl.kt[i] > 0 ? L("Kurtaxe", zpl.kt[i] / z, proN(zpl.kt[i] / z)) : "") + extraL("f" + i));
       });
     } else for (let g = 1; g <= x.GE; g++) bd.push("");
     const rows = who.match(/<tr>[\s\S]*?<\/tr>/g) || [];
