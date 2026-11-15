@@ -2,6 +2,19 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.10.2.0",
+      "datum": "15.11.2026",
+      "titel": "Fragen Schritt für Schritt",
+      "arten": [
+        "Funktion"
+      ],
+      "punkte": [
+        "Nach dem Termin erscheint nur die erste offene Frage. Ist sie beantwortet, kommt die nächste darunter. Beantwortete Fragen bleiben sichtbar und lassen sich ändern.",
+        "Zimmer und Reinigung erscheinen erst, wenn die Liste der Freunde vollständig ist; die Reinigung erst, wenn klar ist, wer zusammengehört und wer im selben Zimmer schläft.",
+        "Die Leiste unten nennt den nächsten Schritt, zum Beispiel «Bitte ausfüllen: Liste deiner Freunde»."
+      ]
+    },
+    {
       "v": "3.10.1.0",
       "datum": "15.11.2026",
       "titel": "Fragen erst nach dem Termin, Chips auch ohne Namen",
