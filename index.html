@@ -249,8 +249,10 @@ if (TEST_MODUS) {
   .zchips.mfg-z { flex-wrap: nowrap; gap: 5px; margin-bottom: 6px; } .mfg-z .zchip { min-height: 38px; padding: 2px 8px; font-size: .82em; border-radius: 19px; flex: 0 1 auto; min-width: 0; line-height: 1.15; }   /* eine Familie = eine Zeile (seit 3.9.3.2) */
   .mfg-bett { font-size: .9em; margin: 4px 0 2px; }
   .zchip[aria-pressed="true"] { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
-  #f-reinig select { display: none; } .rein-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 6px; } .rein-chips .zchip:disabled { opacity: .45; cursor: default; }
-  .rein-wahl { margin: 2px 0 4px; font-weight: 600; }   /* Reinigung als Chips (seit 3.9.5.5) */
+  .field.chipfeld > select { display: none; } .rein-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 6px; } .rein-chips .zchip:disabled { opacity: .45; cursor: default; }
+  .rein-wahl { margin: 2px 0 4px; font-weight: 600; }   /* Fragen als Chips (seit 3.9.5.5 Reinigung, seit 3.9.5.6 alle kurzen) */
+  .pt-info { list-style: none; margin: 4px 0 8px; padding: 0; } .pt-info li { display: flex; gap: 8px; align-items: baseline; padding: 3px 0; color: var(--muted); }
+  .pt-info .pt-nr { flex: 0 0 auto; min-width: 1.5em; height: 1.5em; line-height: 1.5em; text-align: center; border-radius: 50%; background: var(--line); color: var(--fg); font-size: .8em; font-weight: 700; }   /* Parteien: nur Information, nicht antippbar (seit 3.9.5.6) */
   .zrech.missing label::after { content: " 🟠"; }
   .gm-pt.missing label::after { content: " 🟠"; } .gm-pt.missing select { background-color: var(--missing-bg) !important; border-color: var(--missing-line) !important; }
   .gm-k .gm-gs { display: flex; gap: 18px; } .gm-k .gm-gs label { display: flex; align-items: center; gap: 6px; min-height: 40px; }
@@ -1539,7 +1541,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.9.5.5";
+let VERSION = "3.9.5.6";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -1613,6 +1615,8 @@ const REINIG = [
   "Freunde zahlen die ganze Reinigung",
   "Familie zahlt die ganze Reinigung"
 ];
+const CHIP_KURZ = (fid, o) => fid === "reinig" && REINIG.indexOf(o) >= 0 ? REINIG_KURZ[REINIG.indexOf(o)] : fid === "waesche" ? (o === W_BR ? "Persönlich bringen" : o === W_SE ? "Per Post" : o) : o.indexOf(": ") > 0 ? o.slice(0, o.indexOf(": ")) : o;   // Text auf dem Chip (seit 3.9.5.6)
+const CHIP_WAHL = (fid, o) => { if (!o || fid === "waesche") return ""; const i = o.indexOf(": "); if (i < 0) return ""; const w = o.slice(i + 2); return w.charAt(0).toUpperCase() + w.slice(1) + "."; };   // Bedeutung der Wahl klein darunter
 const REINIG_KURZ = ["Nach Personen", "Nach Parteien", "Freunde zahlen alles", "Familie zahlt alles"];   // Chips (seit 3.9.5.5); gespeichert wird weiter der lange Text aus REINIG
 const nz = (v) => (typeof v === "number" && isFinite(v)) ? v : 0;
 const isYN = (v) => v === "Ja" || v === "Nein";
@@ -1935,7 +1939,7 @@ function gmRechZeigen(d) {
   const koepfe = [...new Set(zi.filter((i) => alterAm(l[i].geb, ARR) >= 18).map((i) => parteiKopf(i, l, zi)))];
   const glieder = (h) => zi.filter((j) => parteiKopf(j, l, zi) === h || (alterAm(l[j].geb, ARR) < 18 && parteiKopf(j, l, zi) === j && (zA[j] || []).length && zA[j].every((k) => /^f\d+$/.test(k) && parteiKopf(Number(k.slice(1)), l, zi) === h))).map((j) => esc(l[j].vorname));
   const fpp = famParteien(), famT = fpp ? fpp.map((pp, k) => (k === 0 ? famParteiText(pp, 0, false).replace(/^Du/, "Ich (" + esc(ABSENDER) + ")") : famParteiText(pp, k, false)) + (k === 0 ? famK.map((v) => ", " + esc(v)).join("") : "")) : [fam];   // Familie mit Parteien (seit 3.9.0.0)
-  ps.innerHTML = '<p><b>🤝 Parteien</b></p><div class="zchips gm-pt-chips">' + famT.map((t, k) => '<span class="zchip" aria-pressed="false">' + (k + 1) + " · " + t + "</span>").join("") + koepfe.map((h, k) => '<span class="zchip" aria-pressed="false">' + (k + 1 + famT.length) + " · " + glieder(h).join(", ") + "</span>").join("") + "</div>";
+  ps.innerHTML = '<p><b>🤝 Parteien</b></p><ol class="pt-info">' + famT.map((t, k) => '<li><span class="pt-nr">' + (k + 1) + "</span><span>" + t + "</span></li>").join("") + koepfe.map((h, k) => '<li><span class="pt-nr">' + (k + 1 + famT.length) + "</span><span>" + glieder(h).join(", ") + "</span></li>").join("") + "</ol>";   // nur Information, keine Chips (seit 3.9.5.6)
 }
 function gmVorZeigen(fs, feld) {   // Vorschläge aus dem Adressbuch: erst ab dem ersten Buchstaben, nur Treffer mit diesem Anfang (seit 3.9.1.1; vorher zeigte ein leeres Feld alle)
   const d = fs.querySelector(".gm-vor"), wert = (n) => fs.querySelector('[data-gf="' + n + '"]').value.trim().toLowerCase();
@@ -1975,7 +1979,7 @@ function mfgZeigen() {
   const enk = [].concat(...hs.map((x) => x.e)).filter((x) => sel.indexOf(x) >= 0);
   if (enk.length) h += '<div class="field zrech done"><label>👶 Wer schläft im Kinderbettchen?</label><div class="zchips">' + enk.map((x) => chip('data-mkk="' + esc(x) + '"', kk.indexOf(x) >= 0, esc(x), kk.indexOf(x) < 0 ? kk.length >= 2 : voll)).join("") + '</div><p class="hint">Kinder bis etwa 2½ Jahren, höchstens zwei. Sie belegen kein Bett und zählen bei der Reinigung nicht mit, darum hat dann jemand mehr Platz. Ganz Kleine, die bei euch im Bett schlafen, kommen einfach mit, du musst sie oben nicht antippen.</p></div>';
   const fp = famParteien();
-  if (fp && fp.length > 1) h += '<div class="field zrech done"><label>🤝 Parteien der Familie</label><div class="zchips">' + fp.map((pp, i) => '<span class="zchip" aria-pressed="false">' + (i + 1) + " · " + (i === 0 ? famParteiText(pp, 0, false).replace(/^Du/, "Ich (" + esc(ABSENDER) + ")") : famParteiText(pp, i, false)) + "</span>").join("") + "</div></div>";
+  if (fp && fp.length > 1) h += '<div class="field zrech done"><label>🤝 Parteien der Familie</label><ol class="pt-info">' + fp.map((pp, i) => '<li><span class="pt-nr">' + (i + 1) + "</span><span>" + (i === 0 ? famParteiText(pp, 0, false).replace(/^Du/, "Ich (" + esc(ABSENDER) + ")") : famParteiText(pp, i, false)) + "</span></li>").join("") + "</ol></div>";
   mb.innerHTML = h;
 }
 function zahlUiZeigen(d) {   // Chips: wer im selben Zimmer schläft, wer die Kosten für Freunde unter 18 übernimmt (seit 3.7.0.0)
@@ -2137,11 +2141,11 @@ function build() {
       if (f.id === "art") renderKalender();   // Hinweise unter dem Kalender (verbindlich oder mit Vorbehalt) folgen der Wahl
     });
     wrap.append(lab, sel, hint);
-    if (f.id === "reinig") {   // Chips statt Auswahlliste (Wänu 15.11.2026)
-      const ch = document.createElement("div"); ch.className = "rein-chips"; ch.id = "reinChips";
-      const wl = document.createElement("p"); wl.className = "hint rein-wahl"; wl.id = "reinWahl";
+    {   // Chips statt Auswahlliste, wenn die Möglichkeiten kurz und wenige sind (Wänu 15.11.2026: Reinigung 3.9.5.5, alle 3.9.5.6)
+      const ch = document.createElement("div"); ch.className = "rein-chips"; ch.id = "chips-" + f.id; ch.hidden = true;
+      const wl = document.createElement("p"); wl.className = "hint rein-wahl"; wl.id = "wahl-" + f.id; wl.hidden = true;
       sel.after(ch, wl);
-      ch.addEventListener("click", (e) => { const b = e.target.closest("[data-rein]"); if (!b || b.disabled) return; S.reinig = REINIG[Number(b.dataset.rein)]; normalize(); render(); });
+      ch.addEventListener("click", (e) => { const b = e.target.closest("[data-cv]"); if (!b || b.disabled) return; sel.value = b.dataset.cv; sel.dispatchEvent(new Event("change")); });   // gleicher Weg wie die Auswahlliste
     }
     form.appendChild(wrap);
     if (f.id === "wer") {   // ganze Familie zum Antippen bei «Meine Familie und Geschwister» (seit 3.9.0.0)
@@ -4371,11 +4375,16 @@ function render() {
     sel.classList.toggle("done", chosen && !sperr);
     sel.classList.toggle("missing", !chosen && !sperr);
     sel.classList.toggle("locked", sperr);
-    if (f.id === "reinig") {   // Chips spiegeln die Auswahl (seit 3.9.5.5)
-      const ch = document.getElementById("reinChips"), wl = document.getElementById("reinWahl"), sig2 = list.join("|") + "|" + cur + "|" + sperr;
-      if (ch.dataset.sig !== sig2) { ch.dataset.sig = sig2; ch.innerHTML = list.map((o) => { const i = REINIG.indexOf(o); return '<button type="button" class="zchip" data-rein="' + i + '" aria-pressed="' + (o === cur ? "true" : "false") + '"' + (sperr ? " disabled" : "") + ">" + esc(REINIG_KURZ[i] || o) + "</button>"; }).join(""); }
-      const ix = cur.indexOf(": "), w = cur ? (ix >= 0 ? cur.slice(ix + 2) : cur) : "";
-      wl.textContent = w && !sperr ? w.charAt(0).toUpperCase() + w.slice(1) + "." : ""; wl.hidden = !wl.textContent;
+    {   // Chips spiegeln die Auswahl: höchstens 8 Möglichkeiten mit kurzem Text (seit 3.9.5.6)
+      const ch = document.getElementById("chips-" + f.id), wl = document.getElementById("wahl-" + f.id);
+      const chipsAn = list.length > 0 && list.length <= 8 && list.every((o) => CHIP_KURZ(f.id, o).length <= 34) && list.reduce((a, o) => a + CHIP_KURZ(f.id, o).length, 0) <= 100;   // lange Listen (z. B. «Wer von der Familie kommt?» ohne Namen) bleiben Auswahllisten
+      wrap.classList.toggle("chipfeld", chipsAn); ch.hidden = !chipsAn;
+      const sig2 = chipsAn + "|" + list.join("|") + "|" + cur + "|" + sperr;
+      if (!chipsAn) { ch.innerHTML = ""; ch.dataset.sig = ""; wl.hidden = true; }
+      else {
+      if (ch.dataset.sig !== sig2) { ch.dataset.sig = sig2; ch.innerHTML = list.map((o) => '<button type="button" class="zchip" data-cv="' + esc(o) + '" aria-pressed="' + (o === cur ? "true" : "false") + '"' + (sperr ? " disabled" : "") + ">" + esc(CHIP_KURZ(f.id, o)) + "</button>").join(""); }
+      wl.textContent = sperr ? "" : CHIP_WAHL(f.id, cur); wl.hidden = !wl.textContent;
+      }
     }
     const hEl = document.getElementById("h-" + f.id);
     if (f.id === "selbst") { hEl.textContent = ""; const r = document.createElement("span"); r.className = "rot"; r.textContent = "Selbst reinigen geht nur ohne Freunde (für euch Kinder mit Partner/in und Kindern). Mit Freunden reinigen immer die Eltern."; hEl.appendChild(r); hEl.appendChild(document.createTextNode(" " + f.hint(d))); }
