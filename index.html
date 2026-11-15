@@ -249,6 +249,8 @@ if (TEST_MODUS) {
   .zchips.mfg-z { flex-wrap: nowrap; gap: 5px; margin-bottom: 6px; } .mfg-z .zchip { min-height: 38px; padding: 2px 8px; font-size: .82em; border-radius: 19px; flex: 0 1 auto; min-width: 0; line-height: 1.15; }   /* eine Familie = eine Zeile (seit 3.9.3.2) */
   .mfg-bett { font-size: .9em; margin: 4px 0 2px; }
   .zchip[aria-pressed="true"] { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
+  #f-reinig select { display: none; } .rein-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 6px; } .rein-chips .zchip:disabled { opacity: .45; cursor: default; }
+  .rein-wahl { margin: 2px 0 4px; font-weight: 600; }   /* Reinigung als Chips (seit 3.9.5.5) */
   .zrech.missing label::after { content: " 🟠"; }
   .gm-pt.missing label::after { content: " 🟠"; } .gm-pt.missing select { background-color: var(--missing-bg) !important; border-color: var(--missing-line) !important; }
   .gm-k .gm-gs { display: flex; gap: 18px; } .gm-k .gm-gs label { display: flex; align-items: center; gap: 6px; min-height: 40px; }
@@ -1537,7 +1539,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.9.5.4";
+let VERSION = "3.9.5.5";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -1611,6 +1613,7 @@ const REINIG = [
   "Freunde zahlen die ganze Reinigung",
   "Familie zahlt die ganze Reinigung"
 ];
+const REINIG_KURZ = ["Nach Personen", "Nach Parteien", "Freunde zahlen alles", "Familie zahlt alles"];   // Chips (seit 3.9.5.5); gespeichert wird weiter der lange Text aus REINIG
 const nz = (v) => (typeof v === "number" && isFinite(v)) ? v : 0;
 const isYN = (v) => v === "Ja" || v === "Nein";
 
@@ -2134,6 +2137,12 @@ function build() {
       if (f.id === "art") renderKalender();   // Hinweise unter dem Kalender (verbindlich oder mit Vorbehalt) folgen der Wahl
     });
     wrap.append(lab, sel, hint);
+    if (f.id === "reinig") {   // Chips statt Auswahlliste (Wänu 15.11.2026)
+      const ch = document.createElement("div"); ch.className = "rein-chips"; ch.id = "reinChips";
+      const wl = document.createElement("p"); wl.className = "hint rein-wahl"; wl.id = "reinWahl";
+      sel.after(ch, wl);
+      ch.addEventListener("click", (e) => { const b = e.target.closest("[data-rein]"); if (!b || b.disabled) return; S.reinig = REINIG[Number(b.dataset.rein)]; normalize(); render(); });
+    }
     form.appendChild(wrap);
     if (f.id === "wer") {   // ganze Familie zum Antippen bei «Meine Familie und Geschwister» (seit 3.9.0.0)
       const mb = document.createElement("div"); mb.id = "mfgRech"; mb.hidden = true; form.appendChild(mb);
@@ -4362,6 +4371,12 @@ function render() {
     sel.classList.toggle("done", chosen && !sperr);
     sel.classList.toggle("missing", !chosen && !sperr);
     sel.classList.toggle("locked", sperr);
+    if (f.id === "reinig") {   // Chips spiegeln die Auswahl (seit 3.9.5.5)
+      const ch = document.getElementById("reinChips"), wl = document.getElementById("reinWahl"), sig2 = list.join("|") + "|" + cur + "|" + sperr;
+      if (ch.dataset.sig !== sig2) { ch.dataset.sig = sig2; ch.innerHTML = list.map((o) => { const i = REINIG.indexOf(o); return '<button type="button" class="zchip" data-rein="' + i + '" aria-pressed="' + (o === cur ? "true" : "false") + '"' + (sperr ? " disabled" : "") + ">" + esc(REINIG_KURZ[i] || o) + "</button>"; }).join(""); }
+      const ix = cur.indexOf(": "), w = cur ? (ix >= 0 ? cur.slice(ix + 2) : cur) : "";
+      wl.textContent = w && !sperr ? w.charAt(0).toUpperCase() + w.slice(1) + "." : ""; wl.hidden = !wl.textContent;
+    }
     const hEl = document.getElementById("h-" + f.id);
     if (f.id === "selbst") { hEl.textContent = ""; const r = document.createElement("span"); r.className = "rot"; r.textContent = "Selbst reinigen geht nur ohne Freunde (für euch Kinder mit Partner/in und Kindern). Mit Freunden reinigen immer die Eltern."; hEl.appendChild(r); hEl.appendChild(document.createTextNode(" " + f.hint(d))); }
     else if (vorab) hEl.textContent = "Wähle zuerst Anreise und Abreise im Kalender. Dann siehst du, was möglich ist.";

@@ -103,6 +103,7 @@ Bedienkonzept Wänu (14.11.2026, ersetzt wo abweichend die Punkte oben; erst nac
 - 3.9.5.2 (Wänu: orange): Leiste unten bei nur Kindern «Bitte wählen: Eine erwachsene Person, die mitkommt» (vor der Prüfung «Wer von der Familie kommt» in der Pflichtliste); niemand angetippt bleibt «Bitte wählen: Wer von der Familie kommt».
 - 3.9.5.3 (Wänu): Felder «zimmer» und «reinig» gesperrt (`locked`), solange `listeModus()` und die Liste nicht `listeVoll(listeN(d))` ist; Hinweis «Fülle zuerst die Liste deiner Freunde aus …». Antworten bleiben stehen.
 - 3.9.5.4 (Wänu: keine dritte Klappebene): Aufschlüsselung mit Rechnung klein (`L(a, b, k)`): `proN(b)` «Nächte × Betrag» für Übernachtung und Kurtaxe, `reTxt(b)` Reinigung als Bruch von `x.RE` («CHF 240.– ÷ 2 Parteien», «2 von 5 Personen (CHF 240.–)»). CSS: erste Spalte der `tr.auf-d li` linksbündig.
+- 3.9.5.5 (Wänu): Feld «reinig» als Chips (`#reinChips`, `REINIG_KURZ`, `data-rein` = Index in `REINIG`), Select bleibt versteckt (`#f-reinig select {display:none}`), `S.reinig` weiter der lange Text; `#reinWahl` zeigt den Teil nach dem Doppelpunkt der Wahl. Gesperrt (`sperr`) = Chips disabled.
 
 ## Offen: Airbnb-Belegung ins App-Repo umziehen (Wänu «ja», 13.11.2026, nächste Woche)
 - Heute: Workflow `belegung.yml` + `belegung.py` im alten Repo `Waenu/Tschentomat` (Secret `AIRBNB_ICAL`) schreibt `belegt.json`; die App liest `/Tschentomat/belegt.json`.
