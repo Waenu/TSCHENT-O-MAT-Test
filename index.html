@@ -1556,7 +1556,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.10.2.4";
+let VERSION = "3.10.2.5";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -4572,7 +4572,9 @@ function render() {
       zRows.forEach((zr) => {
         if (zr.typ === "leer") { bd.push(""); sg.push({ tot: 0, r: 0, k: 0 }); return; }
         if (zr.typ === "partei") { const fr = []; zr.erw.forEach((j) => zpl.extra["f" + j].forEach((e) => { if (zr.gl.indexOf(e.i) < 0) fr.push(e); })); const g = {}; fr.forEach((e) => { g[e.i] = (g[e.i] || 0) + e.b; });
-          bd.push(zr.gl.map(pers).join("") + Object.keys(g).map((ii) => L("Anteil für " + vn(Number(ii)), g[ii])).join(""));
+          const cn = {}; fr.forEach((e) => { cn[e.i] = (cn[e.i] || 0) + 1; });   // Anteil wie bei «Für Maya (1/4)», z. B. «Für Maya (2/4)» (seit 3.10.2.5)
+          bd.push(zr.gl.map(pers).join("") + Object.keys(g).map((ii) => { const i = Number(ii), z = zc(i), c = cn[ii], q = c / z, t = c >= z ? "" : " (" + (c * 2 === z ? (z === 2 ? "Hälfte" : c + "/" + z) : c + "/" + z) + ")";
+            return L("Für " + vn(i) + t, g[ii], D("su") + "Übernachtung " + chf2((zpl.base[i] - x.GS) * q) + (zpl.gs[i] > 0 ? ", " + D("sr") + "Reinigung " + chf2(zpl.gs[i] * q) : "") + (zpl.kt[i] > 0 ? ", " + D("sk") + "Kurtaxe " + chf2(zpl.kt[i] * q) : "")); }).join(""));
           sg.push(zr.erw.reduce((a, j) => ({ tot: a.tot + zpl.zahlt["f" + j], r: a.r + zpl.gs[j] + exR("f" + j), k: a.k + zpl.kt[j] + exK("f" + j) }), { tot: 0, r: 0, k: 0 })); return; }
         const i = zr.i, z = anteil(i) > 1 && zpl.minder.indexOf(i) >= 0 ? anteil(i) : 1;
         bd.push(L("Übernachtung (" + nTxt + ")" + (i === zpl.zr && zpl.zi.length > 1 ? ", im selben Zimmer" : ""), (zpl.base[i] - x.GS) / z, proN((zpl.base[i] - x.GS) / z), "su") + L("Reinigungsanteil", zpl.gs[i] / z, reTxt(zpl.gs[i] / z), "sr") + (zpl.kt[i] > 0 ? L("Kurtaxe", zpl.kt[i] / z, proN(zpl.kt[i] / z), "sk") : "") + extraL("f" + i));
