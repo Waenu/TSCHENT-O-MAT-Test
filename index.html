@@ -949,8 +949,10 @@ if (TEST_MODUS) {
   #bestKasten .vkd-t { flex: 1; min-width: 0; display: block; }
   #bestKasten .vk-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
   #bestKasten .vk-name { font-weight: 700; font-size: 1.05em; }
-  #bestKasten .vk-kz > .vk-top > .vk-name { cursor: pointer; display: inline-flex; align-items: center; gap: 6px; min-height: 40px; }
-  #bestKasten .vk-kz .vk-pf { display: inline-block; width: 1em; color: var(--accent); }
+  #bestKasten .vk-kz > .vk-top > .vk-name { cursor: pointer; display: flex; flex: 1 1 100%; align-items: center; gap: 6px; min-height: 40px; }
+  #bestKasten .vk-kz .vk-pf { margin-left: auto; padding-left: 10px; font-weight: 700; color: var(--accent); }
+  #bestKasten .vk-kz:not(.vk-zu) .vk-pf { color: inherit; }
+  #bestKasten .vk.vk-zu { cursor: pointer; }
   #bestKasten .vk-kz .vk-name .alarm-n { margin-left: 4px; }
   #bestKasten .vk.vk-zu > :not(.vk-top) { display: none; }   /* eingeklappte Buchung: nur Name, Zahl und Datum (seit 3.9.6.0) */
   #bestKasten .vk-datum { font: inherit; font-size: .9em; color: var(--accent); background: transparent; border: 0; padding: 6px 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; text-align: right; }
@@ -1546,7 +1548,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.9.6.0";
+let VERSION = "3.9.6.1";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -6174,7 +6176,7 @@ function vkKlappen(l) {
     let h = c.h.replace('<div class="vk', '<div data-vkk="' + esc(c.k) + '" class="vk vk-kz' + (auf ? "" : " vk-zu"));
     const a = h.indexOf('<span class="vk-name">'); if (a < 0) return h;
     const b = h.indexOf("</span>", a);
-    return h.slice(0, a) + '<span class="vk-name" role="button" tabindex="0" aria-expanded="' + (auf ? "true" : "false") + '"><span class="vk-pf" aria-hidden="true">' + (auf ? "▾" : "▸") + "</span>" + h.slice(a + 22, b) + marke + h.slice(b);
+    return h.slice(0, a) + '<span class="vk-name" role="button" tabindex="0" aria-expanded="' + (auf ? "true" : "false") + '">' + h.slice(a + 22, b) + marke + '<span class="vk-pf" aria-hidden="true">' + (auf ? "▴" : "▾") + "</span>" + h.slice(b);
   }).join("");
 }
 function persListe() { return KINDER_ABS.map(persBlock).join("") + '<div class="ps-abst"></div>' + PARTNER_ABS.map(persBlock).join(""); }
@@ -6941,6 +6943,8 @@ document.getElementById("bestKasten").addEventListener("click", async (e) => {
     c.classList.add("spring"); setTimeout(() => c.classList.remove("spring"), 3500);
     return;
   }
+  { const c = e.target.closest(".vk-kz"), vkn = c && (c.classList.contains("vk-zu") ? c : e.target.closest(".vk-kz > .vk-top > .vk-name"));   // eingeklappt: Tipp irgendwo auf die Karte klappt auf; offen: Tipp auf die Kopfzeile klappt zu (seit 3.9.6.1)
+    if (vkn) { const auf = c.classList.toggle("vk-zu") === false, nm = c.querySelector(".vk-top > .vk-name"); VK_KL.set(c.getAttribute("data-vkk"), auf); nm.setAttribute("aria-expanded", auf ? "true" : "false"); nm.querySelector(".vk-pf").textContent = auf ? "▴" : "▾"; return; } }
   const zk = e.target.closest("[data-zk]");
   if (zk) {
     const yV = window.scrollY, papiV = !!(TOKEN && !ABSENDER);
@@ -6956,7 +6960,6 @@ document.getElementById("bestKasten").addEventListener("click", async (e) => {
   if (si) { ztSetzen(si.getAttribute("data-stinfo"), "stornoInfo", true); return; }
   const wi = e.target.closest("[data-wainfo]");
   if (wi) { waescheInfoVermerken(wi.getAttribute("data-wainfo")); return; }
-  const vkn = e.target.closest(".vk-kz .vk-name"); if (vkn) { const c = vkn.closest(".vk-kz"), auf = c.classList.toggle("vk-zu") === false; VK_KL.set(c.getAttribute("data-vkk"), auf); vkn.setAttribute("aria-expanded", auf ? "true" : "false"); vkn.querySelector(".vk-pf").textContent = auf ? "▾" : "▸"; return; }
   const vks = e.target.closest(".vk-sec[data-vksec]"); if (vks) { vkUmschalten(vks); return; }
   const ei = e.target.closest("[data-endinfo]");
   if (ei) { endeInfoVermerken(ei.getAttribute("data-endinfo")); return; }

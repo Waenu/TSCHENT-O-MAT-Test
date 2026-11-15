@@ -108,6 +108,7 @@ Bedienkonzept Wänu (14.11.2026, ersetzt wo abweichend die Punkte oben; erst nac
 - 3.9.5.7 (Wänu «baue»): «Gehört zur Partei von» als Chips (`.gm-pt-c`, `data-ptv` = -1 oder Zeile), Select `data-gf="zu"` versteckt, Klick setzt den Wert und löst `change` (bubbles) aus → `gmRechLesen`.
 - 3.9.5.8 (Wänu): Eingabefelder der Liste der Freunde (`.gm-k input[type=text]`) 48 px hoch wie 📅 und Chips.
 - 3.9.6.0 (Wänu: «die aktuelle Anreise zuoberst»): Verwaltung, `persBlock` → `vkKlappen(l)`: ab 2 Karten pro Person (Anfragen und kommende nach Anreise sortiert, dann Endreinigung, Stornos) jede Karte einklappbar (`.vk-kz`, `.vk-zu` zeigt nur `.vk-top`; Tipp auf `.vk-name` mit ▸/▾ und Zahl `alarm-n`). Offen: erste Karte, Anfragen, rote Karten; Zustand bis zum Neuladen in `VK_KL` (Schlüssel `a:`/`b:`/`s:` + bKey).
+- 3.9.6.1 (Wänu): Pfeil `.vk-pf` rechts (▾/▴ wie die Personentitel); eingeklappte Karte klappt bei jedem Tipp auf (auch Datum, Weiche vor `[data-zk]` im Klick-Lauscher), offene Karte nur über die Kopfzeile `.vk-name` zu.
 
 ## Offen: Airbnb-Belegung ins App-Repo umziehen (Wänu «ja», 13.11.2026, nächste Woche)
 - Heute: Workflow `belegung.yml` + `belegung.py` im alten Repo `Waenu/Tschentomat` (Secret `AIRBNB_ICAL`) schreibt `belegt.json`; die App liest `/Tschentomat/belegt.json`.
