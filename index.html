@@ -237,7 +237,7 @@ if (TEST_MODUS) {
   .note.h.gm-k.gm-offen { border-color: #E5534B; }   /* Liste der Freunde noch offen: roter Rahmen (seit 3.4.0.1) */
   .gm-k .gm-f { border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px 10px; margin: 8px 0; display: flex; flex-direction: column; gap: 6px; }
   .gm-k .gm-f legend { font-weight: 700; padding: 0 4px; }
-  .gm-k input[type=text] { width: 100%; box-sizing: border-box; }
+  .gm-k input[type=text] { width: 100%; box-sizing: border-box; min-height: 48px; padding: 10px 12px; font-size: 1rem; }   /* gleich hoch wie 📅 und die Chips (seit 3.9.5.8) */
   .gm-k .gm-geb { display: flex; gap: 6px; align-items: center; position: relative; }
   .gm-k .gm-geb input[type=text] { flex: 1; }
   .gm-k .gm-kal { position: absolute; right: 0; bottom: 0; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
@@ -1542,7 +1542,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.9.5.7";
+let VERSION = "3.9.5.8";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
