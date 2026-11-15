@@ -119,6 +119,7 @@ Bedienkonzept Wänu (14.11.2026, ersetzt wo abweichend die Punkte oben; erst nac
 - 3.10.2.0 (Wänu «ja»): Schritt für Schritt über `STOPP` im Render-Durchlauf der Felder: nach dem ersten sichtbaren Feld, das offen ist (nicht gewählt, nicht `locked`), bleiben die folgenden ausgeblendet; Felder mit `famAus`/`listeAus`/`ptAus` werden ausgeblendet statt grau; zusätzlich Halt bei «wer» mit `famOpts()` und (`famErwFehlt()` oder leerem `S.wer`) und bei «zimmer», solange `zimmerRow` = -2. Leiste (nur Anzeige, nicht in `check`, damit die Varianten «Mit 1 Freund mehr» weiter rechnen): «Bitte ausfüllen: Liste deiner Freunde», «Bitte wählen: Wer mit dir im selben Zimmer schläft», «Bitte wählen: Wer gehört zusammen».
 - 3.10.2.1 (Wänu): Pfeil der Aufteilung als `::after` der letzten Zelle (`tr.auf-z`), ▾ grün `--accent`, offen ▴ wie die übrigen Klappen; `.auf-pf` entfernt (ersetzt 3.9.3.1). Pfeil 1.4em breit; übrige Beträge (`.auf-tot`, Zeilen ohne Klappe, `tr.auf-d ul`) mit gleichem Abstand rechts, damit alle Beträge bündig stehen.
 - 3.10.2.2 (Wänu): `vnK(f)` = «Vorname N.» in `.gm-ptbox` (Titel und Chips), `.gm-pt-sum` und `#zahlRech` (Titel und Chips); Aufteilung, WhatsApp und Liste unverändert mit Vornamen.
+- 3.10.2.3 (Wänu): `vnK` auch in `#zimmerRech` (Chips) und im Hinweis von `#zahlRech`.
 
 ## Offen: Airbnb-Belegung ins App-Repo umziehen (Wänu «ja», 13.11.2026, nächste Woche)
 - Heute: Workflow `belegung.yml` + `belegung.py` im alten Repo `Waenu/Tschentomat` (Secret `AIRBNB_ICAL`) schreibt `belegt.json`; die App liest `/Tschentomat/belegt.json`.
