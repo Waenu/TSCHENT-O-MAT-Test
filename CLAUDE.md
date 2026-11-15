@@ -120,6 +120,7 @@ Bedienkonzept Wänu (14.11.2026, ersetzt wo abweichend die Punkte oben; erst nac
 - 3.10.2.1 (Wänu): Pfeil der Aufteilung als `::after` der letzten Zelle (`tr.auf-z`), ▾ grün `--accent`, offen ▴ wie die übrigen Klappen; `.auf-pf` entfernt (ersetzt 3.9.3.1). Pfeil 1.4em breit; übrige Beträge (`.auf-tot`, Zeilen ohne Klappe, `tr.auf-d ul`) mit gleichem Abstand rechts, damit alle Beträge bündig stehen.
 - 3.10.2.2 (Wänu): `vnK(f)` = «Vorname N.» in `.gm-ptbox` (Titel und Chips), `.gm-pt-sum` und `#zahlRech` (Titel und Chips); Aufteilung, WhatsApp und Liste unverändert mit Vornamen.
 - 3.10.2.3 (Wänu): `vnK` auch in `#zimmerRech` (Chips) und im Hinweis von `#zahlRech`.
+- 3.10.2.4 (Wänu: «Zuoberst hätte ich den Bezahler erwartet, Kinder zuletzt»): Zeilen `.gm-pt` in `.gm-ptbox` werden nach jedem Zeichnen umgehängt (Erwachsene zuerst, dann unter 18, sonst Listenreihenfolge); Zugriff pro Zeile nur über `data-pi` (nie über die Position). `glieder()` in `.gm-pt-sum` ebenso sortiert.
 
 ## Offen: Airbnb-Belegung ins App-Repo umziehen (Wänu «ja», 13.11.2026, nächste Woche)
 - Heute: Workflow `belegung.yml` + `belegung.py` im alten Repo `Waenu/Tschentomat` (Secret `AIRBNB_ICAL`) schreibt `belegt.json`; die App liest `/Tschentomat/belegt.json`.
