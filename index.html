@@ -935,6 +935,7 @@ if (TEST_MODUS) {
   #bestKasten details.pers.rot:not([open]) > summary { border-color: #C62828; }
   #bestKasten .ps-l { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.25; }
   #bestKasten .ps-b { font-weight: 400; font-size: .85rem; opacity: .85; }
+  #bestKasten .ps-sum { font-weight: 600; font-size: .85rem; margin-left: 8px; white-space: nowrap; }   /* offener Betrag hinter dem Namen (seit 3.14.1.2) */
   #bestKasten details.pers > summary .alarm-n { margin-left: 0; }
   #bestKasten .alarm-n.rot { background: #E5534B; color: #fff; }
   #bestKasten .ps-abst { height: 14px; }
@@ -1586,7 +1587,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.14.1.1";
+let VERSION = "3.14.1.2";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -6314,7 +6315,8 @@ function persBlock(name) {
   if (vorbei.length) inh += '<div class="ps-hist"><b>Frühere Aufenthalte</b>' + vorbei.map(histZeile).join("") + "</div>";
   if (!alle.length && !anf.length && !sto.length) inh = '<p class="hint">' + esc(name) + " hat noch nichts gebucht.</p>";
   const offen = PERS_STAND.get(name) === true;   // zugeklappt, bis Wänu den Titel antippt (oder ein Sprung ihn öffnet)
-  return persTitel(name, esc(name), zeile, n, rot, alle.length + anf.length > 0, offen, inh);
+  const sumOff = alle.filter((x) => x.betrag > 0 && !x.bezahlt).reduce((t, x) => t + zahlSumme(x), 0);   // alle noch nicht bezahlten Buchungen, mit Kurtaxe der Freunde (seit 3.14.1.2)
+  return persTitel(name, esc(name) + (sumOff > 0 ? '<span class="ps-sum">· ' + esc(chf(sumOff)) + " offen</span>" : ""), zeile, n, rot, alle.length + anf.length > 0, offen, inh);
 }
 function stornoText(x) { return waHoi(x.name) + "Deinen Aufenthalt haben wir storniert. Es entstehen dir keine Kosten.\n\n" + waZeit(x) + grussVon(x.name); }
 const stornoOffen = (x) => [!x.stornoInfo, !x.prov && !x.freigegeben && x.dep > heuteKey(), !!x.pimlical && !x.pimAus && x.dep >= heuteKey()].filter(Boolean).length;
