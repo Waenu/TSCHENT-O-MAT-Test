@@ -25,26 +25,9 @@
       "betrag": 1500,
       "rechnung": "Gesendet am Mo 16.11.2026, 19:45 Uhr. App-Version 3.14.1.0.\nAnreise\tMontag 7.06.2027\nAbreise\tDonnerstag 10.06.2027 (3 Nächte)\nSonderbuchung (eure Vorlage)\tnormale Preise wie bei einer gewöhnlichen Buchung, ohne Mindestnächte\nFamilie\tNur ich\nFreunde\t5\nFreund im selben Zimmer\tNein\nZimmer 1 unberührt\tNein\nReinigung nach Parteien\tjede Partei zahlt gleich viel\nBedingungen akzeptiert\tJa\nTotal\tCHF 1’578.00, davon Kurtaxe Adelboden für die Freunde CHF 78.00\n#Preisberechnung\nDu pro Nacht\tCHF 70.–\nFreund/in 1 pro Nacht\tCHF 70.–\nFreund/in 2 pro Nacht\tCHF 70.–\nFreund/in 3 pro Nacht\tCHF 70.–\nFreund/in 4 pro Nacht\tCHF 70.–\nFreund/in 5 pro Nacht\tCHF 70.–\nÜbernachtung (3 Nächte)\tCHF 1’260.–\nReinigung\tCHF 240.–\nReinigung: dein Anteil\tCHF 40.00\nReinigung: Partei Freund/in 1\tCHF 40.00\nReinigung: Partei Freund/in 2\tCHF 40.00\nReinigung: Partei Freund/in 3\tCHF 40.00\nReinigung: Partei Freund/in 4\tCHF 40.00\nReinigung: Partei Freund/in 5\tCHF 40.00\nKurtaxe Adelboden (dazu) 5 Freunde ab 16 Jahren zu CHF 5.20 pro Nacht, 3 Nächte\tCHF 78.00\nTotal mit Kurtaxe\tCHF 1’578.00\n#Aufteilung unter den Freunden\nDu zahlst\tCHF 250.00\nFreund/in 1 zahlt davon Kurtaxe CHF 15.60 (ab 16 Jahren)\tCHF 265.60\nFreund/in 2 zahlt davon Kurtaxe CHF 15.60 (ab 16 Jahren)\tCHF 265.60\nFreund/in 3 zahlt davon Kurtaxe CHF 15.60 (ab 16 Jahren)\tCHF 265.60\nFreund/in 4 zahlt davon Kurtaxe CHF 15.60 (ab 16 Jahren)\tCHF 265.60\nFreund/in 5 zahlt davon Kurtaxe CHF 15.60 (ab 16 Jahren)\tCHF 265.60\nReinigung aufgeteilt: Nach Parteien: jede Partei zahlt gleich viel.",
       "bestaetigt": "2026-11-16T19:45"
-    },
-    {
-      "name": "Manuel",
-      "arr": "2027-06-10",
-      "dep": "2027-06-13",
-      "selbst": false,
-      "pers": 1,
-      "sond": {
-        "pa": false
-      },
-      "betrag": 1500,
-      "rechnung": "Gesendet am Mo 16.11.2026, 19:50 Uhr. App-Version 3.14.1.0.\nAnreise\tDonnerstag 10.06.2027\nAbreise\tSonntag 13.06.2027 (3 Nächte)\nSonderbuchung (eure Vorlage)\tnormale Preise wie bei einer gewöhnlichen Buchung, ohne Mindestnächte\nFamilie\tNur ich\nFreunde\t5\nFreund im selben Zimmer\tNein\nZimmer 1 unberührt\tNein\nReinigung nach Parteien\tjede Partei zahlt gleich viel\nBedingungen akzeptiert\tJa\nTotal\tCHF 1’578.00, davon Kurtaxe Adelboden für die Freunde CHF 78.00\n#Preisberechnung\nDu pro Nacht\tCHF 70.–\nFreund/in 1 pro Nacht\tCHF 70.–\nFreund/in 2 pro Nacht\tCHF 70.–\nFreund/in 3 pro Nacht\tCHF 70.–\nFreund/in 4 pro Nacht\tCHF 70.–\nFreund/in 5 pro Nacht\tCHF 70.–\nÜbernachtung (3 Nächte)\tCHF 1’260.–\nReinigung\tCHF 240.–\nReinigung: dein Anteil\tCHF 40.00\nReinigung: Partei Freund/in 1\tCHF 40.00\nReinigung: Partei Freund/in 2\tCHF 40.00\nReinigung: Partei Freund/in 3\tCHF 40.00\nReinigung: Partei Freund/in 4\tCHF 40.00\nReinigung: Partei Freund/in 5\tCHF 40.00\nKurtaxe Adelboden (dazu) 5 Freunde ab 16 Jahren zu CHF 5.20 pro Nacht, 3 Nächte\tCHF 78.00\nTotal mit Kurtaxe\tCHF 1’578.00\n#Aufteilung unter den Freunden\nDu zahlst\tCHF 250.00\nFreund/in 1 zahlt davon Kurtaxe CHF 15.60 (ab 16 Jahren)\tCHF 265.60\nFreund/in 2 zahlt davon Kurtaxe CHF 15.60 (ab 16 Jahren)\tCHF 265.60\nFreund/in 3 zahlt davon Kurtaxe CHF 15.60 (ab 16 Jahren)\tCHF 265.60\nFreund/in 4 zahlt davon Kurtaxe CHF 15.60 (ab 16 Jahren)\tCHF 265.60\nFreund/in 5 zahlt davon Kurtaxe CHF 15.60 (ab 16 Jahren)\tCHF 265.60\nReinigung aufgeteilt: Nach Parteien: jede Partei zahlt gleich viel.",
-      "bestaetigt": "2026-11-16T19:50"
     }
   ],
   "logbuch": [
-    {
-      "t": "2026-11-03T14:28",
-      "text": "Entfernt: Jerome, Mi 25.11.2026 bis Sa 28.11.2026"
-    },
     {
       "t": "2026-11-03T14:29",
       "text": "Bestätigt: Jerome, Di 17.11.2026 bis Do 19.11.2026, CHF 110, Wäsche: persönlich bringen bis So 22.11.2026"
@@ -840,6 +823,10 @@
     {
       "t": "2026-11-16T19:50",
       "text": "Bestätigt: ⭐ Sonderbuchung, Manuel, Do 10.06.2027 bis So 13.06.2027, CHF 1500"
+    },
+    {
+      "t": "2026-11-16T20:01",
+      "text": "Endgültig gelöscht: Manuel, Do 10.06.2027 bis So 13.06.2027"
     }
   ],
   "reinigung": [],
