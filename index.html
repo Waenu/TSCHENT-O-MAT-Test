@@ -1587,7 +1587,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.14.1.2";
+let VERSION = "3.14.1.3";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -4223,10 +4223,10 @@ const STORNO_TAGE = 30;
 const saisonStreng = (arr, dep) => { for (let k = arr; k < dep; k = addDays(k, 1)) if (FEST_MONATE.indexOf(monatVon(k)) >= 0 || istHoch(k)) return true; return false; };   // eine Nacht im Februar oder in der Hochsaison
 function stornoStreng(d) { return !!(ARR && DEP && d && d.GE > 0 && !S.inLuecke && saisonStreng(ARR, DEP)); }   // nur mit Freunden, nur Februar und Hochsaison, nicht in einer Lücke
 const stornoBis = () => addDays(ARR, -STORNO_TAGE);
-function buchStreng(b) { return freundeVon(b) > 0 && !b.lg && !/^Lücke\t/m.test(b.rechnung || "") && saisonStreng(b.arr, b.dep); }   // bestätigte Buchung: verbindlich mit Absagefrist
+function buchStreng(b) { return !b.sond && freundeVon(b) > 0 && !b.lg && !/^Lücke\t/m.test(b.rechnung || "") && saisonStreng(b.arr, b.dep); }   // bestätigte Buchung: verbindlich mit Absagefrist
+function stornoBuch() { return ABSENDER ? BUCH.filter((b) => eigenN(b.name) && buchStreng(b) && heuteKey() <= addDays(b.arr, -STORNO_TAGE)).sort((p, q) => (p.arr < q.arr ? -1 : 1)) : []; }
 function stornoZeilen() {   // eigene bestätigte Buchungen, deren Absagefrist noch läuft (seit 2.122.2.0)
-  if (!ABSENDER) return [];
-  return BUCH.filter((b) => eigenN(b.name) && buchStreng(b) && heuteKey() <= addDays(b.arr, -STORNO_TAGE)).sort((p, q) => (p.arr < q.arr ? -1 : 1))
+  return stornoBuch()
     .map((b) => "📌 Dein Aufenthalt vom " + esc(fmtTag(b.arr)) + " bis " + esc(fmtTag(b.dep)) + " (mit Freunden): Stornierung spätestens am <b>" + esc(fmtTag(addDays(b.arr, -STORNO_TAGE))) + "</b>.");
 }
 function anfrageText(r) {
@@ -5003,7 +5003,7 @@ function aufentZeigen() {
   }
   {   // Absagefrist der eigenen verbindlichen Buchungen: auf der Startseite und im Glossar (seit 2.122.2.0)
     const z = stornoZeilen(), st = document.getElementById("aufStatus"), gp = document.getElementById("stornoPers");
-    if (z.length) { st.hidden = false; st.innerHTML += '<div class="note h storno-warn">' + z.join("<br>") + " " + symBtn("b-storno", "📅") + "</div>"; }
+    if (z.length && !meinModus()) { st.hidden = false; st.innerHTML += '<div class="note h storno-warn">' + z.join("<br>") + " " + symBtn("b-storno", "📅") + "</div>"; }   // Kinder: als Hinweis beim Aufenthalt in «Meine Verwaltung» (seit 3.14.1.3)
     if (gp) gp.innerHTML = z.length ? '<div class="note h storno-warn">' + z.join("<br>") + "</div>" : "";
   }
   {   // von den Eltern angepasster Termin (Konflikt mit Airbnb-Gast): Hinweis, bis das Kind ihn wegklickt (seit 2.122.0.0)
@@ -6652,7 +6652,8 @@ function meinVerteilen() {
     c.hidden = true;
   });
   MEIN_TEILE.li = liTeile(); const voN = (MEIN_TEILE.vo || []).filter((x) => x.el.classList.contains("steht")).length; MEIN_N.li = MEIN_TEILE.li.reduce((s, x) => s + x.o, 0) + voN;   // offene Vorlagen zählen orange (seit 3.14.0.0)
-  const ORD = ["vo", "gm", "zb", "ink", "li", "ab"];
+  MEIN_TEILE.sf = stornoBuch().map((b) => { const el = document.createElement("p"); el.className = "hint mein-teil sf-h"; el.innerHTML = "📌 Mit Freunden verbindlich: Stornierung spätestens am <b>" + esc(fmtTag(addDays(b.arr, -STORNO_TAGE))) + "</b>. " + symBtn("b-storno", "📅"); return { k: bKey(b), el: el }; });   // Stornofrist beim Aufenthalt (seit 3.14.1.3)
+  const ORD = ["vo", "gm", "zb", "ink", "li", "sf", "ab"];
   const keys = [...new Set(ORD.flatMap((t) => (MEIN_TEILE[t] || []).map((x) => x.k)))].sort((p, q) => (p.split("|")[1] < q.split("|")[1] ? -1 : 1));
   const zahl = (k) => (MEIN_TEILE.gm || []).filter((x) => x.k === k && x.el.classList.contains("gm-offen")).length + (MEIN_TEILE.zb || []).filter((x) => x.k === k).length + (MEIN_TEILE.ink || []).filter((x) => x.k === k && x.el.classList.contains("brennt")).length;
   const orz = (k) => MEIN_TEILE.li.filter((x) => x.k === k).reduce((s, x) => s + x.o, 0) + (MEIN_TEILE.vo || []).filter((x) => x.k === k && x.el.classList.contains("steht")).length;
