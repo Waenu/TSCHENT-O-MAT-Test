@@ -2,6 +2,17 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.15.0.5",
+      "datum": "16.11.2026",
+      "titel": "Profil: Hinweis zum Namen",
+      "arten": [
+        "Text"
+      ],
+      "punkte": [
+        "«Wie willst du genannt werden?»: Der Hinweis zeigt jetzt, wie man im Kopf (z. B. «Debys») und bei «Ich» und unter den Rechnungen (z. B. «Deborah») erscheint; beides passt sich beim Tippen an."
+      ]
+    },
+    {
       "v": "3.15.0.4",
       "datum": "16.11.2026",
       "titel": "Glossar: Sonderbuchungen und Mitzahlen",

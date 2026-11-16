@@ -148,6 +148,7 @@ Bedienkonzept Wänu (14.11.2026, ersetzt wo abweichend die Punkte oben; erst nac
 - 3.15.0.2 (Wänu): Glossar-Kapitel `b-sonder` «⭐ Spezialwünsche und Sonderbuchung» nach `b-sicht` (statisch, Wir-Form).
 - 3.15.0.3 (Wänu: «wieso bei gratis CHF 8»): `reinSH(s, d)` = Familien-Reinigungsanteil nach Parteien (wie `zahlPlan`, Kinder in Parteien) minus `d.FA`; `calc` addiert ihn vor den Böden zu `out.FZ` (`out.SH`, HZ/WZ unverändert, `KON` mit −SH), `zahlPlan` zieht ihn ab (`zahlt.ich = r.FZ − x.FA − SH + FA2`), `mitzahlen` skaliert mit `(T − fam + SH)/fr`. `rohListe()` (Entwurf roh, `ROH_L` für Varianten mit anderem ARR/DEP), auch in `freundParteienN`; weitere Freunde in Varianten = eigene Parteien. Aufschlüsselung Familie: Übernachtung vor dem Erlass + Zeile «🎁 Mindestpreis: erlassen» (`erlL`).
 - 3.15.0.4 (Wänu): Kapitel `b-sonder` heisst «⭐ Sonderbuchungen»; `bc-rechnen` Punkt Mindestpreis mit «Lieber mitzahlen?» (Verweis auf «🎁 Für dich gratis oder mitzahlen?»).
+- 3.15.0.5 (Wänu): Hinweis unter «Wie willst du genannt werden?»: «So erscheinst du jetzt: oben im Kopf als «`.mein-vs`», bei «Ich» … als «`.mein-vn`»» (beide live beim Tippen); vorher «Leer lassen = Name», obwohl der Kopf den Spitznamen zeigt.
 
 ## Offen: Airbnb-Belegung ins App-Repo umziehen (Wänu «ja», 13.11.2026, nächste Woche)
 - Heute: Workflow `belegung.yml` + `belegung.py` im alten Repo `Waenu/Tschentomat` (Secret `AIRBNB_ICAL`) schreibt `belegt.json`; die App liest `/Tschentomat/belegt.json`.

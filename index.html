@@ -1588,7 +1588,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.15.0.4";
+let VERSION = "3.15.0.5";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -6749,7 +6749,7 @@ document.getElementById("meinAuf").addEventListener("click", (e) => { const b = 
 function meinZeigen() {
   const k = document.getElementById("meinProfilInhalt"), m = mailLokal() || {};
   k.innerHTML = '<p class="hint">Diese Angaben bleiben nur auf deinem Handy. Nur die Mailadresse geht an die Eltern.</p>' +
-    '<label class="ink-fr">Wie willst du genannt werden?<input type="text" data-mein="ruf" maxlength="20" autocomplete="off" placeholder="' + esc(ABSENDER) + '" value="' + esc(rufGespeichert()) + '"></label><p class="hint">Steht im Kopf (<b class="mein-vs">' + esc(genitiv(rufGespeichert() || SPITZNAME[ABSENDER] || ABSENDER)) + '</b>), bei «Ich» in der Auswahl und unter deinen Rechnungen. Leer lassen = ' + esc(ABSENDER) + ".</p>" +
+    '<label class="ink-fr">Wie willst du genannt werden?<input type="text" data-mein="ruf" maxlength="20" autocomplete="off" placeholder="' + esc(ABSENDER) + '" value="' + esc(rufGespeichert()) + '"></label><p class="hint">So erscheinst du jetzt: oben im Kopf als «<b class="mein-vs">' + esc(genitiv(rufGespeichert() || SPITZNAME[ABSENDER] || ABSENDER)) + '</b>», bei «Ich» in der Auswahl und unter deinen Rechnungen als «<b class="mein-vn">' + esc(rufname()) + '</b>». Trägst du oben einen Namen ein, gilt er an allen drei Stellen.</p>' +
     '<label class="ink-fr">Mailadresse<input type="email" data-mein="mail" maxlength="80" autocomplete="email" value="' + esc(m.name === ABSENDER ? m.mail || "" : "") + '"></label>' +
     '<label class="ink-fr">TWINT-Nummer<input type="tel" data-mein="twint" maxlength="20" inputmode="tel" autocomplete="tel" placeholder="z. B. 079 123 45 67" value="' + esc(inkTwint()) + '"></label>' +
     '<label class="ink-fr">IBAN (für Überweisungen deiner Freunde)<input type="text" data-mein="iban" maxlength="42" autocomplete="off" placeholder="CH00 0000 0000 0000 0000 0" value="' + esc(inkIban()) + '"></label>' +
@@ -6768,7 +6768,7 @@ document.getElementById("btnMein").addEventListener("click", () => {
 });
 document.getElementById("meinProfil").addEventListener("change", (e) => { if (!e.target.matches("[data-ink-trink]")) return; try { localStorage.setItem("tm2_inkTrink:" + ABSENDER, e.target.checked ? "1" : "0"); } catch (er) {} INK_SIG = ""; inkZeigen(); });
 document.getElementById("meinKasten").addEventListener("input", (e) => {
-  if (!e.target.matches('[data-mein="ruf"]')) return; const v = document.querySelector("#meinKasten .mein-vs"); if (v) v.textContent = genitiv(e.target.value.trim() || SPITZNAME[ABSENDER] || ABSENDER);
+  if (!e.target.matches('[data-mein="ruf"]')) return; const v = document.querySelector("#meinKasten .mein-vs"); if (v) v.textContent = genitiv(e.target.value.trim() || SPITZNAME[ABSENDER] || ABSENDER); const vn = document.querySelector("#meinKasten .mein-vn"); if (vn) vn.textContent = e.target.value.trim() || ABSENDER;
 });
 document.getElementById("meinKasten").addEventListener("click", (e) => {
   if (!e.target.closest("[data-mein-ok]")) return;
