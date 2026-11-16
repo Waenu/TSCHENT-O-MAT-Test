@@ -1557,7 +1557,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.10.5.0";
+let VERSION = "3.10.5.1";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -2077,12 +2077,12 @@ const FIELDS = [
     hint: () => {
       if (S.verbOK === true) {
         const v = "{{Verbindlich}} · Aufenthalt ist nur für die Familie möglich. Freunde sind nicht erlaubt.\nDer Termin gehört euch fest, die Eltern sperren ihn in Airbnb. Ihr zahlt pauschal " + chf(P.hochNachtMin) + " pro Nacht plus Endreinigung für das ganze Chalet.", p = "{{Mit Vorbehalt}} · Aufenthalt ist auch mit Freunden möglich.\nDer Termin bleibt in Airbnb offen, ein Airbnb-Gast hat Vorrang.";   // Absätze pro Art (seit 3.10.3.1, Wänu)
-        return "Dieser Termin liegt in der Hochsaison.\n\n" + (S.art === ART_V ? v + "\n\nMit Freunden ginge nur {{Mit Vorbehalt}} (in Airbnb nicht gesperrt)." : S.art === ART_P ? p + "\n\nOhne Freunde ginge auch {{Verbindlich}} (fest und in Airbnb gesperrt)." : v + "\n\n" + p);
+        return "Dieser Termin liegt in der Hochsaison.\n\n" + (S.art === ART_V ? v : S.art === ART_P ? p : v + "\n\n" + p);
       }
       if (S.staffelEnde && S.selbstOK === true) return "Eure Staffel ist schon gewählt und lässt sich nicht ändern: Ihr setzt die laufende Staffel fort, und direkt danach reist ein Airbnb-Gast an. Darum endet die Staffel mit eurem Termin. Ihr kommt ohne Freunde, die Eltern reinigen für den Airbnb-Gast, und die Endreinigung (" + chf(P.reinigung) + ") wird unter den Reisegruppen der Staffel aufgeteilt.";
       const st = "{{Staffel}} · Aufenthalt ist nur für die Familie möglich. Freunde sind nicht erlaubt.\nIhr reinigt selbst und bringt Bettwäsche, Hand- und Küchentücher mit. Jetzt " + chf(P.reinigungSelbst) + ", später euer Anteil an der Endreinigung (" + chf(P.reinigung) + " geteilt durch alle Reisegruppen, zu zweit je " + chf(P.reinigung / 2) + ", zu dritt je " + chf(P.reinigung / 3) + "). Beginnt ihr die Staffel, ist das Chalet gereinigt und bezogen, und ihr bringt keine Wäsche mit. Regeln: «🧹 Selber reinigen» unter «💡 Anleitung & Infos».", no = "{{Normal}} · Aufenthalt ist auch mit Freunden möglich.\nDie Eltern reinigen, " + chf(P.reinigung) + ".";   // Absätze pro Art, Kosten der Staffel an einer Stelle (seit 3.10.3.1, Wänu)
       const offen = S.staffelOffen ? "\n\nHier läuft eine Familienstaffel. Ohne Freunde führt ihr sie weiter. {{Normal}} geht nur mit Freunden und beendet sie: Die Endreinigung der früheren Reisegruppen fällt dann an." : "";
-      return "Dieser Termin liegt in der Tiefsaison und ist fest (in Airbnb gesperrt)." + offen + "\n\n" + (S.art === ART_S ? st + "\n\nMit Freunden ginge nur {{Normal}}." : S.art === ART_N ? no + "\n\nOhne Freunde ginge auch die {{Staffel}} (ihr reinigt selbst, jetzt " + chf(P.reinigungSelbst) + ")." : st + "\n\n" + no);
+      return "Dieser Termin liegt in der Tiefsaison und ist fest (in Airbnb gesperrt)." + offen + "\n\n" + (S.art === ART_S ? st : S.art === ART_N ? no : st + "\n\n" + no);
     },
     visible: () => artOpts().length > 0, opts: () => artOpts() },
   { id: "wer", label: "👨‍👩‍👧‍👦 Wer von der Familie kommt?", type: "str",
