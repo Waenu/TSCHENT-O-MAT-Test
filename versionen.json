@@ -2,6 +2,25 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.11.0.0",
+      "datum": "16.11.2026",
+      "titel": "Geld einsammeln und Meine Verwaltung",
+      "arten": [
+        "Neue Funktion"
+      ],
+      "punkte": [
+        "Nach der Bestätigung erscheint auf der Startseite der Kasten «💰 Geld einsammeln» mit allen kommenden Aufenthalten, jeder einzeln aufklappbar.",
+        "Pro Partei ein Knopf «Rechnung für …»: WhatsApp mit Abrechnung pro Person (Übernachtung, Reinigung, Kurtaxe), Total, Zahlungsfrist, TWINT und IBAN.",
+        "Hinweis aufs Trinkgeld für die Kasse von Marianne Werder wahlweise (zu Beginn eingeschaltet).",
+        "Abhaken, wer bezahlt hat: Bezahlte verschwinden (wieder anzeigbar). Danach steht, wie viel das Kind den Eltern überweist (Aufenthalt und Kurtaxe der Freunde). Der Eintrag bleibt, bis die Eltern die Zahlung abgehakt haben.",
+        "Neu «👤 Meine Verwaltung» für Kinder und Partner: Wie willst du genannt werden (Kopf, «Ich» in der Auswahl, Unterschrift der Rechnungen), Mailadresse, TWINT-Nummer und IBAN. Alles nur auf dem Handy, die Mailadresse geht wie bisher an die Eltern.",
+        "Verwaltung der Eltern: «📅 Zahlungsfrist der Freunde» (Tage nach der Abreise) als Vorschlag für die Kinder.",
+        "Zahlung an die Eltern zeigt jetzt auch die Kurtaxe der Freunde («💳 Zu bezahlen», Verwaltung, Erinnerung): Die Eltern zahlen sie an Adelboden Tourismus und schicken den QR-Code für die Gästekarte. Die Einnahmen bleiben ohne Kurtaxe.",
+        "Bei «Meine Familie und Geschwister» bekommen auch die Geschwister ihre Rechnung.",
+        "Anleitung: Kleinkinder von Freunden und «Geld einsammeln» ergänzt."
+      ]
+    },
+    {
       "v": "3.10.5.2",
       "datum": "16.11.2026",
       "titel": "Warnung bei zu altem Kleinkind",

@@ -446,6 +446,9 @@ if (TEST_MODUS) {
   .pay { border: 2px solid var(--accent); border-radius: 6px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
   .pay strong { font-size: var(--t-title); }
   .pay .rot-txt { color: var(--spitz-line); }
+  .ink-opt label { display: flex; flex-direction: column; gap: 4px; font-weight: 700; margin-top: 8px; } .ink-opt input { min-height: 48px; font: inherit; color: var(--fg); padding: 8px 12px; border: 2px solid var(--line); border-radius: 6px; background: var(--surface); }
+  .ink-b { border-top: 1px solid rgba(127,127,127,.35); margin-top: 10px; padding-top: 8px; } .ink-b > summary { cursor: pointer; display: block; white-space: normal; line-height: 1.35; } .ink-sw { display: flex; gap: 8px; align-items: center; margin: 8px 0; } .ink-sw input { width: 22px; height: 22px; } .ink-fr { display: flex; flex-direction: column; gap: 4px; font-weight: 700; margin-top: 8px; } .ink-fr input { min-height: 48px; font: inherit; color: var(--fg); padding: 8px 12px; border: 2px solid var(--line); border-radius: 6px; background: var(--surface); } .ink-an { margin-top: 10px; } .ink-zg { margin: 6px 0; }
+  .ink-z { border-top: 1px solid rgba(127,127,127,.25); padding: 8px 0; margin-top: 8px; } .ink-n { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 6px; } .ink-z.ink-ok .ink-n { opacity: .6; } .ink-hk[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); } .ink-warn { border-color: var(--error-line); }
   .gm-alt.gm-warn { color: var(--error-line); font-weight: 700; }
   .gm-alt-rot { border-color: var(--error-line) !important; box-shadow: 0 0 0 1px var(--error-line); }
   .pay .iban { font-weight: 700; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
@@ -1378,6 +1381,8 @@ if (TEST_MODUS) {
     <div id="kindStreifen" role="status" hidden><span id="kindStreifenTxt"></span><button type="button" class="btn" id="btnZurEltern">Zurück zu Papi</button></div>
     <button type="button" class="bigbtn blau" id="btnAnsichten" aria-expanded="false" aria-controls="bestKasten" hidden><span class="bi" aria-hidden="true"><span class="an-auge">👁️</span></span>Verwaltung</button>
     <div class="note h" id="bestKasten" hidden></div>
+    <button type="button" class="bigbtn" id="btnMein" aria-expanded="false" aria-controls="meinKasten" hidden><span class="bi" aria-hidden="true">👤</span>Meine Verwaltung</button>
+    <div class="note h" id="meinKasten" hidden></div>
     <button type="button" class="bigbtn" id="btnHilfe" aria-expanded="false" aria-controls="hilfe"><span class="bi" aria-hidden="true"><span class="an-bulb">💡</span></span>Anleitung &amp; Infos</button>
     <div id="hilfe" hidden>
     <details class="card" id="b-benutzung">
@@ -1463,6 +1468,7 @@ if (TEST_MODUS) {
     <div id="zahlBox" hidden></div>
     <div id="wsHinweis" hidden></div>
     <div id="gmBox" hidden></div>
+    <div id="inkBox" hidden></div>
     <div id="absageBox" hidden></div>
   </nav>
 
@@ -1559,7 +1565,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.10.5.2";
+let VERSION = "3.11.0.0";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -1989,10 +1995,10 @@ function gmRechZeigen(d) {
   let ps = box.querySelector(".gm-pt-sum"); if (!ps) { ps = document.createElement("div"); ps.className = "gm-pt-sum"; box.appendChild(ps); }
   if (offen.length || !zi || !zi.length) { ps.innerHTML = ""; return; }
   const zA = (S.zahler || {}), famK = zi.filter((i) => alterAm(l[i].geb, ARR) < 18 && parteiKopf(i, l, zi) === i && (zA[i] || []).length && zA[i].every((k) => k === "ich" || k === "partner")).map((i) => vnK(l[i]));
-  const fam = (eigenAktiv() && !ichDa() ? esc(famLabel()) : "Ich (" + esc(ABSENDER) + ")" + (famWahl() && S.werFam !== "Nur ich" ? ", " + esc(famLabel().replace(/^Ich(, | und )/, "")) : S.wer && S.wer !== "Nur ich" ? " und Familie" : "")) + famK.map((v) => ", " + esc(v)).join("");
+  const fam = (eigenAktiv() && !ichDa() ? esc(famLabel()) : "Ich (" + esc(rufname()) + ")" + (famWahl() && S.werFam !== "Nur ich" ? ", " + esc(famLabel().replace(/^Ich(, | und )/, "")) : S.wer && S.wer !== "Nur ich" ? " und Familie" : "")) + famK.map((v) => ", " + esc(v)).join("");
   const koepfe = [...new Set(zi.filter((i) => alterAm(l[i].geb, ARR) >= 18).map((i) => parteiKopf(i, l, zi)))];
   const glieder = (h) => zi.filter((j) => parteiKopf(j, l, zi) === h || (alterAm(l[j].geb, ARR) < 18 && parteiKopf(j, l, zi) === j && (zA[j] || []).length && zA[j].every((k) => /^f\d+$/.test(k) && parteiKopf(Number(k.slice(1)), l, zi) === h))).sort((x, y) => (alterAm(l[x].geb, ARR) < 18) - (alterAm(l[y].geb, ARR) < 18) || x - y).map((j) => esc(vnK(l[j])));
-  const fpp = famParteien(), famT = fpp ? fpp.map((pp, k) => (k === 0 ? famParteiText(pp, 0, false).replace(/^Du/, "Ich (" + esc(ABSENDER) + ")") : famParteiText(pp, k, false)) + (k === 0 ? famK.map((v) => ", " + esc(v)).join("") : "")) : [fam];   // Familie mit Parteien (seit 3.9.0.0)
+  const fpp = famParteien(), famT = fpp ? fpp.map((pp, k) => (k === 0 ? famParteiText(pp, 0, false).replace(/^Du/, "Ich (" + esc(rufname()) + ")") : famParteiText(pp, k, false)) + (k === 0 ? famK.map((v) => ", " + esc(v)).join("") : "")) : [fam];   // Familie mit Parteien (seit 3.9.0.0)
   ps.innerHTML = '<p><b>🤝 Parteien</b></p><ol class="pt-info">' + famT.map((t, k) => '<li><span class="pt-nr">' + (k + 1) + "</span><span>" + t + "</span></li>").join("") + koepfe.map((h, k) => '<li><span class="pt-nr">' + (k + 1 + famT.length) + "</span><span>" + glieder(h).join(", ") + "</span></li>").join("") + "</ol>";   // nur Information, keine Chips (seit 3.9.5.6)
 }
 function gmVorZeigen(fs, feld) {   // Vorschläge aus dem Adressbuch: erst ab dem ersten Buchstaben, nur Treffer mit diesem Anfang (seit 3.9.1.1; vorher zeigte ein leeres Feld alle)
@@ -2010,7 +2016,7 @@ function eigenHtml() {   // Chips des eigenen Haushalts, «Ich» fest (seit 3.9.
   const chip = (attr, an, html, aus) => '<button type="button" class="zchip" ' + attr + ' aria-pressed="' + (an ? "true" : "false") + '"' + (aus ? " disabled" : "") + ">" + html + "</button>";
   const leute = (f.p ? [f.p] : []).concat(f.k);
   const fehlt = famErwFehlt();
-  let h = '<div class="field zrech ' + (fehlt ? "missing" : "done") + '"><label>👨‍👩‍👧‍👦 Wer kommt mit?</label><div class="zchips mfg-z">' + chip('data-ich="1"', ichDa(), ABSENDER ? 'Ich<small>(' + esc(ABSENDER) + ")</small>" : "Ich", false) +
+  let h = '<div class="field zrech ' + (fehlt ? "missing" : "done") + '"><label>👨‍👩‍👧‍👦 Wer kommt mit?</label><div class="zchips mfg-z">' + chip('data-ich="1"', ichDa(), ABSENDER ? 'Ich<small>(' + esc(rufname()) + ")</small>" : "Ich", false) +
     leute.map((x) => chip('data-fe="' + esc(x) + '"', sel.indexOf(x) >= 0, esc(x) + (kk.indexOf(x) >= 0 ? "<small>🛏️ Kinderbettchen</small>" : ""), sel.indexOf(x) < 0 && voll && (f.k.indexOf(x) < 0 || kk.length >= 2))).join("") +
     '</div>' + (erwWarnZeigen() ? '<p class="hint" style="color:var(--error-line);font-weight:600">Mindestens eine erwachsene Person muss mitkommen.</p>' : "") + '<p class="hint">Tippe alle an, die mitkommen. Kommst du selbst nicht mit, tippe <span class="hl">Ich</span> ab.</p></div>';
   const enk = f.k.filter((x) => sel.indexOf(x) >= 0);
@@ -2024,7 +2030,7 @@ function mfgZeigen() {
   if (!mfgAktiv()) { mb.innerHTML = eigenHtml(); return; }
   const sel = S.mfg || [], kk = S.mfgKK || [], hs = famAlle(), eig = hs.find((h) => h.m.indexOf(ABSENDER) >= 0), voll = sel.length - kk.length >= MFG_MAX();   // Kleinkinder ohne Bett belegen keinen Platz
   const chip = (attr, an, html, aus) => '<button type="button" class="zchip" ' + attr + ' aria-pressed="' + (an ? "true" : "false") + '"' + (aus ? " disabled" : "") + ">" + html + "</button>";
-  const reihe = (h) => '<div class="zchips mfg-z">' + (h === eig ? chip('data-ich="1"', ichDa(), 'Ich<small>(' + esc(ABSENDER) + ")</small>", false) : "") + h.m.filter((x) => x !== ABSENDER).map((x) => chip('data-mfg="' + esc(x) + '"', sel.indexOf(x) >= 0, esc(x) + (kk.indexOf(x) >= 0 ? "<small>🛏️ Kinderbettchen</small>" : ""), voll && sel.indexOf(x) < 0 && (h.e.indexOf(x) < 0 || kk.length >= 2))).join("") + "</div>";
+  const reihe = (h) => '<div class="zchips mfg-z">' + (h === eig ? chip('data-ich="1"', ichDa(), 'Ich<small>(' + esc(rufname()) + ")</small>", false) : "") + h.m.filter((x) => x !== ABSENDER).map((x) => chip('data-mfg="' + esc(x) + '"', sel.indexOf(x) >= 0, esc(x) + (kk.indexOf(x) >= 0 ? "<small>🛏️ Kinderbettchen</small>" : ""), voll && sel.indexOf(x) < 0 && (h.e.indexOf(x) < 0 || kk.length >= 2))).join("") + "</div>";
   const betten = (ichDa() ? 1 : 0) + sel.length - kk.length, fehlt = famErwFehlt();
   let h = '<div class="field zrech ' + ((sel.length || ichDa()) && !fehlt ? "done" : "missing") + '"><label>👨‍👩‍👧‍👦 Wer kommt mit?</label>' + reihe(eig) + hs.filter((x) => x !== eig).map(reihe).join("") +
     '<p class="mfg-bett">🛏️ ' + betten + " von " + P.maxPersonen + " Betten belegt" + (kk.length ? ", dazu " + kk.length + " Kinderbettchen" : "") + "</p>" +
@@ -2033,7 +2039,7 @@ function mfgZeigen() {
   const enk = [].concat(...hs.map((x) => x.e)).filter((x) => sel.indexOf(x) >= 0);
   if (enk.length) h += '<div class="field zrech done"><label>👶 Wer schläft im Kinderbettchen?</label><div class="zchips">' + enk.map((x) => chip('data-mkk="' + esc(x) + '"', kk.indexOf(x) >= 0, esc(x), kk.indexOf(x) < 0 ? kk.length >= 2 : voll)).join("") + '</div><p class="hint">Kinder bis etwa 2½ Jahren, höchstens zwei. Sie belegen kein Bett und zählen bei der Reinigung nicht mit, darum hat dann jemand mehr Platz. Ganz Kleine, die bei euch im Bett schlafen, kommen einfach mit, du musst sie oben nicht antippen.</p></div>';
   const fp = famParteien();
-  if (fp && fp.length > 1) h += '<div class="field zrech done"><label>🤝 Parteien der Familie</label><ol class="pt-info">' + fp.map((pp, i) => '<li><span class="pt-nr">' + (i + 1) + "</span><span>" + (i === 0 ? famParteiText(pp, 0, false).replace(/^Du/, "Ich (" + esc(ABSENDER) + ")") : famParteiText(pp, i, false)) + "</span></li>").join("") + "</ol></div>";
+  if (fp && fp.length > 1) h += '<div class="field zrech done"><label>🤝 Parteien der Familie</label><ol class="pt-info">' + fp.map((pp, i) => '<li><span class="pt-nr">' + (i + 1) + "</span><span>" + (i === 0 ? famParteiText(pp, 0, false).replace(/^Du/, "Ich (" + esc(rufname()) + ")") : famParteiText(pp, i, false)) + "</span></li>").join("") + "</ol></div>";
   mb.innerHTML = h;
 }
 function zahlUiZeigen(d) {   // Chips: wer im selben Zimmer schläft, wer die Kosten für Freunde unter 18 übernimmt (seit 3.7.0.0)
@@ -2054,7 +2060,7 @@ function zahlUiZeigen(d) {   // Chips: wer im selben Zimmer schläft, wer die Ko
   pb.innerHTML = minder.map((i) => {
     const z = zahlerVon(i, zi, l), ok = z.length > 0, al = alterAm(l[i].geb, ARR);   // Minderjährige zahlen nie selbst (seit 3.7.2.0)
     return '<div class="field zrech ' + (ok ? "done" : "missing") + '"><label>💸 Wer übernimmt die Kosten für ' + esc(vnK(l[i])) + " (" + al + ")?</label><div class=\"zchips\">" +
-      chip('data-zz="' + i + '|ich"', z.indexOf("ich") >= 0, !ABSENDER ? "Ich" : 'Ich<small>(' + esc(ABSENDER) + ')</small>') +
+      chip('data-zz="' + i + '|ich"', z.indexOf("ich") >= 0, !ABSENDER ? "Ich" : 'Ich<small>(' + esc(rufname()) + ')</small>') +
       (partnerDa() ? chip('data-zz="' + i + '|partner"', z.indexOf("partner") >= 0, esc(partnerDa())) : "") +
       erw.map((j) => chip('data-zz="' + i + "|f" + j + '"', z.indexOf("f" + j) >= 0, esc(vnK(l[j])))).join("") +
       '</div><p class="hint">' + "Wer zahlt, übernimmt " + (al < 6 ? "Nachtpreis" : "Nachtpreis, Kurtaxe") + " und Reinigungsanteil von " + esc(vnK(l[i])) + ". " + (ok ? (z.length > 1 ? "Mehrere gewählt: gleich verteilt." : "") : "Bitte antippen. Mehrere sind möglich, dann wird gleich verteilt.") +
@@ -2402,6 +2408,10 @@ function konfFrei(b) {   // freie Strecken im Termin als [von, bis) (bis = Abrei
 }
 const strecken = (l) => l.map((r) => fmtTag(r[0]) + " bis " + fmtTag(r[1])).join(" und ");
 function konfBelegt(b) { const n = konfNaechte(b), o = []; n.forEach((k) => { const l = o[o.length - 1]; if (l && l[1] === k) l[1] = addDays(k, 1); else o.push([k, addDays(k, 1)]); }); return o; }
+function ktVon(b) { const m = /\nKurtaxe Adelboden[^\t\n]*\tCHF ([\d'’.]+)/.exec((b && b.rechnung) || ""); const v = m ? Number(m[1].replace(/['’]/g, "")) : 0; return isFinite(v) && v > 0 ? v : 0; }   // Kurtaxe der Freunde aus dem Schnappschuss der Anfrage (seit 3.11.0.0)
+function zahlSumme(b) { return (b.betrag > 0 ? b.betrag : 0) + ktVon(b); }   // an die Eltern: Aufenthalt und Kurtaxe der Freunde (Wänu: die Kurtaxe überweisen die Eltern an Adelboden Tourismus)
+function chfZ(b) { const k = ktVon(b); return k ? chf2(zahlSumme(b)) : chf(b.betrag); }
+function chfZk(b) { const k = ktVon(b); return chfZ(b) + (k ? " (inkl. Kurtaxe der Freunde " + chf2(k) + ")" : ""); }
 function reinAnteil(b) { const m = /\nReinigung\tCHF ([\d'’]+)/.exec(b.rechnung || ""); const r = m ? Number(m[1].replace(/['’]/g, "")) : (b.sb ? 0 : P.reinigung); return Math.min(r, b.betrag || 0); }
 function konfPreis(b, arr, dep) {   // Übernachtungen anteilig nach Nächten, Reinigung voll
   const n0 = diffDays(b.arr, b.dep), n = diffDays(arr, dep), r = reinAnteil(b);
@@ -2796,7 +2806,7 @@ function glossarKurz(offen) {
     rechnen: "Eure Preise liegen weit unter den Marktpreisen von Airbnb: Die ganze Familie zahlt pauschal " + chf(P.famPausch) + " pro Nacht, jeder Freund " + chf(P.gast) + " pro Nacht, dazu kommt die Endreinigung (" + chf(P.reinigung) + "). Die genaue Rechnung steht unter dem Preis: Tippe eine Zeile der Aufteilung an, dann klappt sie auf, mit einem farbigen Balken zuunterst.",
     sicht: "Wenn Airbnb Nächte wegen Vorlauf, Mindestaufenthalt oder Sonntag nicht mehr verkaufen kann, stehen sie euch offen: zum normalen Familienpreis und ohne Vorbehalt, auch in der Hochsaison. Im Kalender ist diese Zeit gelb und wandert täglich mit.",
     reinigung: "Das rote Kästchen zwischen zwei Balken zeigt, wer nach dem Aufenthalt reinigt. Im Normalfall reinigen die Eltern (gefülltes Kästchen). Nur wenn die Familienstaffel weitergeht, reinigt ihr selbst (Rahmen).",
-    zahlung: "Die Familie überweist den ganzen Betrag, auch wenn Freunde dabei sind, spätestens " + ZAHL_TAGE + " Tage nach dem letzten Ferientag und ohne Aufforderung.<br>" + esc(BANK) + "<br><b>IBAN: " + esc(IBAN) + '</b> <button type="button" class="btn" data-ibankopie="1">📋 IBAN kopieren</button>',
+    zahlung: "Die Familie überweist den ganzen Betrag, auch wenn Freunde dabei sind, samt Kurtaxe der Freunde (die Eltern zahlen sie an Adelboden Tourismus und schicken euch den QR-Code für die Gästekarte), spätestens " + ZAHL_TAGE + " Tage nach dem letzten Ferientag und ohne Aufforderung.<br>" + esc(BANK) + "<br><b>IBAN: " + esc(IBAN) + '</b> <button type="button" class="btn" data-ibankopie="1">📋 IBAN kopieren</button>',
     trinkgeld: "Ein Trinkgeld für Mami ist freiwillig, aber ein schönes Zeichen der Wertschätzung für ihre viele Arbeit. Gebt, was euch passt.",
     geld: "Damit decken wir die laufenden Kosten des Chalets, den Unterhalt, die Hypozinsen und die Steuern. Für grosse Arbeiten legen wir Geld in den Erneuerungsfonds zurück.",
     kalender: "Tippe zuerst den Anreisetag an, dann den Abreisetag (" + P.minNaechte + " bis " + P.maxNaechte + " Nächte). Die Legende unter dem Kalender hilft dir, den Wunschtermin zu finden.",
@@ -2822,7 +2832,7 @@ function begriffeFuellen() {
   const ruhe = RUHE.length ? ruheTxt() : "";
   const set = (id, html) => { const e = document.getElementById(id); if (e) e.innerHTML = html; };
   set("bc-trinkgeld", "<p>Es war ein Anliegen von Mami, dass die Kinder günstiger nach Adelboden gehen können. Dafür macht sie viel Arbeit: Fahrt, Reinigung und Wäsche, siehe «Endreinigung» " + symBtn("b-endrein", "🪣") + ".</p><p>Auch Papi packt selbstverständlich mit an: Er reinigt, repariert und hält das Chalet in Schuss.</p><p>Wer möchte, gibt Mami deshalb ein Trinkgeld. Das ist freiwillig, aber ein schönes Zeichen der Wertschätzung. Gebt, was euch passt: Es freut sie, und ihr dürft grosszügig sein 😉</p><p>Wenn ihr unter «Trinkgeld für Mami» einen Betrag eintragt, wird er zum Preis dazugerechnet und extra ausgewiesen.</p>");
-  set("bc-zahlung", "<p>Die Familie überweist den ganzen Betrag, auch wenn Freunde dabei sind. Spätestens " + ZAHL_TAGE + " Tage nach dem letzten Ferientag, ohne Aufforderung.</p><p>" + esc(BANK) + "</p><p>Bitte mit Name und Datum der Ferien überweisen.</p><p>Ist die Zahlung nach Ablauf der Frist nicht verbucht, erscheint auf deinem Handy eine rote Meldung. Sie lässt sich nicht wegklicken und verschwindet erst, wenn die Eltern die Zahlung verbucht haben. Ab " + ERINNERUNG_AB + " Tagen nach der Abreise schicken dir die Eltern zusätzlich eine WhatsApp als Erinnerung. Bei Aufenthalten, die nichts kosten, gibt es keine Meldung.</p>");
+  set("bc-zahlung", "<p>Die Familie überweist den ganzen Betrag, auch wenn Freunde dabei sind, samt Kurtaxe der Freunde. Die Eltern zahlen die Kurtaxe an Adelboden Tourismus und schicken euch den QR-Code für die Gästekarte. Spätestens " + ZAHL_TAGE + " Tage nach dem letzten Ferientag, ohne Aufforderung.</p><p>" + esc(BANK) + "</p><p>Bitte mit Name und Datum der Ferien überweisen.</p><p>Ist die Zahlung nach Ablauf der Frist nicht verbucht, erscheint auf deinem Handy eine rote Meldung. Sie lässt sich nicht wegklicken und verschwindet erst, wenn die Eltern die Zahlung verbucht haben. Ab " + ERINNERUNG_AB + " Tagen nach der Abreise schicken dir die Eltern zusätzlich eine WhatsApp als Erinnerung. Bei Aufenthalten, die nichts kosten, gibt es keine Meldung.</p>");
   (function () {
     let h = "<p>Die Möglichkeiten, wie dein Aufenthalt günstiger wird. Die Einzelheiten stehen jeweils beim Symbol.</p><ul>";
     h += "<li><b>Freunde mitnehmen:</b> Jeder Freund zahlt seinen Satz, dein Anteil sinkt mit jedem Freund " + symBtn("b-rechnen", "🧮") + "." + "</li>";
@@ -2925,7 +2935,8 @@ function begriffeFuellen() {
   set("bc-zeiten", "<p>Einchecken ab <b>" + ZEIT_AN + "</b>, Auschecken bis <b>" + ZEIT_AB + "</b>. Das gilt für jede Buchung.</p><p>Bis " + ZEIT_AB + " müssen alle draussen sein, damit die Eltern bis " + ZEIT_AN + " reinigen können, falls am selben Tag ein neuer Gast kommt.</p>");
   set("bc-rechnen", "<p><b>Woher kommen die Preise?</b> Die Preise für Airbnb-Gäste berechnet das Programm PriceLabs. Es vergleicht unser Chalet mit gleichwertigen Ferienwohnungen und berücksichtigt dazu über 100 weitere Faktoren. Diese Preise werden mehrmals täglich von PriceLabs in Airbnb geschrieben, und sie haben Erfolg: Sogar Nächte Anfang Dezember sind vermietet. Für euch gilt ein Familienpreis. Er richtet sich nach diesen Marktpreisen, liegt in der Hochsaison bewusst darunter und ist nicht aus der Luft gegriffen.</p><p>Die Eltern legen die Preise fest. Eine Tabelle für alles gibt es nicht, darum hier die Grundidee:</p><ul>" +
     "<li><b>Übernachtungen:</b> Die Familie zahlt pauschal " + chf(P.famPausch) + " pro Nacht, jeder Freund " + chf(P.gast) + " (" + chf(P.gastZimmer) + " im Zimmer eines Familienmitglieds, das Familienmitglied zahlt dann nur noch " + chf(P.famAnteil) + " pro Nacht). Mit Freunden wird die Familie entlastet.</li>" +
-    "<li><b>Freunde unter 18</b> zahlen den gleichen Preis wie Erwachsene. Wer ihren Anteil übernimmt, bestimmt ihr im Rechner: du, deine Partnerin oder dein Partner oder erwachsene Freunde. Gehört ein Kind zu einer Partei, zahlen deren Erwachsene. <b>Kleinkinder von Freunden</b> bis 2½ Jahre schlafen ohne eigenes Bett und sind gratis.</li>" +
+    "<li><b>Freunde unter 18</b> zahlen den gleichen Preis wie Erwachsene. Wer ihren Anteil übernimmt, bestimmt ihr im Rechner: du, deine Partnerin oder dein Partner oder erwachsene Freunde. Gehört ein Kind zu einer Partei, zahlen deren Erwachsene. <b>Kleinkinder von Freunden</b> bis 2½ Jahre fügst du in der Liste mit «👶 Kleinkind dazu (ohne Bett)» hinzu. Sie schlafen im Kinderbettchen und sind gratis. Es hat 2 Kinderbettchen, Familie und Freunde zusammen.</li>" +
+    "<li><b>💰 Geld einsammeln:</b> Sobald die Eltern bestätigt haben, findest du auf der Startseite pro Partei einen Knopf «Rechnung für …». Er öffnet WhatsApp mit einer fertigen Abrechnung pro Person, den Empfänger wählst du selbst. Mit «Bezahlt?» hakst du ab, wer bezahlt hat. Deine TWINT-Nummer und die Zahlungsfrist trägst du dort einmal ein, sie bleiben nur auf deinem Handy.</li>" +
     "<li><b>Endreinigung:</b> Dazu kommen " + chf(P.reinigung) + ", aufgeteilt nach eurer Auswahl " + symBtn("b-endrein", "🪣") + "." + "</li>" +
     (P.mindestpreisWoche > 0 ? "<li><b>Mindestpreis:</b> Mit Freunden ab " + P.mindestpreisAbNaechte + " Nächten entfällt der Anteil der Familie, soweit das Total nicht unter " + chf(P.mindestpreisWoche) + " pro 7 Nächte sinkt (bei anderen Längen anteilig). Der Gesamtpreis sinkt nie unter diesen Mindestpreis, mit Freunden sinkt nur dein Anteil." + (P.hochNachtMin > 0 ? " Das gilt auch in der Hochsaison mit Vorbehalt. Wer dort verbindlich bucht, zahlt pauschal " + chf(P.hochNachtMin) + " pro Nacht plus Endreinigung, ohne Freunde " + symBtn("b-hochsaison", "🏔️") + "." : "") + (P.festBodenWoche > 0 && FEST_MONATE.length ? " Im " + esc(festTxt()) + " gilt der dortige Mindestpreis " + symBtn("b-februar", "⛷️") + "." : "") + "</li>" : "") +
     "</ul>" +
@@ -3658,8 +3669,9 @@ setInterval(() => { try { reservTexte(); } catch (e) {} }, 300000);   // Spruch 
 const SPITZNAME = { Jerome: "Jerry", Deborah: "Deby", Miriam: "Miri", Manuel: "Mänsi", David: "Dave", Andreas: "Andy", Rahel: "Rahel", Sarah: "Sarah" };   // nur für den Kopf (seit 2.123.0.0)
 function kopfName() {
   const e = document.getElementById("kName"); if (!e) return;
-  const n = ABSENDER ? (SPITZNAME[ABSENDER] || ABSENDER) + "s" : TOKEN ? "Wänus" : mamiAn() ? "Mariannes" : "";
+  const n = ABSENDER ? genitiv(rufGespeichert() || SPITZNAME[ABSENDER] || ABSENDER) : TOKEN ? "Wänus" : mamiAn() ? "Mariannes" : "";
   if (e.textContent !== n || e.hidden !== !n) { e.textContent = n; e.hidden = !n; }
+  meinKnopf();
 }
 // Scroll-Fenster (seit 3.2.0.0): offenen Sprung ausführen (aktuelle Woche, Tag oder Monat zuoberst); false, solange das Fenster nicht sichtbar ist
 // Monatstitel in der Kopfzeile: Zusatz wie «(Skisaison)» klein in einer zweiten Zeile (seit 3.2.1.2)
@@ -4418,6 +4430,7 @@ function gkkVerschieben() {   // ändert sich die Zahl der Freunde, wandern die 
   GKK_G = g;
 }
 function render() {
+  INK = null;
   gkkVerschieben();
   mfgSync();
   if (famOpts() && S.wer && !famWahl()) { S.wer = ""; S.werFam = ""; S.werArt = ""; S.fam = null; }
@@ -4635,6 +4648,26 @@ function render() {
     } else for (let g = 1; g <= x.GE; g++) { bd.push("");
       const st = kt.summe > 0 ? (kt.alt ? (kt.alt[g - 1] >= 16 ? "E" : kt.alt[g - 1] >= 6 ? "K" : "0") : (g > kt.er ? "K" : "E")) : "0", kk = (st === "E" ? kt.sE : st === "K" ? kt.sK : 0) * x.nights;
       sg.push({ tot: (g === 1 ? r.HZ : r.WZ / (x.GE - 1)) + kk, r: x.GS, k: kk }); }
+    {   // Abrechnung für «Geld einsammeln» (seit 3.11.0.0): pro Partei Personen mit Zeilen, nur auf dem Handy gespeichert
+      const ps = [], Z = (a) => a.filter((q) => q[1] > 0.004);
+      if (zpl) {
+        const persZ = (j) => ({ n: zpl.l[j].vorname, a: zpl.alt[j] < 18 ? zpl.alt[j] : null, z: Z([["Übernachtung", zpl.base[j] - x.GS], ["Reinigung", zpl.gs[j]], ["Kurtaxe", zpl.kt[j]]]), s: zpl.eigen[j] });
+        const fuer = (keys, gl) => { const g = {}; keys.forEach((k) => (zpl.extra[k] || []).forEach((e) => { if (gl.indexOf(e.i) < 0) g[e.i] = (g[e.i] || 0) + e.b; })); return Object.keys(g).map((ii) => ({ n: zpl.l[ii].vorname, a: zpl.alt[ii], s: g[ii] })); };
+        const nn = (i) => String(zpl.l[i].name || "").trim().toLowerCase(), kkVon = {};   // Kleinkinder ohne Bett: zur Partei mit gleichem Nachnamen, sonst zum Buchenden
+        zRows.forEach((zr, k) => { if (zr.typ === "leer") return; const gl = zr.typ === "partei" ? zr.gl : [zr.i]; zpl.kk.forEach((i) => { if (kkVon[i] === undefined && nn(i) && gl.some((j) => nn(j) === nn(i))) kkVon[i] = k; }); });
+        const kkDa = (k) => zpl.kk.filter((i) => kkVon[i] === k).map((i) => ({ n: zpl.l[i].vorname, kk: true, z: [], s: 0 }));
+        zRows.forEach((zr, zk) => {
+          if (zr.typ === "partei") { const kk = kkDa(zk);
+            ps.push({ an: zr.erw.map((j) => zpl.l[j].vorname), pers: zr.gl.map(persZ).concat(kk), fuer: fuer(zr.erw.map((j) => "f" + j), zr.gl), t: zr.erw.reduce((a, j) => a + zpl.zahlt["f" + j], 0) }); }
+          else if (zr.typ === "eins") { const i = zr.i, kk = kkDa(zk);
+            ps.push({ an: [zpl.l[i].vorname], pers: [persZ(i)].concat(kk), fuer: fuer(["f" + i], [i]), t: zpl.zahlt["f" + i] }); }
+        });
+      }
+      if (famAufB) { const sum = famAufB.reduce((a, pp) => a + pp.n, 0) || 1, pro = REINIG.indexOf(S.reinig) === 1;
+        famAufB.forEach((pp) => { if (pp.eigen) return; const g = pro ? 1 / famAufB.length : pp.n / sum, re = famRei * g;
+          ps.unshift({ fam: true, an: pp.erw.length ? pp.erw : [pp.kopf], mit: pp.namen, pers: [], fuer: [], z: Z([["Anteil am Familienpreis", pp.b - re], ["Reinigung", re]]), t: pp.b }); }); }
+      INK = ps.length ? { arr: ARR, dep: DEP, nights: x.nights, tot: r.TOT, kt: kt.summe > 0 ? kt.summe : 0, p: ps } : null;
+    }
     const rows = who.match(/<tr>[\s\S]*?<\/tr>/g) || [];
     const balken = (q) => { if (!q || !(q.tot > 0.004)) return ""; const rr = Math.max(0, q.r), kk = Math.max(0, q.k), u = Math.max(0, q.tot - rr - kk);   // Balken zuunterst in der aufgeklappten Zeile (seit 3.10.0.1, Wänu)
       return '<li class="ueb-li"><div class="ueb-b">' + (u > 0.004 ? '<i class="su" style="flex:' + u + '"></i>' : "") + (rr > 0.004 ? '<i class="sr" style="flex:' + rr + '"></i>' : "") + (kk > 0.004 ? '<i class="sk" style="flex:' + kk + '"></i>' : "") + '</div><div class="ueb-leg"><span><i class="su"></i>Übernachtung</span>' + (rr > 0.004 ? '<span><i class="sr"></i>Reinigung</span>' : "") + (kk > 0.004 ? '<span><i class="sk"></i>Kurtaxe</span>' : "") + "</div></li>"; };
@@ -4813,7 +4846,7 @@ document.getElementById("result").addEventListener("click", (e) => {
   if (ce) { kopiere(LETZTE_EINLADUNG, ce, "Einladung kopiert", "Einladung kopieren"); return; }
   const q = e.target.closest("#copyReq");
   if (q) kopiere(LETZTE_ANFRAGE, q, "Anfrage kopiert", "Anfrage kopieren");
-  if (q || e.target.closest("#waReq")) { gmEntwurfUebernehmen(); aufentSpeichern(); aufHinweisZeigen(); }
+  if (q || e.target.closest("#waReq")) { gmEntwurfUebernehmen(); inkSpeichern(); aufentSpeichern(); aufHinweisZeigen(); }
   if (e.target.closest("#zuKnoepfe")) {
     setRechner(false);
     const z = document.getElementById("btnAnreise").hidden ? document.getElementById("btnCheck") : document.getElementById("btnAnreise");
@@ -4875,6 +4908,7 @@ function aufentSichern() {
 }
 function buchungenAn(j) {
   if (!j || !Array.isArray(j.buchungen)) return false;
+  FREUND_TAGE = typeof j.freundTage === "number" && isFinite(j.freundTage) && j.freundTage >= 0 ? Math.round(j.freundTage) : null;   // Regel von Papi (seit 3.11.0.0)
   REIN_TAGE = Array.isArray(j.reinigung) ? j.reinigung.filter((r) => r && DKEY.test(r.tag) && DKEY.test(r.ab) && r.ab <= r.tag) : [];   // Reinigungstage der Eltern (seit 2.126.0.0)
   const gut = j.buchungen.filter((b) => b && typeof b.name === "string" && DKEY.test(b.arr) && DKEY.test(b.dep) && b.arr < b.dep);
   const bes = (b) => (typeof b.bescheid === "string" && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(b.bescheid) ? b.bescheid : "");
@@ -4976,6 +5010,7 @@ function aufentZeigen() {
     if (sl.length) { st.hidden = false; st.innerHTML += sl.map((b) => '<div class="note h"><b>❌ Storniert:</b> ' + (b.name === ABSENDER ? "Dein Aufenthalt" : "Der Aufenthalt von " + esc(b.name)) + ' vom ' + esc(fmtTag(b.arr)) + ' bis ' + esc(fmtTag(b.dep)) + ' wurde von den Eltern gelöscht. Die Knöpfe dazu sind weg. <button type="button" class="ov-back" data-stok="' + esc(bKey(b)) + '">OK, gelesen</button></div>').join(""); }
   }
   gmKindZeigen();
+  inkZeigen();
   mailPruefen();
   {   // rote Zahlungsmeldung: bleibt, bis Papi die Zahlung verbucht hat (kein Schliessen-Knopf)
     const zb = document.getElementById("zahlBox"), zl = ABSENDER ? BUCH.filter((b) => eigenN(b.name) && zahlFaellig(b)) : [];
@@ -4984,7 +5019,7 @@ function aufentZeigen() {
       ab.hidden = !ABSENDER || !l.length; ab.innerHTML = ab.hidden ? "" : l.map((x) => '<div class="absage">' + (l.length > 1 ? '<p class="hint">' + esc(fmtTag(x.arr)) + " bis " + esc(fmtTag(x.dep)) + "</p>" : "") + absageKnopf(x) + "</div>").join(""); }
     const er = ABSENDER ? BUCH.filter((b) => eigenN(b.name) && endreinOffen(b)) : [];   // Endreinigung der Staffel (seit 2.125.0.0)
     zb.hidden = zl.length === 0 && vorab.length === 0 && er.length === 0;
-    zb.innerHTML = vorab.map((b) => '<div class="note h"><b>💳 Zu bezahlen:</b> Für deinen Aufenthalt vom ' + esc(fmtTag(b.arr)) + " bis " + esc(fmtTag(b.dep)) + " sind <b>" + esc(chf(b.betrag)) + "</b> fällig, spätestens am " + esc(fmtTag(zahlFrist(b))) + ". Du kannst auch schon vorher überweisen, die Bankverbindung steht unter «Zahlung» " + symBtn("b-zahlung", "💰") + ".</div>").join("") + er.map((b) => { const an = endreinAnteile(b).filter((a) => a.name !== b.name); return '<div class="note h' + (endreinUeberfaellig(b) ? " rot-warn" : "") + '"><b>🪣 Endreinigung der Staffel' + (endreinUeberfaellig(b) ? " offen" : "") + ":</b> Eure Staffel endet mit deinem Aufenthalt (" + esc(fmtTag(b.arr)) + " bis " + esc(fmtTag(b.dep)) + "). Bitte überweise die Endreinigung von <b>" + esc(chf(P.reinigung)) + "</b> spätestens am " + esc(fmtTag(endreinFrist(b))) + "." + (an.length ? " Die Anteile von " + esc(an.map((a) => a.name + " (" + chf(a.chf) + ")").join(" und ")) + " holst du dir zurück." : "") + " Bankverbindung unter «Zahlung» " + symBtn("b-zahlung", "💰") + ".</div>"; }).join("") + zl.map((b) => '<div class="note h rot-warn"><b>💳 Zahlung offen:</b> Für deinen Aufenthalt vom ' + esc(fmtTag(b.arr)) + ' bis ' + esc(fmtTag(b.dep)) + ' sind <b>' + esc(chf(b.betrag)) + '</b> fällig. Die Frist war am ' + esc(fmtTag(zahlFrist(b))) + '. Bitte überweise jetzt, die Bankverbindung steht unter «Zahlung» ' + symBtn("b-zahlung", "💰") + '. Sobald Papi die Zahlung verbucht hat, verschwindet diese Meldung.</div>').join("");
+    zb.innerHTML = vorab.map((b) => '<div class="note h"><b>💳 Zu bezahlen:</b> Für deinen Aufenthalt vom ' + esc(fmtTag(b.arr)) + " bis " + esc(fmtTag(b.dep)) + " sind <b>" + esc(chfZ(b)) + "</b>" + (ktVon(b) ? " (inkl. Kurtaxe der Freunde " + esc(chf2(ktVon(b))) + ")" : "") + " fällig, spätestens am " + esc(fmtTag(zahlFrist(b))) + ". Du kannst auch schon vorher überweisen, die Bankverbindung steht unter «Zahlung» " + symBtn("b-zahlung", "💰") + ".</div>").join("") + er.map((b) => { const an = endreinAnteile(b).filter((a) => a.name !== b.name); return '<div class="note h' + (endreinUeberfaellig(b) ? " rot-warn" : "") + '"><b>🪣 Endreinigung der Staffel' + (endreinUeberfaellig(b) ? " offen" : "") + ":</b> Eure Staffel endet mit deinem Aufenthalt (" + esc(fmtTag(b.arr)) + " bis " + esc(fmtTag(b.dep)) + "). Bitte überweise die Endreinigung von <b>" + esc(chf(P.reinigung)) + "</b> spätestens am " + esc(fmtTag(endreinFrist(b))) + "." + (an.length ? " Die Anteile von " + esc(an.map((a) => a.name + " (" + chf(a.chf) + ")").join(" und ")) + " holst du dir zurück." : "") + " Bankverbindung unter «Zahlung» " + symBtn("b-zahlung", "💰") + ".</div>"; }).join("") + zl.map((b) => '<div class="note h rot-warn"><b>💳 Zahlung offen:</b> Für deinen Aufenthalt vom ' + esc(fmtTag(b.arr)) + ' bis ' + esc(fmtTag(b.dep)) + ' sind <b>' + esc(chf(b.betrag)) + '</b> fällig. Die Frist war am ' + esc(fmtTag(zahlFrist(b))) + '. Bitte überweise jetzt, die Bankverbindung steht unter «Zahlung» ' + symBtn("b-zahlung", "💰") + '. Sobald Papi die Zahlung verbucht hat, verschwindet diese Meldung.</div>').join("");
   }
 }
 function ovOeffnen(id, an) {
@@ -5953,7 +5988,7 @@ function listeLaden(k) { try { const l = JSON.parse(localStorage.getItem(k) || "
 function listeSichern(k, l) { try { localStorage.setItem(k, JSON.stringify(l)); } catch (e) {} }
 const bKey = (x) => x.name + "|" + x.arr + "|" + x.dep;
 let OFFEN = listeLaden("tm2_offen"), ABGEL = listeLaden("tm2_abgelehnt");
-let zeigG = false, zeigE = false, zeigW = false, EJAHR = 0;   // Einnahmen-Übersicht in der Verwaltung
+let zeigG = false, zeigE = false, zeigW = false, zeigR = false, EJAHR = 0;   // Einnahmen-Übersicht in der Verwaltung
 let PERS_ZIEL = "", PERS_OK = null;   // Person, die nach dem Zeichnen der Verwaltung angesprungen wird
 let bestMsg = "", bestFehler = "", zeigB = false, zeigA = false, zeigL = false, bestBusy = false, zeigAns = false;
 function bestBeschr(b) { return fmtTag(b.arr) + " bis " + fmtTag(b.dep) + ", " + ((b.selbst || b.sb) ? "reinigt selbst" : "Reinigung durch Eltern") + ((b.luecke || b.lg) ? ", ganze Lücke" : "") + ", " + b.pers + (b.pers === 1 ? " Person" : " Personen") + (provVon(b) ? ", mit Vorbehalt" : "") + (b.verb ? ", verbindlich" : "") + (b.waesche === "bringen" ? ", bringt die Wäsche zurück" : b.waesche === "senden" ? ", sendet die Wäsche zurück" : ""); }
@@ -5968,7 +6003,7 @@ function vkChips(x, anfrage) {
   if (!anfrage && wRueck(x)) c.push('<span class="vk-chip' + (x.waescheZurueck ? "" : " v") + '">🧺 ' + (x.waescheZurueck ? "Wäsche zurück am " + esc(fmtTag(x.waescheZurueck.slice(0, 10))) : (x.waesche === "senden" ? "sendet" : x.waesche === "bringen" ? "bringt" : "bringt oder sendet") + " die Wäsche bis " + esc(fmtTag(waescheBis(x)))) + "</span>");
   if (!anfrage && x.angepasst) c.push('<span class="vk-chip v">✂️ angepasst, vorher ' + esc(fmtTag(x.angepasst.arr)) + " bis " + esc(fmtTag(x.angepasst.dep)) + (x.angepasst.betrag ? ", " + esc(chf(x.angepasst.betrag)) : "") + "</span>");
   c.push('<span class="vk-chip">' + x.pers + (x.pers === 1 ? " Person" : " Personen") + "</span>");
-  if (x.betrag > 0) c.push('<span class="vk-chip">💳 ' + (x.bezahlt ? "bezahlt am " + esc(fmtTag(x.bezahlt.slice(0, 10))) : esc(chf(x.betrag)) + " offen") + "</span>");
+  if (x.betrag > 0) c.push('<span class="vk-chip">💳 ' + (x.bezahlt ? "bezahlt am " + esc(fmtTag(x.bezahlt.slice(0, 10))) : esc(chfZ(x)) + " offen") + "</span>");
   return '<div class="vk-chips">' + c.join("") + "</div>";
 }
 function rechnungHtml(r, bt) {
@@ -6109,7 +6144,7 @@ function zuTunKarte(x) {
     detail: "Anteile: " + esc(endreinTxt(x)) + ". " + esc(x.name) + " zahlt alles und holt die Anteile der anderen." + (endreinInfoOffen(x) ? (x.endreinAnteile ? " <b>Die Anteile haben sich geändert, bitte neu mitteilen.</b>" : " <b>Noch nicht mitgeteilt.</b>") : " Mitgeteilt am " + ztAm(x.endreinInfo) + "."),
     doneTxt: "Endreinigung bezahlt am " + ztAm(x.endreinBezahlt),
     knoepfe: !x.bescheid ? '<span class="hint">Wird mit dem Bescheid mitgeteilt.</span>' : endeOffen(x) ? '<span class="hint">Wird mit der Staffel-Ende-Info mitgeteilt.</span>' : '<a class="btn" data-erinfo="' + key + '" href="https://wa.me/?text=' + encodeURIComponent(endreinText(x)) + '" target="_blank" rel="noopener">' + WA_SVG + (x.endreinInfo ? "Endreinigung nochmals mitteilen" : "Endreinigung mitteilen") + "</a>" }));
-  if (x.betrag > 0 && !(prov && !x.bezahlt && konf)) z.push(ztZeile({ feld: "bezahlt", key: key, done: !!x.bezahlt, titel: "💳 Zahlung " + esc(chf(x.betrag)) + (x.bezahlt ? "" : kommt ? " (fällig nach der Abreise)" : " offen"), doneTxt: "Zahlung eingegangen am " + ztAm(x.bezahlt), knoepfe: '<button type="button" class="btn" data-bez="' + key + '">✓ Zahlung eingegangen</button>' }));
+  if (x.betrag > 0 && !(prov && !x.bezahlt && konf)) z.push(ztZeile({ feld: "bezahlt", key: key, done: !!x.bezahlt, titel: "💳 Zahlung " + esc(chfZk(x)) + (x.bezahlt ? "" : kommt ? " (fällig nach der Abreise)" : " offen"), doneTxt: "Zahlung eingegangen am " + ztAm(x.bezahlt), knoepfe: '<button type="button" class="btn" data-bez="' + key + '">✓ Zahlung eingegangen</button>' }));
   const offen = z.some((t) => !/zt-z done/.test(t) && !/fällig nach der Abreise/.test(t)), rot = /zt-z( done)? rot|zt-z rot/.test(z.join(""));
   const liste = '<div class="zt"><div class="zt-h">' + (offen ? "📌 Zu tun" : "✅ Alles erledigt") + "</div>" + z.join("") + "</div>";
   const fam = ABS.indexOf(String(x.name).trim()) >= 0;
@@ -6135,7 +6170,7 @@ document.getElementById("bestKasten").addEventListener("click", async (e) => {
   if (!b || !ZT_TXT[feld]) return;
   if (done) { if (!(await appFrage("«" + ZT_TXT[feld] + "» bei " + b.name + " (" + fmtTag(b.arr) + " bis " + fmtTag(b.dep) + ") wieder als offen markieren?", "Ja, wieder offen"))) return; }
   else if (feld === "endreinBezahlt") { if (!(await appFrage("Endreinigung der Staffel von " + b.name + " (" + chf(P.reinigung) + ") als eingegangen verbuchen?", "Ja, verbuchen"))) return; }
-  else if (feld === "bezahlt") { if (!(await appFrage("Zahlung von " + b.name + " (" + chf(b.betrag) + ", " + fmtTag(b.arr) + " bis " + fmtTag(b.dep) + ") als eingegangen verbuchen?", "Ja, verbuchen"))) return; }
+  else if (feld === "bezahlt") { if (!(await appFrage("Zahlung von " + b.name + " (" + chfZk(b) + ", " + fmtTag(b.arr) + " bis " + fmtTag(b.dep) + ") als eingegangen verbuchen?", "Ja, verbuchen"))) return; }
   else if (feld === "waescheZurueck") { if (!(await appFrage("Ist die Wäsche von " + b.name + " (" + fmtTag(b.arr) + " bis " + fmtTag(b.dep) + ") zurück bei euch?", "Ja, ist zurück"))) return; }
   ztSetzen(key, feld, !done);
 });
@@ -6437,6 +6472,131 @@ function gmAltAufraeumen() {   // Haken «gesendet» älter als die Bestätigung
   BUCH.forEach((b) => { const k = bKey(b), e = o[k]; if (e && e.gesendet && b.bestaetigt && String(e.gesendet).slice(0, 16) < b.bestaetigt) { delete e.gesendet; w = w.filter((x) => x !== k); geaendert = true; } });
   if (geaendert) try { localStorage.setItem("tm2_gm", JSON.stringify(o)); localStorage.setItem("tm2_gmWeg", JSON.stringify(w)); } catch (e) {}
 }
+// --- Geld einsammeln (seit 3.11.0.0, Wänu): Abrechnung pro Partei per WhatsApp, abhaken, TWINT-Nummer; alles nur auf dem Handy ---
+let INK = null, INK_SIG = "";
+const INK_OPEN = new Set();
+function inkLokal() { try { const o = JSON.parse(localStorage.getItem("tm2_ink") || "{}"); return o && typeof o === "object" ? o : {}; } catch (e) { return {}; } }
+function inkSetzen(key, v) { const o = inkLokal(); if (v) o[key] = v; else delete o[key]; const k = Object.keys(o); k.slice(0, Math.max(0, k.length - 20)).forEach((x) => delete o[x]); try { localStorage.setItem("tm2_ink", JSON.stringify(o)); } catch (e) {} }
+function inkTwint() { try { return localStorage.getItem("tm2_twint") || ""; } catch (e) { return ""; } }
+function inkSpeichern() {   // beim Senden der Anfrage: neue Anfrage = neue Abrechnung, Haken und Frist beginnen leer
+  if (!ABSENDER || !ARR || !DEP) return;
+  const key = bKey({ name: ABSENDER, arr: ARR, dep: DEP });
+  inkSetzen(key, INK && INK.p.length ? Object.assign({}, INK, { am: jetztStr(), ok: {} }) : null);
+  INK_SIG = "";
+}
+function inkUnd(l) { return l.length > 1 ? l.slice(0, -1).join(", ") + " und " + l[l.length - 1] : l[0] || ""; }
+function inkIban() { try { return localStorage.getItem("tm2_iban") || ""; } catch (e) { return ""; } }
+function inkTrink() { try { return localStorage.getItem("tm2_inkTrink") !== "0"; } catch (e) { return true; } }   // Trinkgeld-Hinweis: an, bis das Kind ihn ausschaltet
+function rufGespeichert() { try { return (localStorage.getItem("tm2_rufname") || "").trim(); } catch (e) { return ""; } }
+function rufname() { return rufGespeichert() || ABSENDER; }   // «Wie willst du genannt werden?» (seit 3.11.0.0): Chips «Ich», Kopf, Unterschrift der Rechnungen
+let FREUND_TAGE = null;   // Regel von Papi (buchungen.json, freundTage): Freunde zahlen dem Kind bis so viele Tage nach der Abreise
+const freundTage = () => FREUND_TAGE !== null ? FREUND_TAGE : Math.max(0, ZAHL_TAGE - 2);
+const inkEltern = () => PARTNER_ABS.indexOf(ABSENDER) >= 0 ? "Marianne und Silvan" : "Mami und Papi";   // aus Sicht des Kindes wie die Anrede «Hallo Mami und Papi» bzw. «Hallo Marianne und Silvan»
+function inkFrist(e) { return e.frist || addDays(e.dep, freundTage()); }
+function inkText(e, pp) {   // lockerer Text, Aufstellung pro Person
+  const tw = inkTwint(), ib = inkIban(), viele = pp.an.length > 1 || pp.fam || pp.pers.length > 1, nN = e.nights + " " + (e.nights === 1 ? "Nacht" : "Nächte");
+  const z = ["Hoi " + inkUnd(pp.an) + " 👋", "", "Hier " + (viele ? "eure" : "deine") + " Kosten für unseren Aufenthalt im Chalet Tschenten in Adelboden, " + fmtTag(e.arr) + " bis " + fmtTag(e.dep) + " (" + nN + "):", ""];
+  if (pp.fam) { z.push("*" + inkUnd(pp.mit) + "*"); pp.z.forEach((q) => z.push(q[0] + ": " + chf2(q[1]))); z.push(""); }
+  pp.pers.forEach((pe) => {
+    z.push("*" + pe.n + (pe.a !== null && pe.a !== undefined && !pe.kk ? " (" + pe.a + ")" : "") + "*");
+    if (pe.kk) z.push("Kleinkind ohne Bett: gratis 🎉");
+    else { pe.z.forEach((q) => z.push(q[0] + (q[0] === "Übernachtung" ? " (" + nN + ")" : "") + ": " + chf2(q[1]))); if (pp.pers.length > 1 && pe.z.length > 1) z.push("= " + chf2(pe.s)); }
+    z.push("");
+  });
+  pp.fuer.forEach((f) => { z.push("*Anteil für " + f.n + " (" + f.a + ")*: " + chf2(f.s)); z.push(""); });
+  z.push("*Total: " + chf2(pp.t) + "*", "");
+  const bis = " bis " + fmtTag(inkFrist(e));
+  if (tw) z.push("💳 Bitte " + (viele ? "zahlt" : "zahl") + bis + ", am einfachsten per TWINT an " + tw + (ib ? " oder auf mein Konto: " + ib : "") + ".");
+  else if (ib) z.push("💳 Bitte " + (viele ? "überweist" : "überweise") + " es" + bis + " auf mein Konto: " + ib + ".");
+  else z.push("💳 Bitte " + (viele ? "zahlt" : "zahl") + " es mir" + bis + ".");
+  if (inkTrink()) z.push("🍀 Wer mag, darf gerne ein Trinkgeld dazulegen. Ich gebe es weiter, es landet in der Kasse von Marianne Werder.");
+  z.push("", "Merci und liebe Grüsse", rufname());
+  return z.join("\n");
+}
+const INK_ZEIG = new Set();   // Buchungen, bei denen das Kind die schon bezahlten Rechnungen sehen will
+let INK_AUF = null;   // aufgeklappte Buchungen (null = noch nichts angetippt: die erste ist offen)
+function inkZeigen() {
+  meinKnopf();
+  const box = document.getElementById("inkBox"); if (!box) return;
+  const lok = inkLokal();
+  const l = ABSENDER && !MAMI ? BUCH.filter((b) => eigenN(b.name) && b.bestaetigt && lok[bKey(b)] && !(b.betrag > 0 && b.bezahlt) && !(!(b.betrag > 0) && lok[bKey(b)].p.every((pp, k) => (lok[bKey(b)].ok || {})[k]))).sort((p, q) => (p.arr < q.arr ? -1 : 1)) : [];   // bleibt, bis die Eltern die Zahlung abgehakt haben (Wänu)
+  const sig = JSON.stringify([l.map(bKey), l.map((b) => [lok[bKey(b)].ok, lok[bKey(b)].frist, b.betrag, b.bezahlt]), inkTwint(), inkIban(), rufname(), inkTrink(), [...INK_OPEN], [...INK_ZEIG], INK_AUF && [...INK_AUF], FREUND_TAGE, ZAHL_TAGE]);
+  if (sig === INK_SIG) return;
+  INK_SIG = sig;
+  box.hidden = !l.length; if (!l.length) { box.innerHTML = ""; return; }
+  const auf = INK_AUF || new Set([bKey(l[0])]);
+  const offenF = (b) => { const e = lok[bKey(b)], ok = e.ok || {}; return e.p.reduce((a, pp, k) => a + (ok[k] ? 0 : pp.t), 0); };
+  const sum = l.reduce((a, b) => a + offenF(b), 0), tw = inkTwint(), ib = inkIban();
+  let h = '<details class="note h gm-k gm-zu ink-k" data-ink-aus="1"' + (INK_OPEN.has("_") ? " open" : "") + '><summary><span><span class="gm-ico">💰</span><b>Geld einsammeln</b> · ' + (sum > 0.004 ? "bei Freunden offen " + esc(chf2(sum)) : "Freunde haben bezahlt ✅") + "</span></summary>";
+  h += '<p class="hint">Schick jedem seine Rechnung per WhatsApp und hake ab, wer bezahlt hat. Alles bleibt nur auf deinem Handy.</p>';
+  h += tw || ib ? '<p class="hint">Zahlung an dich: ' + esc([tw ? "TWINT " + tw : "", ib ? "IBAN " + ib : ""].filter(Boolean).join(", ")) + ". Ändern in «👤 Meine Verwaltung».</p>" : '<p class="hint ink-warn-t">💡 Trag in «👤 Meine Verwaltung» deine TWINT-Nummer oder IBAN ein, dann steht sie in den Rechnungen.</p>';
+  h += '<label class="ink-sw"><input type="checkbox" data-ink-trink="1"' + (inkTrink() ? " checked" : "") + "> 🍀 Hinweis aufs Trinkgeld mitsenden</label>";
+  l.forEach((b) => {
+    const key = bKey(b), e = lok[key], ok = e.ok || {}, of = offenF(b), nBez = e.p.filter((pp, k) => ok[k]).length, alle = nBez === e.p.length, kt = ktVon(b) || e.kt || 0, an = (b.betrag > 0 ? b.betrag : 0) + kt;
+    h += '<details class="ink-b" data-ink="' + esc(key) + '"' + (auf.has(key) ? " open" : "") + '><summary><b>' + esc(fmtTag(b.arr)) + " bis " + esc(fmtTag(b.dep)) + "</b><br><small>" + (alle ? "✅ Alle Freunde haben bezahlt" : nBez + " von " + e.p.length + " bezahlt, offen " + esc(chf2(of))) + "</small></summary>";
+    if (b.betrag > 0 && e.tot > 0 && Math.abs(b.betrag - e.tot) > 0.5) h += '<p class="note h ink-warn">⚠️ Die Eltern haben den Preis angepasst (beim Anfragen ' + esc(chf2(e.tot)) + ", jetzt " + esc(chf2(b.betrag)) + "). Die Beträge unten stammen noch von deiner Anfrage. Prüf sie, bevor du sie verschickst.</p>";
+    if (!alle) h += '<label class="ink-fr">📅 Bis wann sollen deine Freunde dir zahlen?<input type="date" data-ink-frist="' + esc(key) + '" value="' + esc(inkFrist(e)) + '"></label><p class="hint">Dieses Datum steht in den Rechnungen. Vorschlag der Eltern: ' + freundTage() + (freundTage() === 1 ? " Tag" : " Tage") + " nach der Abreise. Du selbst zahlst den Eltern bis " + esc(fmtTag(zahlFrist(b))) + ".</p>";
+    const zeile = (pp, k) => { const wer = pp.fam ? inkUnd(pp.mit) : inkUnd(pp.pers.map((pe) => pe.n));
+      return '<div class="ink-z' + (ok[k] ? " ink-ok" : "") + '"><div class="ink-n"><span>' + esc(wer) + "</span><b>" + esc(chf2(pp.t)) + "</b></div>" +
+        '<div class="gm-knoepfe">' + (ok[k] ? "" : '<a class="btn" href="https://wa.me/?text=' + encodeURIComponent(inkText(e, pp)) + '" target="_blank" rel="noopener">' + WA_SVG + "Rechnung für " + esc(inkUnd(pp.an)) + "</a>") +
+        '<button type="button" class="btn ink-hk" data-ink-ok="' + k + '" aria-pressed="' + (ok[k] ? "true" : "false") + '">' + (ok[k] ? "✅ Bezahlt am " + esc(fmtTag(ok[k])) : "☐ Bezahlt?") + "</button></div></div>"; };
+    e.p.forEach((pp, k) => { if (!ok[k]) h += zeile(pp, k); });
+    if (nBez) { h += '<button type="button" class="btn ink-zg" data-ink-zeig="' + esc(key) + '">' + (INK_ZEIG.has(key) ? "Bezahlte ausblenden ▴" : "✅ " + nBez + " bezahlt anzeigen ▾") + "</button>"; if (INK_ZEIG.has(key)) e.p.forEach((pp, k) => { if (ok[k]) h += zeile(pp, k); }); }
+    if (an > 0) h += '<p class="note h ink-an">' + (alle ? "🎉 Alle Freunde haben bezahlt. Jetzt noch " : "🏦 An " + inkEltern() + " überweist du ") + "<b>" + esc(chf2(an)) + "</b>" + (alle ? " an " + inkEltern() + " überweisen" : "") + ", bis " + esc(fmtTag(zahlFrist(b))) + "." + (kt > 0 ? '<br><small>Aufenthalt ' + esc(chf2(b.betrag)) + " und Kurtaxe der Freunde " + esc(chf2(kt)) + ".</small>" : "") + '<br><small>Dieser Eintrag verschwindet, sobald die Eltern deine Zahlung erhalten haben.</small></p>';
+    h += "</details>";
+  });
+  box.innerHTML = h + "</details>";
+}
+document.getElementById("inkBox").addEventListener("toggle", (e) => { const d = e.target; if (!d || !d.matches) return;
+  if (d.matches("[data-ink-aus]")) { if (d.open) INK_OPEN.add("_"); else INK_OPEN.delete("_"); return; }
+  if (d.matches("[data-ink]")) { if (!INK_AUF) INK_AUF = new Set([...document.querySelectorAll("#inkBox [data-ink][open]")].map((x) => x.getAttribute("data-ink"))); const k = d.getAttribute("data-ink"); if (d.open) INK_AUF.add(k); else INK_AUF.delete(k); } }, true);
+document.getElementById("inkBox").addEventListener("change", (e) => {
+  const t = e.target;
+  if (t.matches("[data-ink-trink]")) { try { localStorage.setItem("tm2_inkTrink", t.checked ? "1" : "0"); } catch (er) {} INK_SIG = ""; inkZeigen(); return; }
+  if (t.matches("[data-ink-frist]")) { const key = t.getAttribute("data-ink-frist"), o = inkLokal()[key]; if (!o) return; o.frist = t.value || ""; inkSetzen(key, o); INK_SIG = ""; inkZeigen(); }
+});
+document.getElementById("inkBox").addEventListener("click", (e) => {
+  const zg = e.target.closest("[data-ink-zeig]"); if (zg) { const k = zg.getAttribute("data-ink-zeig"); if (INK_ZEIG.has(k)) INK_ZEIG.delete(k); else INK_ZEIG.add(k); INK_SIG = ""; inkZeigen(); return; }
+  const b = e.target.closest("[data-ink-ok]"); if (!b) return;
+  const key = b.closest("[data-ink]").getAttribute("data-ink"), o = inkLokal()[key]; if (!o) return;
+  const k = b.getAttribute("data-ink-ok"); o.ok = o.ok || {}; if (o.ok[k]) delete o.ok[k]; else o.ok[k] = heuteKey();
+  inkSetzen(key, o); INK_SIG = ""; inkZeigen();
+});
+// --- Meine Verwaltung des Kindes (seit 3.11.0.0): Name, Mail, TWINT, IBAN; alles nur auf dem Handy, die Mail geht wie bisher an den Briefkasten ---
+function meinKnopf() { const kn = document.getElementById("btnMein"), k = document.getElementById("meinKasten"); if (!kn) return; const an = !!ABSENDER && !TOKEN && !MAMI; kn.hidden = !an; if (!an && k) k.hidden = true; }
+function meinZeigen() {
+  const k = document.getElementById("meinKasten"), m = mailLokal() || {};
+  k.innerHTML = '<p class="hint">Diese Angaben bleiben nur auf deinem Handy. Nur die Mailadresse geht an die Eltern.</p>' +
+    '<label class="ink-fr">Wie willst du genannt werden?<input type="text" data-mein="ruf" maxlength="20" autocomplete="off" placeholder="' + esc(ABSENDER) + '" value="' + esc(rufGespeichert()) + '"></label><p class="hint">Steht im Kopf (<b class="mein-vs">' + esc(genitiv(rufGespeichert() || SPITZNAME[ABSENDER] || ABSENDER)) + '</b>), bei «Ich» in der Auswahl und unter deinen Rechnungen. Leer lassen = ' + esc(ABSENDER) + ".</p>" +
+    '<label class="ink-fr">Mailadresse<input type="email" data-mein="mail" maxlength="80" autocomplete="email" value="' + esc(m.name === ABSENDER ? m.mail || "" : "") + '"></label>' +
+    '<label class="ink-fr">TWINT-Nummer<input type="tel" data-mein="twint" maxlength="20" inputmode="tel" autocomplete="tel" placeholder="z. B. 079 123 45 67" value="' + esc(inkTwint()) + '"></label>' +
+    '<label class="ink-fr">IBAN (für Überweisungen deiner Freunde)<input type="text" data-mein="iban" maxlength="42" autocomplete="off" placeholder="CH00 0000 0000 0000 0000 0" value="' + esc(inkIban()) + '"></label>' +
+    '<p class="hint">TWINT-Nummer und IBAN stehen in den Rechnungen an deine Freunde («💰 Geld einsammeln»).</p>' +
+    '<button type="button" class="btn main full" data-mein-ok="1">💾 Speichern</button><p class="hint mein-msg" role="status"></p>';
+}
+const genitiv = (n) => /[sxzß]$/i.test(n) ? n + "’" : n + "s";
+document.getElementById("btnMein").addEventListener("click", () => {
+  const k = document.getElementById("meinKasten"), an = k.hidden, kn = document.getElementById("btnMein");
+  if (an) { setHilfe(false); hilfeZuklappen(); setRechner(false); setChem(false); meinZeigen(); }
+  k.hidden = !an; kn.classList.toggle("on", an); kn.setAttribute("aria-expanded", an ? "true" : "false");
+});
+document.getElementById("meinKasten").addEventListener("input", (e) => {
+  if (!e.target.matches('[data-mein="ruf"]')) return; const v = document.querySelector("#meinKasten .mein-vs"); if (v) v.textContent = genitiv(e.target.value.trim() || SPITZNAME[ABSENDER] || ABSENDER);
+});
+document.getElementById("meinKasten").addEventListener("click", (e) => {
+  if (!e.target.closest("[data-mein-ok]")) return;
+  const k = document.getElementById("meinKasten"), v = (n) => (k.querySelector('[data-mein="' + n + '"]').value || "").trim(), msg = k.querySelector(".mein-msg");
+  const ruf = v("ruf").replace(/[<>]/g, ""), mail = v("mail"), tw = v("twint"), ibRoh = v("iban").replace(/\s+/g, "").toUpperCase();
+  if (mail && !mailRe.test(mail)) { msg.textContent = "⚠️ Die Mailadresse stimmt nicht."; return; }
+  if (tw && (tw.replace(/\D/g, "").length < 10 || /[^\d\s+]/.test(tw))) { msg.textContent = "⚠️ Die TWINT-Nummer stimmt nicht (nur Ziffern, z. B. 079 123 45 67)."; return; }
+  if (ibRoh && !/^[A-Z]{2}\d{2}[A-Z0-9]{11,30}$/.test(ibRoh)) { msg.textContent = "⚠️ Die IBAN stimmt nicht (z. B. CH00 0000 0000 0000 0000 0)."; return; }
+  const ib = ibRoh.replace(/(.{4})/g, "$1 ").trim();
+  try { localStorage.setItem("tm2_rufname", ruf); localStorage.setItem("tm2_twint", tw); localStorage.setItem("tm2_iban", ib); } catch (er) {}
+  const m = mailLokal() || {};
+  if (mail && !(m.name === ABSENDER && m.mail === mail)) { const mn = { name: ABSENDER, mail: mail, gesendet: false }; try { localStorage.setItem("tm2_mail", JSON.stringify(mn)); } catch (er) {} mailSenden(mn); }   // sofort merken, Senden an den Briefkasten im Hintergrund
+  kopfName(); render(); INK_SIG = ""; inkZeigen(); meinZeigen();
+  k.querySelector(".mein-msg").textContent = "✅ Gespeichert.";
+});
 function gmKindZeigen() {
   const box = document.getElementById("gmBox");
   gmAltAufraeumen();
@@ -6620,6 +6780,8 @@ function bestZeigen() {
     w += '<div class="vk-nav"><button type="button" class="btn" style="grid-column:1/-1" data-zeig="K">' + (zeigLk ? "Persönliche Links ausblenden" : "🔗 Persönliche Links") + "</button></div>";
     if (zeigLk) w += lkHtml();
     w += '<div class="vk-nav"><button type="button" class="btn" style="grid-column:1/-1" data-zeig="E">' + (zeigE ? "Einnahmen ausblenden" : "💰 Einnahmen") + "</button></div>";
+    w += '<div class="vk-nav"><button type="button" class="btn" style="grid-column:1/-1" data-zeig="R">' + (zeigR ? "Zahlungsfrist ausblenden" : "📅 Zahlungsfrist der Freunde") + "</button></div>";
+    if (zeigR) w += '<div class="note h"><b>📅 Zahlungsfrist der Freunde</b><p class="hint">Vorschlag im Kasten «💰 Geld einsammeln» der Kinder: Ihre Freunde zahlen ihnen bis so viele Tage nach der Abreise. Die Kinder können das Datum pro Aufenthalt ändern. Sie selbst zahlen euch bis ' + ZAHL_TAGE + ' Tage nach der Abreise.</p><label class="ink-fr">Tage nach der Abreise<input type="number" id="freundTageIn" min="0" max="' + ZAHL_TAGE + '" inputmode="numeric" value="' + freundTage() + '"></label><button type="button" class="btn main" data-freundtage="1">💾 Speichern</button><p class="hint" id="freundTageMsg"></p></div>';
     if (zeigE) w += einnahmenHtml();
     if (zeigL) w += "<b>📒 Logbuch</b>" + (LOGBUCH.length ? "<ul>" + LOGBUCH.slice().reverse().map((e) => "<li><span class=\"hint\">" + esc(fmtTag(e.t.slice(0, 10))) + ", " + esc(e.t.slice(11, 16)) + " Uhr</span> " + esc(e.text) + "</li>").join("") + "</ul>" : '<p class="hint">Noch keine Einträge.</p>');
     if (zeigA) w += vkSek("✖ Abgelehnt", ABGEL.length) + (ABGEL.length ? ABGEL.map((x) => { const z = BUCH_ABGEL.find((y) => bKey(y) === bKey(x)); const xx = Object.assign({}, x, { bescheid: z ? z.bescheid : "" }); return vkKarte(xx, xx.bescheid ? "" : "offen", '<div class="vk-chips"><span class="vk-chip">' + (xx.pers ? xx.pers + (xx.pers === 1 ? " Person" : " Personen") : "Absage") + "</span></div>", bescheidStatus(xx), bescheidKnopf(xx, true) + '<button type="button" class="btn" data-wieder="' + esc(bKey(x)) + '">↩️ wieder offen</button>'); }).join("") : '<p class="hint">Keine abgelehnten Anfragen.</p>');
@@ -6670,7 +6832,7 @@ function bestZeigen() {
   if (PERS_ZIEL) { const el = k.querySelector('details.pers[data-pers="' + CSS.escape(PERS_ZIEL) + '"]'); PERS_ZIEL = ""; if (el) setTimeout(() => el.scrollIntoView({ behavior: "auto", block: "start" }), 0); }
 }
 function zahlText(x) {   // Aufbau mit Absätzen (seit 3.9.4.0)
-  return waHoi(x.name) + "Dein Aufenthalt war hoffentlich schön. 😊 Die Zahlung ist bei uns noch nicht eingegangen.\n\n" + waZeit(x) + "\nBetrag: " + chf(x.betrag) + "\nFrist war: " + fmtTagV(zahlFrist(x)) + "\n\nBitte überweise den Betrag in den nächsten Tagen. Die Bankverbindung findest du im TSCHENT-O-MAT unter «Zahlung». Danke dir!";
+  return waHoi(x.name) + "Dein Aufenthalt war hoffentlich schön. 😊 Die Zahlung ist bei uns noch nicht eingegangen.\n\n" + waZeit(x) + "\nBetrag: " + chfZk(x) + "\nFrist war: " + fmtTagV(zahlFrist(x)) + "\n\nBitte überweise den Betrag in den nächsten Tagen. Die Bankverbindung findest du im TSCHENT-O-MAT unter «Zahlung». Danke dir!";
 }
 function waescheProtokoll(l) {   // jede Wäsche-Rückgabe mit Weg, Frist, Info und Quittierung
   if (!l.length) return '<p class="hint">Noch keine Wäsche-Rückgabe. Sie erscheint hier, sobald jemand eine Staffel beginnt.</p>';
@@ -6696,7 +6858,7 @@ function zahlZeile(x) {
     ? '<a class="btn" data-erinnert="' + esc(key) + '" href="https://wa.me/?text=' + encodeURIComponent(zahlText(x)) + '" target="_blank" rel="noopener">' + WA_SVG + (letzte ? "Erneut erinnern" : "Erinnern") + "</a>"
     : '<span class="hint"> Erinnern ist ab dem ' + esc(fmtTag(addDays(x.dep, ERINNERUNG_AB))) + " möglich.</span>";
   const st2 = "<span>" + stand + "</span><span>" + wann + "</span>";
-  return vkKarte(x, zahlFaellig(x) ? "warn" : "", '<div class="vk-chips"><span class="vk-chip">' + esc(chf(x.betrag)) + "</span></div>", st2, '<button type="button" class="btn main" data-bez="' + esc(key) + '">✅ Zahlung eingegangen</button>' + wa);
+  return vkKarte(x, zahlFaellig(x) ? "warn" : "", '<div class="vk-chips"><span class="vk-chip">' + esc(chfZk(x)) + "</span></div>", st2, '<button type="button" class="btn main" data-bez="' + esc(key) + '">✅ Zahlung eingegangen</button>' + wa);
 }
 // Hochsaison: Buchungssicherheit gibt es nur zum Preis für «verbindlich». Darum kein Knopf, der einen Termin mit Vorbehalt (Familienpreis) nachträglich sperrt
 const hochVorbehalt = (x) => P.hochNachtMin > 0 && hochNaechte(x.arr, x.dep) > 0;
@@ -6837,6 +6999,14 @@ document.getElementById("btnAnsichten").addEventListener("click", () => {
   if (zeigAns) { ZURUECK = null; document.getElementById("zurueck").hidden = true; setHilfe(false); hilfeZuklappen(); setRechner(false); setChem(false); PERS_STAND.clear(); VK_OFFEN.clear(); }   // Verwaltung öffnet immer mit allen Titeln zugeklappt
   bestZeigen();
 });
+document.getElementById("bestKasten").addEventListener("click", async (e) => {   // Zahlungsfrist der Freunde speichern (seit 3.11.0.0)
+  const b = e.target.closest("[data-freundtage]"); if (!b) return;
+  const n = Math.round(Number(document.getElementById("freundTageIn").value)), msg = document.getElementById("freundTageMsg");
+  if (!isFinite(n) || n < 0 || n > ZAHL_TAGE) { msg.textContent = "⚠️ Bitte eine Zahl von 0 bis " + ZAHL_TAGE + "."; return; }
+  b.disabled = true; b.textContent = "Speichert …";
+  try { const j = await ghAendern((l, jj) => { jj.freundTage = n; logEintrag(jj, "Zahlungsfrist der Freunde: " + n + " Tage nach der Abreise"); return l; }); buchungenAn(j); try { localStorage.setItem("tm2_buchungen", JSON.stringify(j)); } catch (e2) {} bestZeigen(); }
+  catch (err) { b.disabled = false; b.textContent = "💾 Speichern"; msg.textContent = "⚠️ " + (err && err.message ? err.message : "Nicht gespeichert."); }
+});
 document.getElementById("bestKasten").addEventListener("change", (e) => {
   if (e.target && e.target.id === "ansichtAls") {
     blaseZu();
@@ -6869,7 +7039,7 @@ function sTermine(terme) {
   BUCH.forEach((b) => {
     const eig = papi || (ABSENDER !== "" && eigenN(b.name));
     const t = [b.name, "Familie", b.prov ? "mit Vorbehalt" : "fest", b.sb ? "reinigt selbst" : "Eltern reinigen"];
-    if (eig && b.betrag > 0) { t.push(chf(b.betrag)); t.push(b.bezahlt ? "bezahlt" : "offen"); }
+    if (eig && b.betrag > 0) { t.push(chfZ(b)); t.push(b.bezahlt ? "bezahlt" : "offen"); }
     t.push(datum(b.arr, b.dep));
     liste.push({ arr: b.arr, end: b.dep, teile: t });
   });
@@ -7097,7 +7267,7 @@ document.getElementById("bestKasten").addEventListener("click", async (e) => {
     lkErzeugen(namen).then(() => { bestMsg = alle ? "Alle acht Links sind erzeugt." : "Neuer Link für " + lkn + " ist erzeugt."; }).catch((er) => { bestFehler = er.message; }).then(() => { bestBusy = false; bestZeigen(); });
     return;
   }
-  const z = f("data-zeig"); if (z) { if (z === "K") { zeigLk = !zeigLk; if (zeigLk) { LK_HASH = null; bestZeigen(); lkLaden(); return; } } else if (z === "B") zeigB = !zeigB; else if (z === "L") zeigL = !zeigL; else if (z === "G") zeigG = !zeigG; else if (z === "E") zeigE = !zeigE; else if (z === "W") zeigW = !zeigW; else zeigA = !zeigA; bestZeigen(); return; }
+  const z = f("data-zeig"); if (z) { if (z === "K") { zeigLk = !zeigLk; if (zeigLk) { LK_HASH = null; bestZeigen(); lkLaden(); return; } } else if (z === "B") zeigB = !zeigB; else if (z === "L") zeigL = !zeigL; else if (z === "G") zeigG = !zeigG; else if (z === "E") zeigE = !zeigE; else if (z === "W") zeigW = !zeigW; else if (z === "R") zeigR = !zeigR; else zeigA = !zeigA; bestZeigen(); return; }
   if (e.target.closest("[data-gsave]")) {
     const q = (id) => (document.getElementById(id) || {}).value || "";
     const arr = q("gDat") || q("gSel"), typ = typWahl("gTyp"), name = gastKurz(q("gName")) || (typ === "block" ? "blockiert" : "");
@@ -7424,7 +7594,7 @@ document.getElementById("tokPanel").addEventListener("click", (e) => {
     }
     if (eig) {
       const bez = b.bezahlt && b.betrag > 0;
-      const kurz = b.betrag > 0 ? esc(chf(b.betrag).replace(" ", "\u00a0")) + ", " + (b.prov ? (hochVorbehalt(b) ? "fällig nach dem Aufenthalt" : "fällig mit der Sicherung") : bez ? "bezahlt am " + esc(fmtTag(b.bezahlt.slice(0, 10))) : "noch offen") : "Preisberechnung";
+      const kurz = b.betrag > 0 ? esc(chfZ(b).replace(" ", "\u00a0")) + ", " + (b.prov ? (hochVorbehalt(b) ? "fällig nach dem Aufenthalt" : "fällig mit der Sicherung") : bez ? "bezahlt am " + esc(fmtTag(b.bezahlt.slice(0, 10))) : "noch offen") : "Preisberechnung";
       h += zeile("rech", "🧾", bez ? "Quittung" : "Rechnung", kurz, false) + '<div class="ipan" data-ipan="rech" hidden>' + rechnungHtml(b.rechnung, b.bestaetigt) + "</div>";
     }
     if (zh.length) {
