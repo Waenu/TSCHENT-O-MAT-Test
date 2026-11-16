@@ -2,6 +2,20 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.15.0.0",
+      "datum": "2026-11-16",
+      "titel": "Gratis oder mitzahlen",
+      "arten": [
+        "Funktion"
+      ],
+      "punkte": [
+        "Zahlen die Freunde zusammen mehr als den Mindestpreis, fragt der Rechner: «🎁 Gratis» (Anteil CHF 0) bzw. «🎁 Vergünstigt» (kleinerer Anteil), «🤝 Mitzahlen pro Person» oder «🤝 Mitzahlen pro Partei». Vorgewählt ist Gratis bzw. Vergünstigt (wie bisher).",
+        "Mitzahlen: Das Total bleibt gleich und wird auf alle verteilt; die Familie zahlt ihren Anteil (pro Person: jede Person mit Bett gleich; pro Partei: die Familie wie eine Partei der Freunde), die Freunde entsprechend weniger, untereinander im gleichen Verhältnis. Nie mehr als ohne Mindestpreis.",
+        "Unter jedem Knopf steht der Anteil der Familie. Anfrage mit Zeile «Mindestpreis: Familie gratis/vergünstigt» bzw. «Wir zahlen mit».",
+        "Für die Eltern ändert sich der Betrag nicht."
+      ]
+    },
+    {
       "v": "3.14.1.3",
       "datum": "2026-11-16",
       "titel": "Stornofrist beim Aufenthalt",
