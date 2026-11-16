@@ -2,6 +2,21 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.11.0.1",
+      "datum": "16.11.2026",
+      "titel": "Meine Verwaltung pro Person",
+      "arten": [
+        "Fehler",
+        "Text",
+        "Layout"
+      ],
+      "punkte": [
+        "Name, TWINT-Nummer, IBAN und Trinkgeld-Schalter werden pro Person gespeichert (in der Testversion zeigte Deborah die Angaben von Miriam).",
+        "«Vorschlag der Eltern: spätestens 5 Tage nach der Abreise.»",
+        "Wer «Geld einsammeln» aufklappt, schliesst den Rechner mit dem Kalender, wie bei den übrigen Knöpfen der Startseite."
+      ]
+    },
+    {
       "v": "3.11.0.0",
       "datum": "16.11.2026",
       "titel": "Geld einsammeln und Meine Verwaltung",
