@@ -1588,7 +1588,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.16.1.0";
+let VERSION = "3.16.1.1";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -4626,6 +4626,11 @@ function render() {
   const x = r.d;
   const ktAl = zahlendeAlter(listeN(x)), ktFolgt = listeModus() && listeN(x) > 0 && !ktAl;   // Liste noch unvollständig: Kurtaxe folgt
   const kt = ktFolgt || ktAus() ? kurtaxeRechnen(0, 0, 0) : kurtaxeRechnen(x.GE, S.kinder, x.nights, ktAl), ktS = kt.summe > 0 ? chf2(kt.summe) : "";   // Kurtaxe nur für Freunde, kommt am Schluss zum Preis dazu
+  if (kt.summe > 0) {   // Leiste zeigt den Betrag, der überwiesen wird: mit Kurtaxe der Freunde (seit 3.16.1.1, Wänu); b.betrag bleibt ohne Kurtaxe
+    const f = (v) => Math.abs(v - Math.round(v)) > 0.004 ? chf2(v) : chf(v), k0 = totTxt + nTxt;
+    val.innerHTML = f(r.TOT + tip + kt.summe);
+    if (lab.innerHTML.indexOf(k0) === 0) lab.innerHTML = k0 + '<br><small class="kt-l">inkl. Kurtaxe ' + f(kt.summe) + "</small>" + lab.innerHTML.slice(k0.length);
+  }
   const spR = SOND ? null : spitzTermin();
   if (spR) {
     SNAP_BER = [];
