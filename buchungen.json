@@ -29,10 +29,6 @@
   ],
   "logbuch": [
     {
-      "t": "2026-11-02T08:10",
-      "text": "Entfernt: Deborah, Sa 7.11.2026 bis Mo 9.11.2026"
-    },
-    {
       "t": "2026-11-03T12:09",
       "text": "Bestätigt: Jerome, Mi 25.11.2026 bis Sa 28.11.2026, CHF 405"
     },
@@ -827,8 +823,21 @@
     {
       "t": "2026-11-16T19:45",
       "text": "Bestätigt: ⭐ Sonderbuchung, Manuel, Mo 7.06.2027 bis Do 10.06.2027, CHF 1500"
+    },
+    {
+      "t": "2026-11-16T19:48",
+      "text": "Vorlage für Manuel: 2027-06-10 bis 2027-06-13, normale Preise wie bei einer gewöhnlichen Buchung, ohne Mindestnächte"
     }
   ],
   "reinigung": [],
-  "vorlagen": []
+  "vorlagen": [
+    {
+      "id": "mwjm9s55",
+      "name": "Manuel",
+      "arr": "2027-06-10",
+      "dep": "2027-06-13",
+      "pa": false,
+      "t": "2026-11-16T19:48"
+    }
+  ]
 }
