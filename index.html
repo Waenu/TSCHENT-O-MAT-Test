@@ -242,6 +242,8 @@ if (TEST_MODUS) {
   .gm-k .gm-geb input[type=text] { flex: 1; }
   .gm-k .gm-kal { position: absolute; right: 0; bottom: 0; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
   .gm-k .gm-vor { display: flex; flex-direction: column; gap: 6px; } .gm-k .gm-vor .gv { display: flex; gap: 6px; } .gm-k .gm-vor .gv-w { flex: 1; text-align: left; justify-content: flex-start; } .gm-k .gm-vor .gv-x { flex: none; min-width: 44px; }
+  .gm-k .gm-in { position: relative; display: block; } .gm-k .gm-in input { width: 100%; box-sizing: border-box; padding-right: 54px; } .gm-k .gm-in .gm-ab { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); width: 46px; height: 40px; border: 0; background: transparent; font-size: 1.35rem; line-height: 1; cursor: pointer; padding: 0; }
+  .gm-k .gm-vor.gm-alle { max-height: 55vh; overflow-y: auto; border: 1px solid var(--line); border-radius: 6px; padding: 6px; } .gm-k .gv-k { margin: 0 0 2px; }
   .gm-k .gm-geb .btn, .gm-k .gm-vor .gv-x { flex: none; width: 64px; min-width: 64px; padding: 0; justify-content: center; }   /* ✕ und 📅 gleich gross (seit 3.7.0.0) */
   .zchips { display: flex; flex-wrap: wrap; gap: 8px; }
   .zchip { min-height: 44px; padding: 4px 14px; border-radius: 22px; border: 2px solid var(--line); background: var(--surface); color: var(--fg); font: inherit; font-weight: 600; cursor: pointer; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.15; }
@@ -1565,7 +1567,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.11.0.1";
+let VERSION = "3.11.1.0";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -1946,8 +1948,8 @@ function gmRechZeigen(d) {
     for (let i = 0; i < n; i++) {
       const f = l[i] || {};
       h += '<fieldset class="gm-f' + (kkZeile(i) ? ' gm-kk' : '') + '"><legend>Freund/in ' + (i + 1) + "</legend>" + (kkZeile(i) ? '<button type="button" class="gm-kkx" data-gmkkx="' + i + '" aria-label="Kleinkind entfernen">✕</button>' : '') +
-        '<input type="text" data-gf="name" maxlength="60" autocomplete="off" placeholder="Name" aria-label="Name" value="' + esc(f.name || "") + '">' +
-        '<input type="text" data-gf="vorname" maxlength="60" autocomplete="off" placeholder="Vorname" aria-label="Vorname" value="' + esc(f.vorname || "") + '"><div class="gm-vor" hidden></div>' +
+        '<div class="gm-in"><input type="text" data-gf="name" maxlength="60" autocomplete="off" placeholder="Name" aria-label="Name" value="' + esc(f.name || "") + '"><button type="button" class="gm-ab" data-gmalle="name" aria-label="Alle bisherigen Freunde nach Nachname">📇</button></div>' +
+        '<div class="gm-in"><input type="text" data-gf="vorname" maxlength="60" autocomplete="off" placeholder="Vorname" aria-label="Vorname" value="' + esc(f.vorname || "") + '"><button type="button" class="gm-ab" data-gmalle="vorname" aria-label="Alle bisherigen Freunde nach Vorname">📇</button></div><div class="gm-vor" hidden></div>' +
         '<div class="gm-geb"><input type="text" data-gf="geb" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="Geburtsdatum TT.MM.JJJJ" aria-label="Geburtsdatum (TT.MM.JJJJ)" value="' + esc(f.gebText || gmDatum(f.geb || "")) + '"><button type="button" class="btn" data-gmkal="1" aria-label="Im Kalender wählen">📅</button><input type="date" class="gm-kal" tabindex="-1" aria-hidden="true" max="' + heuteKey() + '"></div>' +
         '<div class="gm-gs" role="radiogroup" aria-label="Geschlecht"><label><input type="radio" name="grs' + i + '" data-gf="geschlecht" value="w"' + (f.geschlecht === "w" ? " checked" : "") + '> weiblich</label><label><input type="radio" name="grs' + i + '" data-gf="geschlecht" value="m"' + (f.geschlecht === "m" ? " checked" : "") + "> männlich</label></div>" +
         '<input type="text" data-gf="nat" maxlength="40" autocomplete="off" placeholder="Nationalität" aria-label="Nationalität" value="' + esc(f.nat || "Schweiz") + '"><p class="hint gm-alt"></p>' +
@@ -2001,14 +2003,19 @@ function gmRechZeigen(d) {
   const fpp = famParteien(), famT = fpp ? fpp.map((pp, k) => (k === 0 ? famParteiText(pp, 0, false).replace(/^Du/, "Ich (" + esc(rufname()) + ")") : famParteiText(pp, k, false)) + (k === 0 ? famK.map((v) => ", " + esc(v)).join("") : "")) : [fam];   // Familie mit Parteien (seit 3.9.0.0)
   ps.innerHTML = '<p><b>🤝 Parteien</b></p><ol class="pt-info">' + famT.map((t, k) => '<li><span class="pt-nr">' + (k + 1) + "</span><span>" + t + "</span></li>").join("") + koepfe.map((h, k) => '<li><span class="pt-nr">' + (k + 1 + famT.length) + "</span><span>" + glieder(h).join(", ") + "</span></li>").join("") + "</ol>";   // nur Information, keine Chips (seit 3.9.5.6)
 }
-function gmVorZeigen(fs, feld) {   // Vorschläge aus dem Adressbuch: erst ab dem ersten Buchstaben, nur Treffer mit diesem Anfang (seit 3.9.1.1; vorher zeigte ein leeres Feld alle)
+function gmVorZeigen(fs, feld, alle) {   // alle: Knopf 📇 im Feld zeigt alle bisherigen Freunde, sortiert nach diesem Feld (seit 3.11.1.0)   // Vorschläge aus dem Adressbuch: erst ab dem ersten Buchstaben, nur Treffer mit diesem Anfang (seit 3.9.1.1; vorher zeigte ein leeres Feld alle)
   const d = fs.querySelector(".gm-vor"), wert = (n) => fs.querySelector('[data-gf="' + n + '"]').value.trim().toLowerCase();
   const id = (f) => (String(f.vorname || "") + "|" + String(f.name || "")).trim().toLowerCase();
   const schon = new Set([...fs.parentNode.querySelectorAll(".gm-f")].map((x) => (x.querySelector('[data-gf="vorname"]').value.trim() + "|" + x.querySelector('[data-gf="name"]').value.trim()).toLowerCase()));   // schon in dieser Liste
   const v = feld ? wert(feld) : "", k = karteiLesen();
-  const tr = k.map((f, i) => ({ f, i })).filter((x) => v && !schon.has(id(x.f)) && String(x.f[feld] || "").toLowerCase().indexOf(v) === 0).sort((a, b) => String(a.f[feld] || "").localeCompare(String(b.f[feld] || ""), "de"));
-  d.hidden = !feld || !tr.length;
-  d.innerHTML = tr.slice(0, 6).map((x) => '<div class="gv"><button type="button" class="btn gv-w" data-gmvor="' + x.i + '">' + esc(x.f.vorname + " " + x.f.name) + (x.f.geb ? ", " + esc(gmDatum(x.f.geb)) : "") + '</button><button type="button" class="btn gv-x" data-gmvorx="' + x.i + '" aria-label="' + esc(x.f.vorname + " " + x.f.name) + ' aus den Vorschlägen entfernen">✕</button></div>').join("");
+  const and = feld === "name" ? "vorname" : "name";
+  const tr = k.map((f, i) => ({ f, i })).filter((x) => !schon.has(id(x.f)) && (alle || (v && String(x.f[feld] || "").toLowerCase().indexOf(v) === 0))).sort((a, b) => String(a.f[feld] || "").localeCompare(String(b.f[feld] || ""), "de") || String(a.f[and] || "").localeCompare(String(b.f[and] || ""), "de"));
+  d.dataset.alle = alle ? feld : "";
+  d.classList.toggle("gm-alle", !!alle);
+  d.hidden = !feld || (!tr.length && !alle);
+  const nm = (f) => feld === "name" && alle ? f.name + " " + f.vorname : f.vorname + " " + f.name;
+  d.innerHTML = (alle ? '<p class="hint gv-k">' + (tr.length ? "📇 " + tr.length + (tr.length === 1 ? " Freund" : " Freunde") + ", nach " + (feld === "name" ? "Nachname" : "Vorname") + " sortiert" : "📇 Noch keine weiteren Freunde gespeichert. Sie kommen beim Senden einer Anfrage oder Liste dazu.") + "</p>" : "") +
+    (alle ? tr : tr.slice(0, 6)).map((x) => '<div class="gv"><button type="button" class="btn gv-w" data-gmvor="' + x.i + '">' + esc(nm(x.f)) + (x.f.geb ? ", " + esc(gmDatum(x.f.geb)) : "") + '</button><button type="button" class="btn gv-x" data-gmvorx="' + x.i + '" aria-label="' + esc(x.f.vorname + " " + x.f.name) + ' aus den Vorschlägen entfernen">✕</button></div>').join("");
 }
 function minderDa() { const n = listeZ(), zi = zahlendeIdx(n); if (!zi) return false; const l = freundeListe(n); return zi.some((i) => alterAm(l[i].geb, ARR) < 18); }
 function eigenHtml() {   // Chips des eigenen Haushalts, «Ich» fest (seit 3.9.4.0)
@@ -2267,6 +2274,11 @@ function build() {
         const kx = e.target.closest("[data-gmkkx]");
         if (kx) { const i = Number(kx.getAttribute("data-gmkkx")), a = gmEntwurf(); if (a[i] && (a[i].name || a[i].vorname)) karteiMerken([a[i]]); a.splice(i, 1); gmEntwurfSetzen(a); S.gkk = Math.max(0, nz(S.gkk) - 1); GM_ENTW_GEN++; normalize(); render(); return; }
         if (e.target.closest(".gm-pt-ok")) { const a = gmEntwurf(); a.forEach((f) => { if (f) delete f.zv; }); gmEntwurfSetzen(a); render(); return; }   // Vorschlag nach Nachname bestätigen (seit 3.10.3.0)
+        const ab = e.target.closest("[data-gmalle]");
+        if (ab) { const fs = ab.closest(".gm-f"), d = fs.querySelector(".gm-vor"), fd = ab.getAttribute("data-gmalle");
+          gb.querySelectorAll(".gm-f").forEach((x) => { if (x !== fs) x.querySelector(".gm-vor").hidden = true; });
+          if (!d.hidden && d.dataset.alle === fd) { d.hidden = true; return; }
+          gmVorZeigen(fs, fd, true); return; }
         const vw = e.target.closest("[data-gmvor]"), vx = e.target.closest("[data-gmvorx]");
         if (vw) {   // Freund aus dem Adressbuch übernehmen
           const f = karteiLesen()[Number(vw.getAttribute("data-gmvor"))], fs = vw.closest(".gm-f"); if (!f) return;
@@ -2280,7 +2292,7 @@ function build() {
           if (!(await appFrage(f.vorname + " " + f.name + " aus deinen Vorschlägen entfernen? In bereits gesendeten Listen bleibt er stehen.", "Ja, entfernen"))) return;
           k.splice(i, 1); karteiSchreiben(k);
           const fs2 = vx.closest(".gm-f"), fd2 = fs2.querySelector('[data-gf="vorname"]').value.trim() || !fs2.querySelector('[data-gf="name"]').value.trim() ? "vorname" : "name";
-          gmVorZeigen(fs2, fd2); return;
+          const da = fs2.querySelector(".gm-vor").dataset.alle; gmVorZeigen(fs2, da || fd2, !!da); return;
         }
         const kal = e.target.closest("[data-gmkal]"); if (!kal) return;
         const k = kal.parentNode.querySelector(".gm-kal"), t = kal.parentNode.querySelector('[data-gf="geb"]'); k.value = gmIso(t.value) || "1990-01-01";
