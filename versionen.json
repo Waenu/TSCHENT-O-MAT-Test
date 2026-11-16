@@ -2,6 +2,23 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.12.0.0",
+      "datum": "16.11.2026",
+      "titel": "Meine Verwaltung mit «Zu erledigen»",
+      "arten": [
+        "Funktion",
+        "Layout"
+      ],
+      "punkte": [
+        "«👤 Meine Verwaltung» hat drei Teile: «📋 Zu erledigen» (Liste der Freunde, Zahlung an die Eltern, Endreinigung der Staffel), «💰 Geld einsammeln» und «👤 Profil» (zugeklappt).",
+        "Die Startseite wird ruhiger: Diese Kästen stehen nicht mehr dort.",
+        "Solange etwas offen ist, hat der Knopf «Meine Verwaltung» einen roten Rahmen und eine rote Zahl (pro Aufgabe).",
+        "Auf der Startseite bleiben: überfällige Zahlung und Endreinigung (rot), ab 2 Tagen vor der Anreise eine rote Erinnerung, wenn die Liste der Freunde fehlt.",
+        "Die rote Meldung «Zahlung offen» nennt auch die Kurtaxe der Freunde.",
+        "Texte (Erinnerung an die Liste, Bestätigung, Anleitung) verweisen auf «Meine Verwaltung»."
+      ]
+    },
+    {
       "v": "3.11.1.0",
       "datum": "16.11.2026",
       "titel": "Alle bisherigen Freunde mit 📇",

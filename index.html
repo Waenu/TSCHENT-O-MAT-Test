@@ -449,6 +449,8 @@ if (TEST_MODUS) {
   .pay strong { font-size: var(--t-title); }
   .pay .rot-txt { color: var(--spitz-line); }
   .ink-opt label { display: flex; flex-direction: column; gap: 4px; font-weight: 700; margin-top: 8px; } .ink-opt input { min-height: 48px; font: inherit; color: var(--fg); padding: 8px 12px; border: 2px solid var(--line); border-radius: 6px; background: var(--surface); }
+  .bigbtn.rot-rand { border-color: var(--error-line); box-shadow: 0 0 0 1px var(--error-line); } #btnMein .alarm-n { margin-left: auto; font-size: 1rem; padding: 2px 10px; } .alarm-n.rot { background: #E5534B; color: #fff; }
+  .mein-sek { margin: 6px 0 14px; } .mein-h { margin: 4px 0 8px; font-size: 1.1rem; } #meinTodo > .note, #meinTodo > div > .note, #meinTodo .gm-k { margin-top: 8px; } #meinProfil > summary { cursor: pointer; font-weight: 700; padding: 6px 0; }
   .ink-b { border-top: 1px solid rgba(127,127,127,.35); margin-top: 10px; padding-top: 8px; } .ink-b > summary { cursor: pointer; display: block; white-space: normal; line-height: 1.35; } .ink-sw { display: flex; gap: 8px; align-items: center; margin: 8px 0; } .ink-sw input { width: 22px; height: 22px; } .ink-fr { display: flex; flex-direction: column; gap: 4px; font-weight: 700; margin-top: 8px; } .ink-fr input { min-height: 48px; font: inherit; color: var(--fg); padding: 8px 12px; border: 2px solid var(--line); border-radius: 6px; background: var(--surface); } .ink-an { margin-top: 10px; } .ink-zg { margin: 6px 0; }
   .ink-z { border-top: 1px solid rgba(127,127,127,.25); padding: 8px 0; margin-top: 8px; } .ink-n { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 6px; } .ink-z.ink-ok .ink-n { opacity: .6; } .ink-hk[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); } .ink-warn { border-color: var(--error-line); }
   .gm-alt.gm-warn { color: var(--error-line); font-weight: 700; }
@@ -1384,7 +1386,7 @@ if (TEST_MODUS) {
     <button type="button" class="bigbtn blau" id="btnAnsichten" aria-expanded="false" aria-controls="bestKasten" hidden><span class="bi" aria-hidden="true"><span class="an-auge">👁️</span></span>Verwaltung</button>
     <div class="note h" id="bestKasten" hidden></div>
     <button type="button" class="bigbtn" id="btnMein" aria-expanded="false" aria-controls="meinKasten" hidden><span class="bi" aria-hidden="true">👤</span>Meine Verwaltung</button>
-    <div class="note h" id="meinKasten" hidden></div>
+    <div class="note h" id="meinKasten" hidden><div class="mein-sek" id="meinTodo"><h3 class="mein-h">📋 Zu erledigen</h3><p class="hint" id="meinLeer">✅ Im Moment ist nichts zu erledigen.</p></div><div class="mein-sek" id="meinGeld"></div><details class="mein-sek" id="meinProfil"><summary>👤 Profil</summary><div id="meinProfilInhalt"></div></details></div>
     <button type="button" class="bigbtn" id="btnHilfe" aria-expanded="false" aria-controls="hilfe"><span class="bi" aria-hidden="true"><span class="an-bulb">💡</span></span>Anleitung &amp; Infos</button>
     <div id="hilfe" hidden>
     <details class="card" id="b-benutzung">
@@ -1467,6 +1469,8 @@ if (TEST_MODUS) {
     <button type="button" class="bigbtn" id="btnAnreise" hidden><span class="bi" aria-hidden="true"><svg class="ik" viewBox="0 0 40 40" focusable="false"><g class="ik-koffer"><path d="M15 12 V8 a2 2 0 0 1 2 -2 h6 a2 2 0 0 1 2 2 V12" fill="none" stroke="#3B7DC4" stroke-width="2.4" stroke-linecap="round"/><rect x="8" y="12" width="24" height="21" rx="4" fill="#3B7DC4"/><path d="M14 16 V29 M26 16 V29" stroke="#fff" stroke-width="1.6" opacity=".55" stroke-linecap="round"/><circle class="ik-rad" cx="14" cy="36" r="2.6" fill="#8A9490"/><circle class="ik-rad" cx="26" cy="36" r="2.6" fill="#8A9490"/></g></svg></span><span class="bt">Anreise-Wäsche<small id="btnAnreiseSub"></small></span></button>
     <button type="button" class="bigbtn" id="btnCheck" hidden><span class="bi" aria-hidden="true"><svg class="ik" viewBox="0 0 40 40" focusable="false"><circle class="ik-kreis" cx="20" cy="20" r="15" fill="#2E9E5B"/><path class="ik-haken" d="M12.5 20.5 L18 26 L28 14.5" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="bt">Reinigungs-Checkliste<small id="btnCheckSub"></small></span></button>
     <div id="aufStatus" hidden></div>
+    <div id="zahlRot" hidden></div>
+    <div id="listeErinn" hidden></div>
     <div id="zahlBox" hidden></div>
     <div id="wsHinweis" hidden></div>
     <div id="gmBox" hidden></div>
@@ -1567,7 +1571,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.11.1.0";
+let VERSION = "3.12.0.0";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -2919,7 +2923,7 @@ function begriffeFuellen() {
       "<p><b>Wozu die Beherbergungsabgabe dient:</b> Der Kanton Bern erhebt sie in allen Unterkünften, ob Hotel, Ferienwohnung oder Gruppenhaus, " + chf2(P.kurtaxeBeherb) + " pro Nacht für jeden Gast ab 16 Jahren. Mit dem Geld stärken die Berner Tourismusregionen zum Beispiel ihre Werbung. Geregelt ist das im kantonalen Tourismusentwicklungsgesetz und in der dazugehörigen Verordnung.</p>" +
       "<p>Beispiel: 3 Freunde, davon 1 Kind, 3 Nächte: 2 × " + chf2(bsp.sE) + " × 3 + 1 × " + chf2(bsp.sK) + " × 3 = <b>" + chf2(bsp.summe) + "</b>.</p>" +
       "<p>Im Rechner trägst du deine Freunde mit Geburtsdatum ein. Die App rechnet daraus die Kurtaxe und zeigt sie unter dem Preis an.</p>" +
-      (gmAktiv() ? "<p>Die Liste deiner Freunde (Name, Geburtsdatum, Geschlecht, Nationalität) füllst du schon im Rechner aus. Nach der Bestätigung sendest du sie auf der Startseite mit einem Tippen. Die Eltern brauchen sie, um deine Freunde in Adelboden anzumelden und die Reservation abzuschliessen.</p>" : "") + "</details>"); }
+      (gmAktiv() ? "<p>Die Liste deiner Freunde (Name, Geburtsdatum, Geschlecht, Nationalität) füllst du schon im Rechner aus. Nach der Bestätigung sendest du sie unter «👤 Meine Verwaltung» mit einem Tippen. Die Eltern brauchen sie, um deine Freunde in Adelboden anzumelden und die Reservation abzuschliessen.</p>" : "") + "</details>"); }
   set("bc-prov", "<p>" + filmGlossar() + "</p><p><b>Mit Vorbehalt</b> heisst: Der Termin ist in Airbnb nicht gesperrt. Meldet sich ein Airbnb-Gast für dieselben Tage, hat er Vorrang und ihr weicht.</p><p>Habt ihr noch nicht begonnen, fällt nichts an. Seid ihr schon im Chalet, bleibt ihr bis zum Anreisetag des Gastes und seid um " + ZEIT_AB + " draussen. Ihr zahlt die normalen Kosten für die Tage, die ihr dort wart, und die Reinigung. Plant deshalb eine Alternative ein.</p><p><b>Gesichert:</b> Ein Airbnb-Gast braucht " + VORLAUF + " Tage Vorlauf. Der Teil bis dahin ist gesichert (Balken voll), der Rest noch offen (gestrichelt). Der volle Teil wächst jeden Tag.</p>" + festUndVorbehaltTxt() + bildVorbehalt());
   set("bc-sicht", "<p>" + filmGlossar("luecke") + "</p><p><b>Lücke wegen Vorlaufzeit ⏸️</b> Airbnb kann diese Nächte nicht mehr verkaufen: Ein Gast braucht " + VORLAUF + " Tage Vorlauf, bleibt mindestens " + AIRBNB_MIN + " Nächte, und sonntags gibt es keinen Check-in. Darum steht diese Zeit euch offen: zum normalen Familienpreis, <b>ohne Vorbehalt</b>, auch in der Hochsaison. Mindestens " + Math.max(P.minNaechte, P.sichtMinNaechte) + " Nächte" + (P.hochMinNaechte > Math.max(P.minNaechte, P.sichtMinNaechte) ? ", in der Hochsaison mindestens " + P.hochMinNaechte : "") + ".</p><p>Im Kalender ist diese Zeit <b>gelb</b> und wandert täglich mit: Mit jedem Tag kann Airbnb weniger verkaufen, es kommen Nächte dazu, die vergangenen fallen weg. Das gilt auch bei nur 2 oder 3 Nächten, solange Airbnb dahinter noch verkaufen kann.</p>");
   set("bc-luecke", "<p>" + filmGlossar("luecke") + "</p><p><b>Lücken 🧩</b> Eine Lücke ist freie Zeit zwischen zwei Airbnb-Gästen von höchstens " + LUECKE_MAX + " Nächten. Ihr bucht sie zum normalen Familienpreis, <b>fest und ohne Vorbehalt</b>: ganz oder teilweise, ab " + P.minNaechte + " Nächten, an jedem Tag der Lücke. Auch <b>Freunde</b> sind willkommen, ab <b>3 Nächten</b>, bis " + P.maxPersonen + " Personen, alle Zimmer. Die Eltern reinigen und stellen die Wäsche, ihr bringt keine mit und reinigt nicht selber.</p><p><b>Wann buchbar:</b> Bis " + (AIRBNB_MIN - 1) + " Nächte sofort, Airbnb kann sie nie verkaufen. " + AIRBNB_MIN + " Nächte sind <b>gesperrt</b>, solange der Vorlauf (" + VORLAUF + " Tage) es Airbnb erlaubt, danach gelb und buchbar. Das Datum steht in der Info-Box. In der Tiefsaison ist sie sofort buchbar. Längere freie Zeit bleibt normal buchbar. Lücken bis " + (AIRBNB_MIN - 1) + " Nächte könnt ihr schon lange im Voraus buchen. Storniert ein Airbnb-Gast, bleibt euer Termin. Das Risiko tragen die Eltern.</p><p><b>Sonntag:</b> Endet ein Gast am Samstag, kann Airbnb den Sonntag nicht vergeben. Ihr reist schon am Sonntag an, die Lücke hat eine Nacht mehr.</p><p><b>Später entstandene Lücke:</b> Auch Zeit, die erst durch den Vorlauf und den Mindestaufenthalt von Airbnb übrig bleibt, wird zur Lücke, sobald höchstens " + LUECKE_MAX + " Nächte bleiben (siehe «Lücke wegen Vorlaufzeit» " + symBtn("b-sicht", "⏸️") + "). Es gelten dieselben Regeln und derselbe Preis.</p>" + (P.lueckeGastNacht > 0 ? "<p><b>Freunde in der Lücke:</b> Ohne Freunde buchst du die Lücke ganz oder teilweise, ab " + P.minNaechte + " Nächten. Mit Freunden geht sie ab <b>" + P.lueckeGastMinNaechte + " Nächten</b>, schon mit 1 Freund. Bei weniger Nächten erscheint das Feld für Freunde nicht. Ein Freund zahlt " + chf(P.gast) + " pro Nacht, die Familie " + chf(P.famPausch) + ". Bringen die Freunde mehr, sinkt der Anteil der Familie bis auf 0, das Total aber nie unter " + chf(P.lueckeGastNacht) + " pro Nacht plus Endreinigung (" + chf(P.reinigung) + "), bei " + P.lueckeGastMinNaechte + " Nächten also " + chf(lueckeMin(P.lueckeGastMinNaechte) + P.reinigung) + ".</p>" + lueckenBeispiel() : ""));
@@ -2948,7 +2952,7 @@ function begriffeFuellen() {
   set("bc-rechnen", "<p><b>Woher kommen die Preise?</b> Die Preise für Airbnb-Gäste berechnet das Programm PriceLabs. Es vergleicht unser Chalet mit gleichwertigen Ferienwohnungen und berücksichtigt dazu über 100 weitere Faktoren. Diese Preise werden mehrmals täglich von PriceLabs in Airbnb geschrieben, und sie haben Erfolg: Sogar Nächte Anfang Dezember sind vermietet. Für euch gilt ein Familienpreis. Er richtet sich nach diesen Marktpreisen, liegt in der Hochsaison bewusst darunter und ist nicht aus der Luft gegriffen.</p><p>Die Eltern legen die Preise fest. Eine Tabelle für alles gibt es nicht, darum hier die Grundidee:</p><ul>" +
     "<li><b>Übernachtungen:</b> Die Familie zahlt pauschal " + chf(P.famPausch) + " pro Nacht, jeder Freund " + chf(P.gast) + " (" + chf(P.gastZimmer) + " im Zimmer eines Familienmitglieds, das Familienmitglied zahlt dann nur noch " + chf(P.famAnteil) + " pro Nacht). Mit Freunden wird die Familie entlastet.</li>" +
     "<li><b>Freunde unter 18</b> zahlen den gleichen Preis wie Erwachsene. Wer ihren Anteil übernimmt, bestimmt ihr im Rechner: du, deine Partnerin oder dein Partner oder erwachsene Freunde. Gehört ein Kind zu einer Partei, zahlen deren Erwachsene. <b>Kleinkinder von Freunden</b> bis 2½ Jahre fügst du in der Liste mit «👶 Kleinkind dazu (ohne Bett)» hinzu. Sie schlafen im Kinderbettchen und sind gratis. Es hat 2 Kinderbettchen, Familie und Freunde zusammen.</li>" +
-    "<li><b>💰 Geld einsammeln:</b> Sobald die Eltern bestätigt haben, findest du auf der Startseite pro Partei einen Knopf «Rechnung für …». Er öffnet WhatsApp mit einer fertigen Abrechnung pro Person, den Empfänger wählst du selbst. Mit «Bezahlt?» hakst du ab, wer bezahlt hat. Deine TWINT-Nummer und die Zahlungsfrist trägst du dort einmal ein, sie bleiben nur auf deinem Handy.</li>" +
+    "<li><b>💰 Geld einsammeln:</b> Sobald die Eltern bestätigt haben, findest du in «👤 Meine Verwaltung» pro Partei einen Knopf «Rechnung für …». Er öffnet WhatsApp mit einer fertigen Abrechnung pro Person, den Empfänger wählst du selbst. Mit «Bezahlt?» hakst du ab, wer bezahlt hat. Deine TWINT-Nummer und IBAN trägst du dort unter «Profil» ein, sie bleiben nur auf deinem Handy. Solange etwas offen ist, hat der Knopf «👤 Meine Verwaltung» einen roten Rahmen und zeigt die Zahl der offenen Aufgaben.</li>" +
     "<li><b>Endreinigung:</b> Dazu kommen " + chf(P.reinigung) + ", aufgeteilt nach eurer Auswahl " + symBtn("b-endrein", "🪣") + "." + "</li>" +
     (P.mindestpreisWoche > 0 ? "<li><b>Mindestpreis:</b> Mit Freunden ab " + P.mindestpreisAbNaechte + " Nächten entfällt der Anteil der Familie, soweit das Total nicht unter " + chf(P.mindestpreisWoche) + " pro 7 Nächte sinkt (bei anderen Längen anteilig). Der Gesamtpreis sinkt nie unter diesen Mindestpreis, mit Freunden sinkt nur dein Anteil." + (P.hochNachtMin > 0 ? " Das gilt auch in der Hochsaison mit Vorbehalt. Wer dort verbindlich bucht, zahlt pauschal " + chf(P.hochNachtMin) + " pro Nacht plus Endreinigung, ohne Freunde " + symBtn("b-hochsaison", "🏔️") + "." : "") + (P.festBodenWoche > 0 && FEST_MONATE.length ? " Im " + esc(festTxt()) + " gilt der dortige Mindestpreis " + symBtn("b-februar", "⛷️") + "." : "") + "</li>" : "") +
     "</ul>" +
@@ -5030,8 +5034,17 @@ function aufentZeigen() {
     { const ab = document.getElementById("absageBox"), l = (AUF_LISTE || []).filter((x) => x.ok && x.dep >= heuteKey());   // Stornierung anfragen: auf der Startseite (seit 2.125.2.0)
       ab.hidden = !ABSENDER || !l.length; ab.innerHTML = ab.hidden ? "" : l.map((x) => '<div class="absage">' + (l.length > 1 ? '<p class="hint">' + esc(fmtTag(x.arr)) + " bis " + esc(fmtTag(x.dep)) + "</p>" : "") + absageKnopf(x) + "</div>").join(""); }
     const er = ABSENDER ? BUCH.filter((b) => eigenN(b.name) && endreinOffen(b)) : [];   // Endreinigung der Staffel (seit 2.125.0.0)
-    zb.hidden = zl.length === 0 && vorab.length === 0 && er.length === 0;
-    zb.innerHTML = vorab.map((b) => '<div class="note h"><b>💳 Zu bezahlen:</b> Für deinen Aufenthalt vom ' + esc(fmtTag(b.arr)) + " bis " + esc(fmtTag(b.dep)) + " sind <b>" + esc(chfZ(b)) + "</b>" + (ktVon(b) ? " (inkl. Kurtaxe der Freunde " + esc(chf2(ktVon(b))) + ")" : "") + " fällig, spätestens am " + esc(fmtTag(zahlFrist(b))) + ". Du kannst auch schon vorher überweisen, die Bankverbindung steht unter «Zahlung» " + symBtn("b-zahlung", "💰") + ".</div>").join("") + er.map((b) => { const an = endreinAnteile(b).filter((a) => a.name !== b.name); return '<div class="note h' + (endreinUeberfaellig(b) ? " rot-warn" : "") + '"><b>🪣 Endreinigung der Staffel' + (endreinUeberfaellig(b) ? " offen" : "") + ":</b> Eure Staffel endet mit deinem Aufenthalt (" + esc(fmtTag(b.arr)) + " bis " + esc(fmtTag(b.dep)) + "). Bitte überweise die Endreinigung von <b>" + esc(chf(P.reinigung)) + "</b> spätestens am " + esc(fmtTag(endreinFrist(b))) + "." + (an.length ? " Die Anteile von " + esc(an.map((a) => a.name + " (" + chf(a.chf) + ")").join(" und ")) + " holst du dir zurück." : "") + " Bankverbindung unter «Zahlung» " + symBtn("b-zahlung", "💰") + ".</div>"; }).join("") + zl.map((b) => '<div class="note h rot-warn"><b>💳 Zahlung offen:</b> Für deinen Aufenthalt vom ' + esc(fmtTag(b.arr)) + ' bis ' + esc(fmtTag(b.dep)) + ' sind <b>' + esc(chf(b.betrag)) + '</b> fällig. Die Frist war am ' + esc(fmtTag(zahlFrist(b))) + '. Bitte überweise jetzt, die Bankverbindung steht unter «Zahlung» ' + symBtn("b-zahlung", "💰") + '. Sobald Papi die Zahlung verbucht hat, verschwindet diese Meldung.</div>').join("");
+    let ZLH = "";
+    const erRot = er.filter((b) => endreinUeberfaellig(b)), erRuhig = er.filter((b) => !endreinUeberfaellig(b));   // überfällig bleibt rot auf der Startseite (seit 3.12.0.0)
+    MEIN_N.zb = zl.length + vorab.length + er.length;
+    zb.hidden = vorab.length === 0 && erRuhig.length === 0;
+    zb.innerHTML = vorab.map((b) => '<div class="note h"><b>💳 Zu bezahlen:</b> Für deinen Aufenthalt vom ' + esc(fmtTag(b.arr)) + " bis " + esc(fmtTag(b.dep)) + " sind <b>" + esc(chfZ(b)) + "</b>" + (ktVon(b) ? " (inkl. Kurtaxe der Freunde " + esc(chf2(ktVon(b))) + ")" : "") + " fällig, spätestens am " + esc(fmtTag(zahlFrist(b))) + ". Du kannst auch schon vorher überweisen, die Bankverbindung steht unter «Zahlung» " + symBtn("b-zahlung", "💰") + ".</div>").join("") + erRuhig.map(ERH).join("");
+    ZLH = zl.map((b) => '<div class="note h rot-warn"><b>💳 Zahlung offen:</b> Für deinen Aufenthalt vom ' + esc(fmtTag(b.arr)) + ' bis ' + esc(fmtTag(b.dep)) + ' sind <b>' + esc(chfZ(b)) + '</b>' + (ktVon(b) ? ' (inkl. Kurtaxe der Freunde ' + esc(chf2(ktVon(b))) + ')' : '') + ' fällig. Die Frist war am ' + esc(fmtTag(zahlFrist(b))) + '. Bitte überweise jetzt, die Bankverbindung steht unter «Zahlung» ' + symBtn("b-zahlung", "💰") + '. Sobald Papi die Zahlung verbucht hat, verschwindet diese Meldung.</div>').join("");
+    const zr = document.getElementById("zahlRot"); zr.hidden = !zl.length && !erRot.length;
+    zr.innerHTML = erRot.map(ERH).join("") + ZLH;
+    meinKnopf();
+    function ERH(b) { return (function (b) { const an = endreinAnteile(b).filter((a) => a.name !== b.name); return '<div class="note h' + (endreinUeberfaellig(b) ? " rot-warn" : "") + '"><b>🪣 Endreinigung der Staffel' + (endreinUeberfaellig(b) ? " offen" : "") + ":</b> Eure Staffel endet mit deinem Aufenthalt (" + esc(fmtTag(b.arr)) + " bis " + esc(fmtTag(b.dep)) + "). Bitte überweise die Endreinigung von <b>" + esc(chf(P.reinigung)) + "</b> spätestens am " + esc(fmtTag(endreinFrist(b))) + "." + (an.length ? " Die Anteile von " + esc(an.map((a) => a.name + " (" + chf(a.chf) + ")").join(" und ")) + " holst du dir zurück." : "") + " Bankverbindung unter «Zahlung» " + symBtn("b-zahlung", "💰") + ".</div>"; })(b); }
+
   }
 }
 function ovOeffnen(id, an) {
@@ -6417,7 +6430,7 @@ document.getElementById("infoBtn").addEventListener("click", () => {
 const GM_URL = "https://script.google.com/macros/s/AKfycbwHIFROA_Eiyl2nufeTUiM3blx59uTe7-obr3z9ZqEzSISvm5E_dtXHiXltBd-Z747S/exec";   // Adresse der Web-App des Briefkastens; leer = Funktion noch nicht eingerichtet
 const GM_MAX = 7;   // 5 Freunde mit Bett + 2 Kleinkinder ohne Bett (seit 3.10.4.0)
 const gmAktiv = () => !!GM_URL;
-function gmErinnerText(x) { return waHoi(x.name) + "Für deinen Aufenthalt fehlt uns noch die Liste deiner Freunde für die Kurtaxe.\n\n" + waZeit(x) + "\n\nBitte fülle sie im TSCHENT-O-MAT aus und tippe auf «Senden», sie steht zuoberst auf der Startseite. Wir brauchen sie, damit wir die Reservation abschliessen können. Danke dir!"; }
+function gmErinnerText(x) { return waHoi(x.name) + "Für deinen Aufenthalt fehlt uns noch die Liste deiner Freunde für die Kurtaxe.\n\n" + waZeit(x) + "\n\nBitte fülle sie im TSCHENT-O-MAT aus und tippe auf «Senden», du findest sie unter «👤 Meine Verwaltung». Wir brauchen sie, damit wir die Reservation abschliessen können. Danke dir!"; }
 function gmOffen(x) { return gmAktiv() && x.dep >= heuteKey() && freundeVon(x) > 0 && !x.kurtaxeAm && GM_LISTEN !== null; }   // Liste fehlt oder Freunde noch nicht angemeldet
 function gmFehlt(x) { return gmAktiv() && x.dep >= heuteKey() && freundeVon(x) > 0 && GM_LISTEN !== null && !GM_LISTEN[bKey(x)]; }   // erst wenn die Listen geladen sind
 function freundeVon(x) { const m = /^Freunde\t(\d+)/m.exec(String((x && x.rechnung) || "")); return m ? Math.min(Number(m[1]), GM_MAX) : 0; }
@@ -6533,7 +6546,8 @@ function inkZeigen() {
   const box = document.getElementById("inkBox"); if (!box) return;
   const lok = inkLokal();
   const l = ABSENDER && !MAMI ? BUCH.filter((b) => eigenN(b.name) && b.bestaetigt && lok[bKey(b)] && !(b.betrag > 0 && b.bezahlt) && !(!(b.betrag > 0) && lok[bKey(b)].p.every((pp, k) => (lok[bKey(b)].ok || {})[k]))).sort((p, q) => (p.arr < q.arr ? -1 : 1)) : [];   // bleibt, bis die Eltern die Zahlung abgehakt haben (Wänu)
-  const sig = JSON.stringify([l.map(bKey), l.map((b) => [lok[bKey(b)].ok, lok[bKey(b)].frist, b.betrag, b.bezahlt]), inkTwint(), inkIban(), rufname(), inkTrink(), [...INK_OPEN], [...INK_ZEIG], INK_AUF && [...INK_AUF], FREUND_TAGE, ZAHL_TAGE]);
+  MEIN_N.ink = l.filter((b) => { const e = lok[bKey(b)], ok = e.ok || {}; return e.p.some((pp, k) => !ok[k]); }).length;   // pro Aufenthalt mit offenen Rechnungen eine Aufgabe
+  const sig = JSON.stringify([MEIN_N.ink, l.map(bKey), l.map((b) => [lok[bKey(b)].ok, lok[bKey(b)].frist, b.betrag, b.bezahlt]), inkTwint(), inkIban(), rufname(), inkTrink(), [...INK_OPEN], [...INK_ZEIG], INK_AUF && [...INK_AUF], FREUND_TAGE, ZAHL_TAGE]);
   if (sig === INK_SIG) return;
   INK_SIG = sig;
   box.hidden = !l.length; if (!l.length) { box.innerHTML = ""; return; }
@@ -6542,7 +6556,7 @@ function inkZeigen() {
   const sum = l.reduce((a, b) => a + offenF(b), 0), tw = inkTwint(), ib = inkIban();
   let h = '<details class="note h gm-k gm-zu ink-k" data-ink-aus="1"' + (INK_OPEN.has("_") ? " open" : "") + '><summary><span><span class="gm-ico">💰</span><b>Geld einsammeln</b> · ' + (sum > 0.004 ? "bei Freunden offen " + esc(chf2(sum)) : "Freunde haben bezahlt ✅") + "</span></summary>";
   h += '<p class="hint">Schick jedem seine Rechnung per WhatsApp und hake ab, wer bezahlt hat. Alles bleibt nur auf deinem Handy.</p>';
-  h += tw || ib ? '<p class="hint">Zahlung an dich: ' + esc([tw ? "TWINT " + tw : "", ib ? "IBAN " + ib : ""].filter(Boolean).join(", ")) + ". Ändern in «👤 Meine Verwaltung».</p>" : '<p class="hint ink-warn-t">💡 Trag in «👤 Meine Verwaltung» deine TWINT-Nummer oder IBAN ein, dann steht sie in den Rechnungen.</p>';
+  h += tw || ib ? '<p class="hint">Zahlung an dich: ' + esc([tw ? "TWINT " + tw : "", ib ? "IBAN " + ib : ""].filter(Boolean).join(", ")) + ". Ändern unter «👤 Profil».</p>" : '<p class="hint ink-warn-t">💡 Trag unter «👤 Profil» deine TWINT-Nummer oder IBAN ein, dann steht sie in den Rechnungen.</p>';
   h += '<label class="ink-sw"><input type="checkbox" data-ink-trink="1"' + (inkTrink() ? " checked" : "") + "> 🍀 Hinweis aufs Trinkgeld mitsenden</label>";
   l.forEach((b) => {
     const key = bKey(b), e = lok[key], ok = e.ok || {}, of = offenF(b), nBez = e.p.filter((pp, k) => ok[k]).length, alle = nBez === e.p.length, kt = ktVon(b) || e.kt || 0, an = (b.betrag > 0 ? b.betrag : 0) + kt;
@@ -6576,9 +6590,24 @@ document.getElementById("inkBox").addEventListener("click", (e) => {
   inkSetzen(key, o); INK_SIG = ""; inkZeigen();
 });
 // --- Meine Verwaltung des Kindes (seit 3.11.0.0): Name, Mail, TWINT, IBAN; alles nur auf dem Handy, die Mail geht wie bisher an den Briefkasten ---
-function meinKnopf() { const kn = document.getElementById("btnMein"), k = document.getElementById("meinKasten"); if (!kn) return; const an = !!ABSENDER && !TOKEN && !MAMI; kn.hidden = !an; if (!an && k) k.hidden = true; }
+const meinModus = () => !!ABSENDER && !TOKEN && !MAMI;
+let MEIN_N = { gm: 0, zb: 0, ink: 0 };   // offene Aufgaben für den Zähler am Knopf (seit 3.12.0.0)
+function meinKnopf() {
+  const kn = document.getElementById("btnMein"), k = document.getElementById("meinKasten"); if (!kn) return;
+  const an = meinModus(); kn.hidden = !an; if (!an && k) k.hidden = true;
+  // Kästen der Kinder in «Meine Verwaltung» (seit 3.12.0.0, Wänu); Papi in «Ansicht als» sieht sie wie bisher auf der Startseite
+  const td = document.getElementById("meinTodo"), gd = document.getElementById("meinGeld"), ab = document.getElementById("absageBox");
+  const zu = (el, ziel, vor) => { if (el && el.parentNode !== ziel) { if (vor) ziel.insertBefore(el, vor); else ziel.appendChild(el); } };
+  if (an) { zu(document.getElementById("gmBox"), td, document.getElementById("meinLeer")); zu(document.getElementById("zahlBox"), td, document.getElementById("meinLeer")); zu(document.getElementById("inkBox"), gd); }
+  else { const nav = ab.parentNode; zu(document.getElementById("zahlBox"), nav, ab); zu(document.getElementById("gmBox"), nav, ab); zu(document.getElementById("inkBox"), nav, ab); }
+  const leer = document.getElementById("meinLeer"); if (leer) leer.hidden = !document.getElementById("gmBox").hidden || !document.getElementById("zahlBox").hidden;
+  const n = an ? MEIN_N.gm + MEIN_N.zb + MEIN_N.ink : 0;
+  kn.classList.toggle("rot-rand", n > 0);
+  let b = kn.querySelector(".alarm-n"); if (!b) { b = document.createElement("span"); b.className = "alarm-n rot"; kn.appendChild(b); }
+  b.textContent = String(n); b.hidden = !n; b.title = n + (n === 1 ? " offene Aufgabe" : " offene Aufgaben");
+}
 function meinZeigen() {
-  const k = document.getElementById("meinKasten"), m = mailLokal() || {};
+  const k = document.getElementById("meinProfilInhalt"), m = mailLokal() || {};
   k.innerHTML = '<p class="hint">Diese Angaben bleiben nur auf deinem Handy. Nur die Mailadresse geht an die Eltern.</p>' +
     '<label class="ink-fr">Wie willst du genannt werden?<input type="text" data-mein="ruf" maxlength="20" autocomplete="off" placeholder="' + esc(ABSENDER) + '" value="' + esc(rufGespeichert()) + '"></label><p class="hint">Steht im Kopf (<b class="mein-vs">' + esc(genitiv(rufGespeichert() || SPITZNAME[ABSENDER] || ABSENDER)) + '</b>), bei «Ich» in der Auswahl und unter deinen Rechnungen. Leer lassen = ' + esc(ABSENDER) + ".</p>" +
     '<label class="ink-fr">Mailadresse<input type="email" data-mein="mail" maxlength="80" autocomplete="email" value="' + esc(m.name === ABSENDER ? m.mail || "" : "") + '"></label>' +
@@ -6588,6 +6617,7 @@ function meinZeigen() {
     '<button type="button" class="btn main full" data-mein-ok="1">💾 Speichern</button><p class="hint mein-msg" role="status"></p>';
 }
 const genitiv = (n) => /[sxzß]$/i.test(n) ? n + "’" : n + "s";
+document.getElementById("listeErinn").addEventListener("click", (e) => { if (!e.target.closest("[data-meinauf]")) return; const k = document.getElementById("meinKasten"); if (k.hidden) document.getElementById("btnMein").click(); const g = document.querySelector("#gmBox details"); if (g) { g.open = true; g.scrollIntoView({ behavior: "smooth", block: "start" }); } });
 document.getElementById("btnMein").addEventListener("click", () => {
   const k = document.getElementById("meinKasten"), an = k.hidden, kn = document.getElementById("btnMein");
   if (an) { setHilfe(false); hilfeZuklappen(); setRechner(false); setChem(false); meinZeigen(); }
@@ -6598,7 +6628,7 @@ document.getElementById("meinKasten").addEventListener("input", (e) => {
 });
 document.getElementById("meinKasten").addEventListener("click", (e) => {
   if (!e.target.closest("[data-mein-ok]")) return;
-  const k = document.getElementById("meinKasten"), v = (n) => (k.querySelector('[data-mein="' + n + '"]').value || "").trim(), msg = k.querySelector(".mein-msg");
+  const k = document.getElementById("meinProfilInhalt"), v = (n) => (k.querySelector('[data-mein="' + n + '"]').value || "").trim(), msg = k.querySelector(".mein-msg");
   const ruf = v("ruf").replace(/[<>]/g, ""), mail = v("mail"), tw = v("twint"), ibRoh = v("iban").replace(/\s+/g, "").toUpperCase();
   if (mail && !mailRe.test(mail)) { msg.textContent = "⚠️ Die Mailadresse stimmt nicht."; return; }
   if (tw && (tw.replace(/\D/g, "").length < 10 || /[^\d\s+]/.test(tw))) { msg.textContent = "⚠️ Die TWINT-Nummer stimmt nicht (nur Ziffern, z. B. 079 123 45 67)."; return; }
@@ -6615,6 +6645,11 @@ function gmKindZeigen() {
   gmAltAufraeumen();
   const lok = gmLokal(), weg = gmWeg();
   const l = gmAktiv() && ABSENDER ? BUCH.filter((b) => eigenN(b.name) && b.dep >= heuteKey() && freundeVon(b) > 0 && !((lok[bKey(b)] || {}).gesendet && !GM_AUF.has(bKey(b)) && (weg.indexOf(bKey(b)) >= 0 || heuteKey() >= addDays(b.dep, -2)))) : [];   // gesendete Liste: weg, wenn ausgeblendet oder ab dem zweitletzten Tag vor der Abreise
+  { const off = l.filter((b) => !(lok[bKey(b)] || {}).gesendet);   // Zähler am Knopf «Meine Verwaltung» und Erinnerung auf der Startseite ab 2 Tagen vor der Anreise (seit 3.12.0.0)
+    MEIN_N.gm = off.length;
+    const er = document.getElementById("listeErinn"), knapp = meinModus() ? off.filter((b) => heuteKey() >= addDays(b.arr, -2)) : [];
+    er.hidden = !knapp.length; er.innerHTML = knapp.map((b) => '<div class="note h rot-warn"><b>👥 Liste deiner Freunde fehlt noch</b> für deinen Aufenthalt ab ' + esc(fmtTag(b.arr)) + '. <button type="button" class="btn" data-meinauf="1">Zu «Meine Verwaltung»</button></div>').join("");
+    meinKnopf(); }
   const sig = JSON.stringify([l.map(bKey), l.map((b) => (lok[bKey(b)] || {}).gesendet || ""), [...GM_AUF], GM_MSG]);
   if (sig === GM_SIG) return;   // nicht neu zeichnen, sonst gehen Eingaben verloren
   GM_SIG = sig;
@@ -6638,6 +6673,7 @@ function gmKindZeigen() {
     }
     return h + '<button type="button" class="btn main full" data-gmsend="' + esc(key) + '">📨 Liste an die Eltern senden</button>' + (msg ? '<p class="hint gm-msg">' + msg + "</p>" : "") + "</details>";
   }).join("");
+  meinKnopf();
 }
 function gmFormLesen(div) {
   return [...div.querySelectorAll(".gm-f")].map((fs) => {
@@ -6883,7 +6919,7 @@ function bestText(x, abgelehnt) {   // Aufbau: Anrede, Satz, Angaben je Zeile, A
   if (abgelehnt) return waHoi(x.name) + "Deine Anfrage können wir leider nicht bestätigen.\n\n" + waZeit(x) + "\n\nMelde dich bei uns, dann suchen wir zusammen eine Lösung.";
   const st = (x.sb || x.selbst) && istStaffelStart(x.arr, x), z = [waHoi(x.name) + "Danke für deine Buchung! Dein Aufenthalt ist bestätigt. 🎉", "", waZeit(x), "Anreise: ab " + ZEIT_AN, "Abreise: Chalet bis " + ZEIT_AB + " übergeben"];
   if (provVon(x)) z.push("", "Achtung: Der Termin steht mit Vorbehalt und ist nicht in Airbnb gesperrt. Kommt ein Airbnb-Gast, hat er Vorrang, dann müsst ihr ausweichen.");
-  if (gmAktiv() && freundeVon(x) > 0) z.push("", "Wichtig: Die Liste deiner Freunde ist schon ausgefüllt. Bitte bestätige sie jetzt im TSCHENT-O-MAT mit «Senden», sie steht zuoberst auf der Startseite. Wir brauchen sie für die Kurtaxe und damit wir die Reservation abschliessen können.");
+  if (gmAktiv() && freundeVon(x) > 0) z.push("", "Wichtig: Die Liste deiner Freunde ist schon ausgefüllt. Bitte bestätige sie jetzt im TSCHENT-O-MAT mit «Senden», du findest sie unter «👤 Meine Verwaltung». Wir brauchen sie für die Kurtaxe und damit wir die Reservation abschliessen können.");
   if (st) z.push("", "Du beginnst die Staffel: Das Chalet ist gereinigt und bezogen, du bringst keine Wäsche mit. Dafür nimmst du die benutzte Wäsche mit und " + (x.waesche === "senden" ? "sendest sie uns" : "bringst sie uns") + " bis spätestens " + fmtTagV(addDays(x.dep, WAESCHE_TAGE)) + ".");
   z.push("", "Im TSCHENT-O-MAT findest du jetzt " + ((((x.sb || x.selbst) && !st) || x.luecke) ? "die Wäsche-Liste für die Anreise und " : "") + "die Checkliste für die Abreise.");
   return z.join("\n");
