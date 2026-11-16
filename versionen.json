@@ -2,6 +2,19 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.15.0.1",
+      "datum": "16.11.2026",
+      "titel": "Sonderbuchung: Daten fest",
+      "arten": [
+        "Fehler"
+      ],
+      "punkte": [
+        "Mit einer angenommenen Sonderbuchung lassen sich im Kalender und bei den Angeboten keine anderen Daten mehr wählen; ein Tipp zeigt den Hinweis «Die Daten der Sonderbuchung lassen sich nicht ändern».",
+        "Neuer Knopf «↩︎ Vorlage verlassen» im Kasten der Sonderbuchung: zurück zum normalen Rechner (wie «Neu starten»).",
+        "Beim Annehmen einer Sonderbuchung zeigt der Kalender gleich den Monat des Termins."
+      ]
+    },
+    {
       "v": "3.15.0.0",
       "datum": "2026-11-16",
       "titel": "Gratis oder mitzahlen",
