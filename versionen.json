@@ -2,6 +2,20 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.16.0.0",
+      "datum": "16.11.2026",
+      "titel": "Rufnamen für Freunde",
+      "arten": [
+        "Neue Funktion"
+      ],
+      "punkte": [
+        "«👤 Meine Verwaltung» → Profil: Schalter «🏷️ Rufnamen für meine Freunde».",
+        "Eingeschaltet erscheint in der Liste der Freunde unter dem Vornamen ein Feld «Rufname» (freiwillig).",
+        "Der Rufname steht in den Chips (ohne Zusatz zum Nachnamen), bei «Wer gehört zusammen?», in der Aufteilung, in den Rechnungen an die Freunde und in den WhatsApp-Nachrichten; zwei gleiche Rufnamen bekommen den Anfangsbuchstaben des Nachnamens dazu.",
+        "Die Liste für die Kurtaxe enthält immer den richtigen Namen; Rufnamen bleiben nur auf dem Handy (auch im Adressbuch 📇)."
+      ]
+    },
+    {
       "v": "3.15.0.5",
       "datum": "16.11.2026",
       "titel": "Profil: Hinweis zum Namen",
