@@ -16,10 +16,6 @@
   ],
   "logbuch": [
     {
-      "t": "2026-11-04T15:52",
-      "text": "Entfernt: Deborah, Sa 12.12.2026 bis Di 15.12.2026"
-    },
-    {
       "t": "2026-11-04T17:39",
       "text": "Bestätigt: Jerome, Mo 16.11.2026 bis Do 19.11.2026, CHF 180, Wäsche: persönlich bringen bis So 22.11.2026"
     },
@@ -814,8 +810,21 @@
     {
       "t": "2026-11-16T22:22",
       "text": "Vorlage gelöscht: Manuel, 2027-06-07 bis 2027-06-10"
+    },
+    {
+      "t": "2026-11-16T22:23",
+      "text": "Vorlage für Manuel: 2027-06-07 bis 2027-06-10, normale Preise wie bei einer gewöhnlichen Buchung, ohne Mindestnächte"
     }
   ],
   "reinigung": [],
-  "vorlagen": []
+  "vorlagen": [
+    {
+      "id": "mwjrss9p",
+      "name": "Manuel",
+      "arr": "2027-06-07",
+      "dep": "2027-06-10",
+      "pa": false,
+      "t": "2026-11-16T22:23"
+    }
+  ]
 }
