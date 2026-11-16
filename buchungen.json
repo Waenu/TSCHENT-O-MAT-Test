@@ -15,16 +15,6 @@
     },
     {
       "name": "Miriam",
-      "arr": "2026-11-21",
-      "dep": "2026-11-28",
-      "selbst": false,
-      "pers": 2,
-      "betrag": 2500,
-      "rechnung": "Gesendet am Mo 16.11.2026, 15:12 Uhr. App-Version 3.11.1.0.\nAnreise\tSamstag 21.11.2026\nAbreise\tSamstag 28.11.2026 (7 Nächte)\nFamilie\tIch, Partner/in und 1 Kind, davon 1 im Kinderbettchen\nFreunde\t4\nFür Freund/in 2 (unter 18) zahlt\tFreund/in 1\nZimmer 1 unberührt\tNein\nReinigung nach Parteien\tjede Partei zahlt gleich viel\nBedingungen akzeptiert\tJa\nTotal\tCHF 2’623.90, davon Kurtaxe Adelboden für die Freunde CHF 123.90\n#Preisberechnung\nFamilie pro Nacht\tCHF 70.–\nFreund/in 1 pro Nacht\tCHF 70.–\nFreund/in 2 pro Nacht\tCHF 70.–\nFreund/in 3 pro Nacht\tCHF 70.–\nFreund/in 4 pro Nacht\tCHF 70.–\nÜbernachtung (7 Nächte)\tCHF 2’450.–\nReinigung\tCHF 240.–\nReinigung: Anteil Familie\tCHF 80.00\nReinigung: Partei Freund/in 1, Freund/in 2\tCHF 80.00\nReinigung: Partei Freund/in 3, Freund/in 4 je CHF 40.00\tCHF 80.00\nGesamtpreis vorher: CHF 2’690.–. Entlastung Familie\t−CHF 190.–\nKurtaxe Adelboden (dazu) 3 Freunde ab 16 Jahren zu CHF 5.20 pro Nacht, 1 Kind von 6 bis 15 Jahren zu CHF 2.10 pro Nacht, 7 Nächte\tCHF 123.90\nTotal mit Kurtaxe\tCHF 2’623.90\n#Aufteilung unter den Freunden\nFamilie zahlt\tCHF 380.00\nFreund/in 1 zahlt inkl. Freund/in 2 davon Kurtaxe CHF 51.10\tCHF 1’111.10\nFreund/in 3 und Freund/in 4 zahlen davon Kurtaxe CHF 72.80\tCHF 1’132.80\nMindestpreis: Die Familie zahlt noch CHF 348.– statt CHF 538.–. Der Gesamtpreis sinkt nie unter CHF 2’500.– (CHF 2’500.– pro 7 Nächte). Die Freunde zahlen ihre Anteile wie berechnet.\nReinigung aufgeteilt: Nach Parteien: jede Partei zahlt gleich viel.",
-      "bestaetigt": "2026-11-16T15:13"
-    },
-    {
-      "name": "Miriam",
       "arr": "2026-12-10",
       "dep": "2026-12-13",
       "selbst": true,
@@ -37,10 +27,6 @@
     }
   ],
   "logbuch": [
-    {
-      "t": "2026-10-31T17:50",
-      "text": "Entfernt: Jerome, Mo 2.11.2026 bis Fr 6.11.2026"
-    },
     {
       "t": "2026-10-31T17:52",
       "text": "Bestätigt: Jerome, Do 5.11.2026 bis Sa 7.11.2026, CHF 110, Wäsche: persönlich bringen bis Di 10.11.2026"
@@ -836,6 +822,10 @@
     {
       "t": "2026-11-16T16:41",
       "text": "Bestätigt: Miriam, Do 10.12.2026 bis So 13.12.2026, CHF 180, Wäsche: persönlich bringen bis Mi 16.12.2026"
+    },
+    {
+      "t": "2026-11-16T17:55",
+      "text": "Endgültig gelöscht: Miriam, Sa 21.11.2026 bis Sa 28.11.2026"
     }
   ],
   "reinigung": []
