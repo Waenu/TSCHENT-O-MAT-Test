@@ -1586,7 +1586,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.14.1.0";
+let VERSION = "3.14.1.1";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -5392,7 +5392,7 @@ function ovWeg(a) {
   return (a.ok
     ? '<p class="hint">Bestätigt von den Eltern. Bei Änderungen melde dich bei ihnen.</p>'
     : '<button type="button" class="ov-weg" data-weg="1">Aufenthalt entfernen</button>') +
-    (a.ok ? rechDetails(a.rechnung, a.bestaetigt) : "") +
+    (a.ok ? rechDetails(rechNamen(a.rechnung, { name: ABSENDER, arr: a.arr, dep: a.dep }), a.bestaetigt) : "") +
     '<p class="hint">Die Knöpfe verschwinden am Tag nach der Abreise von selbst (am ' + fmtTagV(addDays(a.dep, 1)) + ').</p>';
 }
 function anreiseZeichnen() {
@@ -6445,6 +6445,13 @@ const gmDatum = (iso) => /^\d{4}-\d{2}-\d{2}$/.test(iso || "") ? iso.slice(8, 10
 function gmIso(t) { const m = /^\s*(\d{1,2})\.(\d{1,2})\.(\d{4})\s*$/.exec(t || ""); if (!m) return ""; const iso = m[3] + "-" + ("0" + m[2]).slice(-2) + "-" + ("0" + m[1]).slice(-2); const d = new Date(iso + "T12:00:00"); return !isNaN(d) && d.getDate() === Number(m[1]) && iso <= heuteKey() && iso >= "1900-01-01" ? iso : ""; }
 // --- beim Kind: Liste ausfüllen und senden (lokal gemerkt, damit man sie später ändern kann) ---
 function gmLokal() { try { const o = JSON.parse(localStorage.getItem("tm2_gm") || "{}"); return o && typeof o === "object" ? o : {}; } catch (e) { return {}; } }
+function rechNamen(r, b) {   // gespeicherte Preisberechnung ist neutral («Freund/in 2»); auf dem eigenen Handy mit Vornamen aus der Liste der Freunde (seit 3.14.1.1)
+  if (!r || !b || !ABSENDER || !eigenN(b.name)) return r;
+  const e = gmLokal()[bKey(b)], l = e && Array.isArray(e.freunde) ? e.freunde : [];
+  let t = r.replace(/Freund\/in (\d+)/g, (m, n) => { const f = l[Number(n) - 1]; return f && f.vorname ? String(f.vorname) : m; });
+  const fn = famNamen(); if (fn && !fn.gen && fn.p) t = t.replace(/Partner\/in/g, fn.p);
+  return t;
+}
 function gmLokalSetzen(key, v) { const o = gmLokal(); o[key] = v; try { localStorage.setItem("tm2_gm", JSON.stringify(o)); } catch (e) {} }
 const GM_AUF = new Set();   // Formulare, die das Kind nach dem Senden zum Ändern wieder geöffnet hat
 const GM_OPEN = new Set();   // vom Kind aufgeklappte Kästen (bleiben beim Neuzeichnen offen, nach dem Neuladen wieder zu)
@@ -7801,7 +7808,7 @@ document.getElementById("tokPanel").addEventListener("click", (e) => {
     if (eig) {
       const bez = b.bezahlt && b.betrag > 0;
       const kurz = b.betrag > 0 ? esc(chfZ(b).replace(" ", "\u00a0")) + ", " + (b.prov ? (hochVorbehalt(b) ? "fällig nach dem Aufenthalt" : "fällig mit der Sicherung") : bez ? "bezahlt am " + esc(fmtTag(b.bezahlt.slice(0, 10))) : "noch offen") : "Preisberechnung";
-      h += zeile("rech", "🧾", bez ? "Quittung" : "Rechnung", kurz, false) + '<div class="ipan" data-ipan="rech" hidden>' + rechnungHtml(b.rechnung, b.bestaetigt) + "</div>";
+      h += zeile("rech", "🧾", bez ? "Quittung" : "Rechnung", kurz, false) + '<div class="ipan" data-ipan="rech" hidden>' + rechnungHtml(rechNamen(b.rechnung, b), b.bestaetigt) + "</div>";
     }
     if (zh.length) {
       const it = zh.map(hinItem);

@@ -2,6 +2,18 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.14.1.1",
+      "datum": "2026-11-16",
+      "titel": "Rechnung im Kalender mit Namen",
+      "arten": [
+        "Fehler"
+      ],
+      "punkte": [
+        "Tippt ein Kind im Kalender auf seinen Aufenthalt, zeigt «🧾 Rechnung» die Vornamen der Freunde und den Namen des Partners statt «Freund/in 1» und «Partner/in». Gleich in der Reinigungs-Checkliste.",
+        "Die Namen kommen nur aus der Liste auf dem eigenen Handy; gespeichert bleibt die Rechnung neutral."
+      ]
+    },
+    {
       "v": "3.14.1.0",
       "datum": "2026-11-16",
       "titel": "Sonderbuchungen: Daten im Kalender, normale Preise",
