@@ -16,10 +16,6 @@
   ],
   "logbuch": [
     {
-      "t": "2026-11-04T15:51",
-      "text": "Entfernt: Jerome, Di 17.11.2026 bis Do 19.11.2026"
-    },
-    {
       "t": "2026-11-04T15:52",
       "text": "Entfernt: Miriam, Fr 20.11.2026 bis Mo 23.11.2026"
     },
@@ -814,8 +810,21 @@
     {
       "t": "2026-11-16T22:11",
       "text": "Endgültig gelöscht: Manuel, Do 10.06.2027 bis So 13.06.2027"
+    },
+    {
+      "t": "2026-11-16T22:12",
+      "text": "Vorlage für Manuel: 2027-06-07 bis 2027-06-10, normale Preise wie bei einer gewöhnlichen Buchung, ohne Mindestnächte"
     }
   ],
   "reinigung": [],
-  "vorlagen": []
+  "vorlagen": [
+    {
+      "id": "mwjrel2a",
+      "name": "Manuel",
+      "arr": "2027-06-07",
+      "dep": "2027-06-10",
+      "pa": false,
+      "t": "2026-11-16T22:12"
+    }
+  ]
 }
