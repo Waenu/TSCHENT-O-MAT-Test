@@ -257,7 +257,7 @@ if (TEST_MODUS) {
   .field.missing .zchip:not(:disabled):not([aria-pressed="true"]), .gm-pt.missing .zchip:not(:disabled):not([aria-pressed="true"]) { border-color: var(--missing-line); }
   .gm-ptbox { border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px 4px; margin: 8px 0; } .gm-ptbox .gm-pt { padding: 6px 0; border-top: 1px solid rgba(127,127,127,.25); } .gm-ptbox .gm-pt-n { font-weight: 700; } .gm-ptbox[hidden], .gm-ptbox .gm-pt[hidden] { display: none; }
   .gm-pt.vorschlag .zchip[aria-pressed="true"] { background: transparent; color: var(--accent); border: 2px dashed var(--accent); } .gm-pt-ok { margin: 6px 0 8px; }   /* Vorschlag nach Nachname (seit 3.10.3.0) */
-  .gm-pt select { display: none; } .gm-pt .zchips { margin: 4px 0; }   /* Partei als Chips (seit 3.9.5.7) */
+  .gm-pt select { display: none; } .hp { display: block; height: .6em; } .gm-pt .zchips { margin: 4px 0; }   /* Partei als Chips (seit 3.9.5.7) */
   .gm-pt.missing select { background-color: var(--missing-bg) !important; border-color: var(--missing-line) !important; }
   .gm-k .gm-gs { display: flex; gap: 18px; } .gm-k .gm-gs label { display: flex; align-items: center; gap: 6px; min-height: 40px; }
   .gm-k.gm-ok { border-left: 4px solid var(--gruen); }
@@ -1557,7 +1557,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.10.3.0";
+let VERSION = "3.10.3.1";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -2067,14 +2067,13 @@ const FIELDS = [
   { id: "art", label: "📝 Wie möchtest du buchen?", type: "str",
     hint: () => {
       if (S.verbOK === true) {
-        const v = "{{Verbindlich}}: Der Termin gehört euch fest, die Eltern sperren ihn in Airbnb. Ihr zahlt pauschal " + chf(P.hochNachtMin) + " pro Nacht plus Endreinigung für das ganze Chalet. Darum sind keine Freunde möglich.", p = "{{Mit Vorbehalt}}: Freunde sind möglich. Der Termin ist in Airbnb nicht gesperrt, ein Airbnb-Gast hat Vorrang.";
-        return "Dieser Termin liegt in der Hochsaison. " + (S.art === ART_V ? v + " {{Mit Vorbehalt}} wäre nicht gesperrt und mit Freunden möglich." : S.art === ART_P ? p + " {{Verbindlich}} wäre fest und gesperrt, aber ohne Freunde." : "Du hast zwei Möglichkeiten. " + v + " " + p);
+        const v = "{{Verbindlich}} · nur Familie, ohne Freunde\nDer Termin gehört euch fest, die Eltern sperren ihn in Airbnb. Ihr zahlt pauschal " + chf(P.hochNachtMin) + " pro Nacht plus Endreinigung für das ganze Chalet.", p = "{{Mit Vorbehalt}} · auch mit Freunden\nDer Termin bleibt in Airbnb offen, ein Airbnb-Gast hat Vorrang.";   // Absätze pro Art (seit 3.10.3.1, Wänu)
+        return "Dieser Termin liegt in der Hochsaison.\n\n" + (S.art === ART_V ? v + "\n\nMit Freunden ginge nur {{Mit Vorbehalt}} (in Airbnb nicht gesperrt)." : S.art === ART_P ? p + "\n\nOhne Freunde ginge auch {{Verbindlich}} (fest und in Airbnb gesperrt)." : v + "\n\n" + p);
       }
       if (S.staffelEnde && S.selbstOK === true) return "Eure Staffel ist schon gewählt und lässt sich nicht ändern: Ihr setzt die laufende Staffel fort, und direkt danach reist ein Airbnb-Gast an. Darum endet die Staffel mit eurem Termin. Ihr kommt ohne Freunde, die Eltern reinigen für den Airbnb-Gast, und die Endreinigung (" + chf(P.reinigung) + ") wird unter den Reisegruppen der Staffel aufgeteilt.";
-      const st = "{{Staffel}}: Ihr bringt frische Bettwäsche, Handtücher und Küchentücher mit und reinigt selbst, die Reinigung kostet dann " + chf(P.reinigungSelbst) + ". Das geht nur ohne Freunde. Beginnt ihr die Staffel, bringt ihr keine Wäsche mit: Das Chalet ist gereinigt und bezogen. Regeln siehe «🧹 Selbstreinigung» im Kalender.", no = "{{Normal}}: Die Eltern reinigen (" + chf(P.reinigung) + "), Freunde sind möglich.";
-      const vgl = " Bei der {{Staffel}} zahlt ihr jetzt " + chf(P.reinigungSelbst) + " und später euren Anteil an der Endreinigung (" + chf(P.reinigung) + " geteilt durch alle Reisegruppen: zu zweit je " + chf(P.reinigung / 2) + ", zu dritt je " + chf(P.reinigung / 3) + ").";
-      const offen = S.staffelOffen ? " Hier läuft eine Familienstaffel. {{Normal}} geht nur mit Freunden und beendet die Staffel: Die Eltern reinigen, und die Endreinigung der früheren Reisegruppen fällt jetzt an. Ohne Freunde wählt ihr die {{Staffel}} und führt sie weiter." : "";
-      return "Dieser Termin liegt in der Tiefsaison und ist fest (in Airbnb gesperrt)." + offen + " " + (S.art === ART_S ? st + " Mit Freunden wäre nur {{Normal}} möglich." + vgl : S.art === ART_N ? no + " Ohne Freunde ginge auch die {{Staffel}}." + vgl : st + " " + no + vgl);
+      const st = "{{Staffel}} · nur Familie, ohne Freunde\nIhr reinigt selbst und bringt Bettwäsche, Hand- und Küchentücher mit. Jetzt " + chf(P.reinigungSelbst) + ", später euer Anteil an der Endreinigung (" + chf(P.reinigung) + " geteilt durch alle Reisegruppen, zu zweit je " + chf(P.reinigung / 2) + ", zu dritt je " + chf(P.reinigung / 3) + "). Beginnt ihr die Staffel, ist das Chalet gereinigt und bezogen, und ihr bringt keine Wäsche mit. Regeln: «🧹 Selbstreinigung» im Kalender.", no = "{{Normal}} · auch mit Freunden\nDie Eltern reinigen, " + chf(P.reinigung) + ".";   // Absätze pro Art, Kosten der Staffel an einer Stelle (seit 3.10.3.1, Wänu)
+      const offen = S.staffelOffen ? "\n\nHier läuft eine Familienstaffel. Ohne Freunde führt ihr sie weiter. {{Normal}} geht nur mit Freunden und beendet sie: Die Endreinigung der früheren Reisegruppen fällt dann an." : "";
+      return "Dieser Termin liegt in der Tiefsaison und ist fest (in Airbnb gesperrt)." + offen + "\n\n" + (S.art === ART_S ? st + "\n\nMit Freunden ginge nur {{Normal}}." : S.art === ART_N ? no + "\n\nOhne Freunde ginge auch die {{Staffel}} (ihr reinigt selbst, jetzt " + chf(P.reinigungSelbst) + ")." : st + "\n\n" + no);
     },
     visible: () => artOpts().length > 0, opts: () => artOpts() },
   { id: "wer", label: "👨‍👩‍👧‍👦 Wer von der Familie kommt?", type: "str",
@@ -4445,7 +4444,7 @@ function render() {
     else if (famAus) hEl.textContent = "Wähle zuerst, wer von der Familie mitkommt. Mindestens eine erwachsene Person muss dabei sein.";
     else if (listeAus) hEl.textContent = "Fülle zuerst die Liste deiner Freunde aus. Danach geht es hier weiter.";
     else if (ptAus) hEl.textContent = "Lege zuerst bei «Wer gehört zusammen?» fest, wer zu wem gehört. Danach geht es hier weiter.";
-    else hEl.innerHTML = esc(f.hint(d)).replace(/\{\{(.+?)\}\}/g, (m, w) => '<span class="hl">' + w + "</span>" + (f.id === "art" && w === "Mit Vorbehalt" ? filmKnopf() : ""));   // {{Wort}} im Hinweis = hervorgehoben, hinter «Mit Vorbehalt» das Film-Symbol
+    else hEl.innerHTML = esc(f.hint(d)).replace(/\{\{(.+?)\}\}/g, (m, w) => '<span class="hl">' + w + "</span>" + (f.id === "art" && w === "Mit Vorbehalt" ? filmKnopf() : "")).replace(/\n\n/g, '<span class="hp"></span>').replace(/\n/g, "<br>");   // Absätze im Hinweis (seit 3.10.3.1)   // {{Wort}} im Hinweis = hervorgehoben, hinter «Mit Vorbehalt» das Film-Symbol
     if (!wrap.hidden) {   // Schritt für Schritt (seit 3.10.2.0)
       if (STOPP) wrap.hidden = true;
       else if (famAus || listeAus || ptAus) { wrap.hidden = true; STOPP = true; }   // Grund steht schon oben (Familie, Liste, Parteien)
