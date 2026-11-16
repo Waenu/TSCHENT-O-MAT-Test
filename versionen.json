@@ -2,6 +2,19 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.16.1.0",
+      "datum": "16.11.2026",
+      "titel": "Reinigung nur nach Personen oder Parteien",
+      "arten": [
+        "Regel"
+      ],
+      "punkte": [
+        "Bei «Wie werden die Reinigungskosten aufgeteilt?» gibt es nur noch «Nach Personen» und «Nach Parteien» (auch für die Pauschale bei Sonderbuchungen). «Freunde zahlen alles» und «Familie zahlt alles» entfallen.",
+        "Eine alte Wahl im Rechner ist wieder offen und muss neu gewählt werden. Gespeicherte Buchungen bleiben unverändert.",
+        "Hinweis: «Ohne Mindestpreis bleibt das Total gleich.» (mit Mindestpreis zahlen die Freunde genau ihren Teil)."
+      ]
+    },
+    {
       "v": "3.16.0.0",
       "datum": "16.11.2026",
       "titel": "Rufnamen für Freunde",

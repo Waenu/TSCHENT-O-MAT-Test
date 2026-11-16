@@ -1588,7 +1588,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.16.0.0";
+let VERSION = "3.16.1.0";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -1665,7 +1665,8 @@ const REINIG = [
 const CHIP_KURZ = (fid, o) => fid === "reinig" && REINIG.indexOf(o) >= 0 ? REINIG_KURZ[REINIG.indexOf(o)] : fid === "waesche" ? (o === W_BR ? "Persönlich bringen" : o === W_SE ? "Per Post" : o) : o.indexOf(": ") > 0 ? o.slice(0, o.indexOf(": ")) : o;   // Text auf dem Chip (seit 3.9.5.6)
 const CHIP_WAHL = (fid, o) => { return "";   // seit 3.10.5.0: die gewählte Bedeutung steht im Hinweis darunter (gelb markiert)
  if (!o || fid === "waesche") return ""; const i = o.indexOf(": "); if (i < 0) return ""; const w = o.slice(i + 2); return w.charAt(0).toUpperCase() + w.slice(1) + "."; };   // Bedeutung der Wahl klein darunter
-const REINIG_KURZ = ["Nach Personen", "Nach Parteien", "Freunde zahlen alles", "Familie zahlt alles"];   // Chips (seit 3.9.5.5); gespeichert wird weiter der lange Text aus REINIG
+const REINIG_KURZ = ["Nach Personen", "Nach Parteien", "Freunde zahlen alles", "Familie zahlt alles"];
+const REINIG_AKTIV = REINIG.slice(0, 2);   // wählbar nur noch nach Personen oder Parteien (seit 3.16.1.0, Wänu); [2] und [3] bleiben nur für alte Daten und die Rechnung in derive   // Chips (seit 3.9.5.5); gespeichert wird weiter der lange Text aus REINIG
 const nz = (v) => (typeof v === "number" && isFinite(v)) ? v : 0;
 const isYN = (v) => v === "Ja" || v === "Nein";
 
@@ -1786,7 +1787,7 @@ function check(s, d) {
   if (d.GE > 0 && s.kinderPflicht === true && typeof s.kinder !== "number") return "Bitte wählen: Kinder von 6 bis 15 Jahren unter den Freunden";
   if (d.GE > 0 && !d.lock && !d.voll && !d.SOND && !isYN(s.zimmer)) return "Bitte wählen: Freund oder Freundin im selben Zimmer";
   if (!d.sparLock && !isYN(s.spar)) return "Bitte wählen: Bleibt Zimmer 1 unberührt";
-  if (d.GE > 0 && REINIG.indexOf(s.reinig) < 0 && !(d.SOND && d.RE === 0)) return "Bitte wählen: Aufteilung der " + (d.SOND ? "Pauschale" : "Reinigung");
+  if (d.GE > 0 && REINIG_AKTIV.indexOf(s.reinig) < 0 && !(d.SOND && d.RE === 0)) return "Bitte wählen: Aufteilung der " + (d.SOND ? "Pauschale" : "Reinigung");
   if (d.nights < minFuer(ARR, DEP) && !d.SOND && !d.SOND0) return "Mindestens " + minFuer(ARR, DEP) + " Nächte" + (minFuer(ARR, DEP) > P.minNaechte ? " (in diesem Zeitraum)" : "");
   if (d.nights > P.maxNaechte) return "Höchstens " + P.maxNaechte + " Nächte";
   if (d.FP + d.GE > P.maxPersonen) return "Maximal " + P.maxPersonen + " Personen";
@@ -2240,9 +2241,9 @@ const FIELDS = [
   { id: "reinig", label: "🍰 Wie werden die Reinigungskosten (" + chf(P.reinigung) + ") aufgeteilt?", type: "str",
     hint: () => { const L = ["{{" + REINIG_KURZ[0] + "}} · Jede Person zahlt gleich viel, auch Kinder und Enkel. Kleinkinder ohne Bett zählen nicht.",
         "{{" + REINIG_KURZ[1] + "}} · Jede Partei zahlt gleich viel. " + (listeModus() ? "Die Familie ist eine Partei, die Freunde legen ihre bei «Wer gehört zusammen?» fest." : "Die Familie ist eine Partei, jeder Freund eine weitere."),
-        "{{" + REINIG_KURZ[2] + "}} · Die Freunde übernehmen die ganze Reinigung.", "{{" + REINIG_KURZ[3] + "}} · Die Familie übernimmt die ganze Reinigung."], i = REINIG.indexOf(S.reinig);
-      return "Das entscheidet ihr. Das Total bleibt gleich.\n\n" + (i >= 0 ? L[i] : L.join("\n\n")); },   // je Wahl eine Zeile (seit 3.10.5.0)
-    visible: (d) => d.GE > 0 && !(d.SOND && d.RE === 0), opts: () => REINIG }
+        ], i = REINIG_AKTIV.indexOf(S.reinig);
+      return "Das entscheidet ihr. Ohne Mindestpreis bleibt das Total gleich.\n\n" + (i >= 0 ? L[i] : L.join("\n\n")); },   // je Wahl eine Zeile (seit 3.10.5.0)
+    visible: (d) => d.GE > 0 && !(d.SOND && d.RE === 0), opts: () => REINIG_AKTIV }
 ];
 { const rf = FIELDS.find((f) => f.id === "reinig"), rh = rf.hint; rf.hint = (d) => SOND && SOND.pa ? rh(d).replace(/Reinigung/g, "Pauschale") : rh(d); }   // Sonderbuchung: die Pauschale wird aufgeteilt
 {   // Lücke mit Freunden: Hinweis, wie viele Freunde «Ja» braucht
@@ -2259,6 +2260,7 @@ const FIELDS = [
 }
 
 function normalize() {
+  if (S.reinig && REINIG_AKTIV.indexOf(S.reinig) < 0) S.reinig = "";   // alte Wahl «Freunde/Familie zahlt alles» gilt nicht mehr (seit 3.16.1.0)
   NOTICES = {};
   mfgSync();
   if (S.staffelEnde && S.selbstOK === true) S.art = ART_S;   // Staffel endet zwangsläufig: keine Auswahl
@@ -2796,8 +2798,8 @@ function lueckenRegeln() {
   return "<ul><li>Höchstens " + P.lueckeMaxPersonen + " Erwachsene in den Betten (Partner/in, Bruder oder Schwester), zusätzlich höchstens " + P.lueckeMaxKleinkinder + " Kleinkind im Kinderbettchen.</li><li>Keine Freunde. Es kommt nur die Familie: Partner/in, Bruder oder Schwester.</li><li>Nur Zimmer 2 mit dem blauen Bad. Das Kleinkind schläft bei den Erwachsenen in Zimmer 2 oder im Kinderbettchen in Zimmer 3. Zimmer 1 und das rote Bad bleiben unberührt.</li><li>Frische Bettwäsche, Handtücher und Küchentücher mitbringen und selbst beziehen. Bettdecken und Kissen nie ohne frischen Duvet- und Kissenbezug benutzen. Alles nehmt ihr wieder mit. Nur die Moltons bleiben nach dem Benutzen auf der Matratze. Das Kleinkind-Bettchen braucht nichts, dort ist die Wäsche immer vorhanden.</li><li>Wie bei der Selbstreinigung steht in der Anfrage der Hinweis zur eigenen Wäsche. Nach der Bestätigung durch die Eltern erscheint oben der Knopf «Anreise-Wäsche» mit der Liste, gerechnet für die Erwachsenen in den Betten.</li><li>Die Eltern reinigen für " + chf(P.reinigung) + ".</li></ul>";
 }
 function bildAuswahl() {
-  let h = '<div class="zchips ex-chips" style="flex-wrap:wrap" role="img" aria-label="Beispiel der Chips zur Reinigung">' + REINIG_KURZ.map((t) => '<span class="zchip ex-miss">' + esc(t) + "</span>").join("") + "</div><ul>";
-  REINIG.forEach((t) => { const i = t.indexOf(": "); h += "<li>" + (i > 0 ? "<b>" + esc(t.slice(0, i)) + ":</b> " + esc(t.slice(i + 2)) : esc(t)) + "</li>"; });
+  let h = '<div class="zchips ex-chips" style="flex-wrap:wrap" role="img" aria-label="Beispiel der Chips zur Reinigung">' + REINIG_KURZ.slice(0, 2).map((t) => '<span class="zchip ex-miss">' + esc(t) + "</span>").join("") + "</div><ul>";
+  REINIG_AKTIV.forEach((t) => { const i = t.indexOf(": "); h += "<li>" + (i > 0 ? "<b>" + esc(t.slice(0, i)) + ":</b> " + esc(t.slice(i + 2)) : esc(t)) + "</li>"; });
   return h + '</ul><p class="exbild-cap">So sieht die Frage «Wie werden die Reinigungskosten aufgeteilt?» aus. Tippt den passenden Chip an.</p>';   // Chips statt Liste (seit 3.9.7.3)
 }
 function bildLuecke() {
@@ -4443,7 +4445,7 @@ function zielHinweis(r) {
     if (base <= 0) return { frei: true, zeilen: [] };
     const probe = (patch, dep) => {   // höchster Anteil über alle noch offenen Wahlen (Zimmer, Reinigungsaufteilung): so wird nie zu viel versprochen
       const alt = Object.assign({}, S, patch), oldDep = DEP;
-      const zl = alt.gaeste > 0 && !alt.zimmer ? ["", "Ja", "Nein"] : [alt.zimmer], rl = alt.gaeste > 0 && !alt.reinig ? ["", ...REINIG] : [alt.reinig];
+      const zl = alt.gaeste > 0 && !alt.zimmer ? ["", "Ja", "Nein"] : [alt.zimmer], rl = alt.gaeste > 0 && !alt.reinig ? ["", ...REINIG_AKTIV] : [alt.reinig];
       let best = null;
       try {
         if (dep) DEP = dep;
