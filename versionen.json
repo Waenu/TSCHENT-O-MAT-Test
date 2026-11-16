@@ -2,6 +2,31 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.10.5.0",
+      "datum": "16.11.2026",
+      "titel": "Hinweise je Wahl, Wahl wieder aufheben",
+      "arten": [
+        "Funktion",
+        "Text"
+      ],
+      "punkte": [
+        "Bei «Wer von der Familie kommt?», Zimmer, Zimmer 1, Wäsche und Reinigung steht jede Wahl gelb markiert mit einem kurzen Satz. Nach der Wahl bleibt nur die gewählte Zeile.",
+        "Den gewählten Chip nochmals antippen hebt die Wahl auf, dann erscheinen wieder alle Möglichkeiten.",
+        "Bei «Wer kommt mit?» kürzerer Hinweis."
+      ]
+    },
+    {
+      "v": "3.10.4.1",
+      "datum": "16.11.2026",
+      "titel": "Kleinkind-Knopf nur, wenn ein Bettchen frei ist",
+      "arten": [
+        "Layout"
+      ],
+      "punkte": [
+        "Sind beide Kinderbettchen belegt, verschwindet «👶 Kleinkind dazu (ohne Bett)»; es steht nur noch «Beide Kinderbettchen sind belegt, weitere Kleinkinder sind nicht möglich.»"
+      ]
+    },
+    {
       "v": "3.10.4.0",
       "datum": "16.11.2026",
       "titel": "Kleinkinder von Freunden ohne Bett",
