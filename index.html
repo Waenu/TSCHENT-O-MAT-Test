@@ -456,6 +456,7 @@ if (TEST_MODUS) {
   .bigbtn.rot-rand { border-color: var(--error-line); box-shadow: 0 0 0 1px var(--error-line); } #btnMein .alarm-n { margin-left: auto; font-size: 1rem; padding: 2px 10px; } .alarm-n.rot { background: #E5534B; color: #fff; }
   .mein-sek { margin: 6px 0 14px; } .mein-h { margin: 4px 0 8px; font-size: 1.1rem; } #meinTodo > .note, #meinTodo > div > .note, #meinTodo .gm-k { margin-top: 8px; } #meinProfil > summary { cursor: pointer; font-weight: 700; padding: 8px 14px; }
   .note.h.brennt, details.note.h.brennt { border-color: var(--error-line); }
+  .sond-f .sond-d { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; } .sond-f input[type=date], .sond-f input[type=text] { width: 100%; min-height: 44px; } .sond-f .ink-sw { display: block; margin: 8px 0; } .sond-msg { font-weight: 600; } .vorl .btns { margin-top: 8px; } .sond-h { border-color: var(--accent); }
   .note.h.steht, details.note.h.steht { border-color: var(--missing-line); }   /* Liste steht an: orange (seit 3.13.0.0) */
   .bigbtn.or-rand { border-color: var(--missing-line); box-shadow: 0 0 0 1px var(--missing-line); } .bigbtn .alarm-n.or-n { margin-left: auto; font-size: 1rem; padding: 2px 10px; } #btnMein .alarm-n + .alarm-n { margin-left: 6px; }
   .li-k { margin-top: 10px; } .li-k .li-b { display: flex; align-items: center; gap: 8px; width: 100%; text-align: left; margin-top: 8px; } .li-k .li-b small { display: block; font-weight: 400; opacity: .8; } .li-k .li-b .alarm-n { margin-left: auto; } .li-k .li-b.steht { border-color: var(--missing-line); box-shadow: 0 0 0 1px var(--missing-line); }   /* offene Aufgabe in «Meine Verwaltung» rot umrandet wie der Knopf (seit 3.12.0.1) */
@@ -1483,6 +1484,7 @@ if (TEST_MODUS) {
     <div id="aufStatus" hidden></div>
     <div id="zahlRot" hidden></div>
     <div id="listeErinn" hidden></div>
+    <div id="vorlBox" hidden></div>
     <div id="zahlBox" hidden></div>
     <div id="wsHinweis" hidden></div>
     <div id="gmBox" hidden></div>
@@ -1584,7 +1586,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.13.0.0";
+let VERSION = "3.14.0.0";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -1665,6 +1667,23 @@ const REINIG_KURZ = ["Nach Personen", "Nach Parteien", "Freunde zahlen alles", "
 const nz = (v) => (typeof v === "number" && isFinite(v)) ? v : 0;
 const isYN = (v) => v === "Ja" || v === "Nein";
 
+// Sonderbuchungen (seit 3.14.0.0, Wänu): Vorlagen der Eltern mit eigener Pauschale pro Nacht, Reinigung und Kurtaxe wählbar, ohne Mindestnächte und Saisonregeln
+var VORL = [];     // Vorlagen aus buchungen.json: {id, name, arr, dep, preis, rein, kt, t}
+var SOND = null;   // Vorlage, die gerade im Rechner steht
+function sondPatch(o, s) {   // Pauschale wie die Reinigung als ein Betrag, aufgeteilt nach der Wahl (Personen, Parteien …); Total = Pauschale × Nächte + Reinigung
+  o.SOND = true; o.FN0 = o.FN = o.GN = o.HN = o.WN = o.PN = o.UE = 0; o.LR = 0; o.SM = o.SB = false; o.SO = false; o.ZE = "Nein"; o.sp = false; o.sparGrund = "sond"; o.sparLock = true; o.LG = o.LUE = o.VERB = false;
+  o.RE = Math.round(nz(SOND.preis) * o.nights + (SOND.rein ? P.reinigung : 0));
+  const ri = REINIG.indexOf(s.reinig); let FA = o.RE;
+  if (o.GE > 0) { if (ri === 1) FA = o.RE / (1 + o.GE); else if (ri === 2) FA = 0; else if (ri === 3) FA = o.RE; else FA = o.RE * o.ER / (o.ER + o.GE); }
+  o.FA = FA; o.GS = o.GE > 0 ? (o.RE - FA) / o.GE : 0;
+  return o;
+}
+function sondBed(v) { return (nz(v.preis) > 0 ? chf(v.preis) + " pro Nacht für das ganze Chalet" : "Übernachtung gratis") + ", " + (v.rein ? "mit Reinigung (" + chf(P.reinigung) + ")" : "ohne Reinigung") + ", " + (v.kt ? "Kurtaxe für Freunde wie üblich" : "ohne Kurtaxe"); }
+function sondStart(v) {   // Vorlage in den Rechner übernehmen: Daten fest, Saisonregeln aus
+  SOND = v; ARR = v.arr; DEP = v.dep; S.nights = diffDays(ARR, DEP);
+  S.festMin = false; S.festBoden = false; S.hochBoden = false; S.luecke = false; S.lueckeDyn = false; S.lueckeGanz = false; S.inLuecke = false; S.verbOK = false; S.hochN = 0; S.art = ""; S.selbstOK = false; S.staffelEnde = false; S.staffelOffen = false;
+  normalize(); render(); renderKalender();
+}
 function derive(s) {
   const wer = s.wer;
   const lock = /Partner|Familienmitglied/.test(wer) || wer === MFG;
@@ -1728,6 +1747,7 @@ function derive(s) {
     else FA = RE * ER / (ER + GE);
   }
   const GS = GE > 0 ? (RE - FA) / GE : 0;
+  if (SOND) return sondPatch({ VERB, LG, LUE, lock, voll, base, kkMax, kkMin, kkFix, KK, sp, sparLock, sparGrund, FP, ER, frei, GE, PT, ZE, SO, SM, SB, LR, FN0, FN, GN, HN, WN, PN, nights, UE, AF, AG, RE, FA, GS }, s);
   return { VERB, LG, LUE, lock, voll, base, kkMax, kkMin, kkFix, KK, sp, sparLock, sparGrund, FP, ER, frei, GE, PT, ZE, SO, SM, SB, LR, FN0, FN, GN, HN, WN, PN, nights, UE, AF, AG, RE, FA, GS };
 }
 
@@ -1757,10 +1777,10 @@ function check(s, d) {
   if (s.gaeste > d.frei) return "Nur noch " + d.frei + " Freund frei. Bitte Freunde neu wählen.";
   if (d.SM && s.selbst === "Ja" && ARR && istStaffelStart(ARR) && W_OPTS.indexOf(s.waesche) < 0) return "Bitte wählen: Wie kommt die benutzte Wäsche zurück";
   if (d.GE > 0 && s.kinderPflicht === true && typeof s.kinder !== "number") return "Bitte wählen: Kinder von 6 bis 15 Jahren unter den Freunden";
-  if (d.GE > 0 && !d.lock && !d.voll && !isYN(s.zimmer)) return "Bitte wählen: Freund oder Freundin im selben Zimmer";
+  if (d.GE > 0 && !d.lock && !d.voll && !d.SOND && !isYN(s.zimmer)) return "Bitte wählen: Freund oder Freundin im selben Zimmer";
   if (!d.sparLock && !isYN(s.spar)) return "Bitte wählen: Bleibt Zimmer 1 unberührt";
-  if (d.GE > 0 && REINIG.indexOf(s.reinig) < 0) return "Bitte wählen: Aufteilung der Reinigung";
-  if (d.nights < minFuer(ARR, DEP)) return "Mindestens " + minFuer(ARR, DEP) + " Nächte" + (minFuer(ARR, DEP) > P.minNaechte ? " (in diesem Zeitraum)" : "");
+  if (d.GE > 0 && REINIG.indexOf(s.reinig) < 0 && !(d.SOND && d.RE === 0)) return "Bitte wählen: Aufteilung der " + (d.SOND ? "Pauschale" : "Reinigung");
+  if (d.nights < minFuer(ARR, DEP) && !d.SOND) return "Mindestens " + minFuer(ARR, DEP) + " Nächte" + (minFuer(ARR, DEP) > P.minNaechte ? " (in diesem Zeitraum)" : "");
   if (d.nights > P.maxNaechte) return "Höchstens " + P.maxNaechte + " Nächte";
   if (d.FP + d.GE > P.maxPersonen) return "Maximal " + P.maxPersonen + " Personen";
   return "OK";
@@ -1776,6 +1796,7 @@ function calc(s) {
     out.FZ = d.FN * d.nights + d.AF + d.FA;
     out.HZ = d.GE === 0 ? 0 : d.HN * d.nights + d.GS;
     out.WZ = d.WN * d.nights + Math.max(0, d.GE - 1) * d.GS;
+    if (d.SOND) { out.SOND = true; out.KON = Math.abs(out.FZ + out.HZ + out.WZ - out.TOT) < 0.005; return out; }   // Sonderbuchung: keine Böden, kein Mindestpreis
     if (d.VERB) {
       // Verbindliche Buchung in der Hochsaison: Hochsaison-Nächte 200, übrige Nächte der normale Familienpreis, plus Reinigung; keine Gäste
       const hn = Math.min(d.nights, nz(s.hochN));
@@ -1921,7 +1942,7 @@ function zahlPlan(r, x) {   // Umverteilung der fertigen Beträge: Zimmerpreis, 
   const zr = zimmerRow(x, zi), ord = zr >= 0 ? [zr].concat(zi.filter((i) => i !== zr)) : zi.slice();
   const base = {}; ord.forEach((i, pos) => { base[i] = pos === 0 ? r.HZ : r.WZ / (x.GE - 1); });
   const sE = Math.round((P.kurtaxe + P.kurtaxeBeherb) * 100) / 100, kt = {}, alt = {};
-  zi.forEach((i) => { alt[i] = alterAm(l[i].geb, ARR); kt[i] = (alt[i] >= 16 ? sE : alt[i] >= 6 ? P.kurtaxeKind : 0) * x.nights; });
+  zi.forEach((i) => { alt[i] = alterAm(l[i].geb, ARR); kt[i] = SOND && !SOND.kt ? 0 : (alt[i] >= 16 ? sE : alt[i] >= 6 ? P.kurtaxeKind : 0) * x.nights; });
   const minder = zi.filter((i) => alt[i] < 18), zahler = {}; minder.forEach((i) => { zahler[i] = zahlerVon(i, zi, l); });
   const covered = minder.filter((i) => zahler[i].length);
   let FA2 = x.FA; const gs = {}; zi.forEach((i) => { gs[i] = x.GS; });   // nach Personen und «Freunde zahlen»: Anteil der Minderjährigen trägt, wer für sie zahlt
@@ -2140,7 +2161,7 @@ const FIELDS = [
       const ja = "{{Ja}} · Diese Person schläft bei dir im Zimmer und zahlt " + chf(P.gastZimmer) + " statt " + chf(P.gast) + " pro Nacht." + (nur ? " Du zahlst dann nur " + chf(P.famAnteil) + " statt " + chf(P.famPausch) + ", Zimmer 1 und das rote Bad bleiben unberührt." : "") + " Es ist ein Zimmer weniger zu beziehen und zu reinigen.",
         nein = "{{Nein}} · Alle Freunde schlafen in anderen Zimmern und zahlen " + chf(P.gast) + " pro Nacht.";
       return S.zimmer === "Ja" ? ja : S.zimmer === "Nein" ? nein : ja + "\n\n" + nein; },
-    visible: (d) => d.GE > 0 && !d.lock && !d.voll, opts: () => ["Ja", "Nein"] },
+    visible: (d) => d.GE > 0 && !d.lock && !d.voll && !d.SOND, opts: () => ["Ja", "Nein"] },
   { id: "spar", label: "🔑 Bleibt Zimmer 1 (Schlafzimmer mit rotem Bad) unberührt?", type: "str",
     hint: (d) => d.sparGrund === "so" ? "Ihr teilt Zimmer 2 und das blaue Bad, Zimmer 1 und das rote Bad bleiben unberührt. Der Sonderpreis von " + chf(P.famAnteil) + " pro Nacht gilt dafür." : d.sparGrund === "pers" ? "Nicht möglich: Bei mehr als " + P.sparMaxPers + " Personen insgesamt (auch Kleinkinder) wird Zimmer 1 gebraucht." : (() => { const ja = "{{Ja}} · Ihr benutzt nur Zimmer 2, Zimmer 3 und das blaue Bad. Die Familie zahlt " + chf(P.famPausch - P.sparEin) + " statt " + chf(P.famPausch) + " pro Nacht.", nein = "{{Nein}} · Das ganze Chalet steht euch zur Verfügung.";
       return S.spar === "Ja" ? ja : S.spar === "Nein" ? nein : ja + "\n\n" + nein; })(),
@@ -2157,8 +2178,9 @@ const FIELDS = [
         "{{" + REINIG_KURZ[1] + "}} · Jede Partei zahlt gleich viel. " + (listeModus() ? "Die Familie ist eine Partei, die Freunde legen ihre bei «Wer gehört zusammen?» fest." : "Die Familie ist eine Partei, jeder Freund eine weitere."),
         "{{" + REINIG_KURZ[2] + "}} · Die Freunde übernehmen die ganze Reinigung.", "{{" + REINIG_KURZ[3] + "}} · Die Familie übernimmt die ganze Reinigung."], i = REINIG.indexOf(S.reinig);
       return "Das entscheidet ihr. Das Total bleibt gleich.\n\n" + (i >= 0 ? L[i] : L.join("\n\n")); },   // je Wahl eine Zeile (seit 3.10.5.0)
-    visible: (d) => d.GE > 0, opts: () => REINIG }
+    visible: (d) => d.GE > 0 && !(d.SOND && d.RE === 0), opts: () => REINIG }
 ];
+{ const rf = FIELDS.find((f) => f.id === "reinig"), rh = rf.hint; rf.hint = (d) => SOND ? rh(d).replace(/Reinigung/g, "Pauschale") : rh(d); }   // Sonderbuchung: die Pauschale wird aufgeteilt
 {   // Lücke mit Freunden: Hinweis, wie viele Freunde «Ja» braucht
   const zf = FIELDS.find((f) => f.id === "zimmer"), zh = zf.hint, sf = FIELDS.find((f) => f.id === "spar"), sh = sf.hint;
   const mehr = (d, feld) => {
@@ -2425,7 +2447,7 @@ function verbMoeglich(arr, dep) {
   return n >= P.verbMin && n <= P.verbMax && hochNaechte(arr, dep) >= P.verbMin;
 }
 // Termin mit Vorbehalt im aktuellen Formular (verbindlich gewählt = nicht mit Vorbehalt)
-const provSel = () => provStay(ARR, DEP) && !(S.verbOK === true && S.art === ART_V);
+const provSel = () => !SOND && provStay(ARR, DEP) && !(S.verbOK === true && S.art === ART_V);
 // Erste Nacht eines Termins mit Vorbehalt, auf der schon ein Airbnb-Gast liegt (sonst null). Davor bleibt der Termin gesichert (seit 2.96.0.0)
 function provKonfliktAb(b) { if (!b.prov || !BELEGT_AIR) return null; for (let k = b.arr; k < b.dep; k = addDays(k, 1)) if (BELEGT_AIR.has(k)) return k; return null; }
 // Konflikt mit Airbnb-Gast (seit 2.122.0.0): belegte Nächte im Termin, freie Strecken, neuer Preis
@@ -2616,6 +2638,7 @@ function initKalenderMonat() { const n = heuteDate(); calY = n.getFullYear(); ca
 
 function kalenderKlick(k) {
   if (GFORM && GFORM.mode) { gastTagWahl(k); return; }
+  SOND = null;   // Kalender angetippt: Vorlage verlassen
   if (k === "") { ARR = ""; DEP = ""; }   // Knopf «löschen» unter dem Kalender: Anreise und Abreise abwählen
   else if (!ARR || (ARR && DEP)) { if (kannAnreise(k)) { ARR = k; DEP = ""; } }
   else if (k === ARR) { ARR = ""; }
@@ -2626,7 +2649,6 @@ function kalenderKlick(k) {
     if (moegl.length === 1) DEP = moegl[0];
     if (moegl.length && !KAL_LISTE) { const f = moegl[0], fy = parseInt(f.slice(0, 4), 10), fm = parseInt(f.slice(5, 7), 10) - 1; if (fy !== calY || fm !== calM) { calY = fy; calM = fm; } }   // der früheste mögliche Abreisetag liegt in einem anderen Monat: der Kalender wechselt dorthin, ohne einen Tag zu wählen
   }
-  ELTERN = false;
   S.nights = (ARR && DEP) ? diffDays(ARR, DEP) : null;
   S.festMin = !!(ARR && DEP && P.festMinGaeste > 0 && festStay(ARR, DEP));
   S.festBoden = !!(ARR && DEP && P.festBodenWoche > 0 && festStay(ARR, DEP));
@@ -3825,7 +3847,7 @@ function festSatz(min, preis) { return "Aufenthalte sind <b>fest</b> und in Airb
 function terminBox() {
   const el = document.getElementById("calTermin"); if (!el) return;
   const sig = ARR + "|" + DEP, neu = sig !== TERMIN_SIG; TERMIN_SIG = sig;
-  if (!(ARR && DEP)) { el.hidden = true; el.innerHTML = ""; el.classList.remove("mitw"); return; }
+  if (!(ARR && DEP) || SOND) { el.hidden = true; el.innerHTML = ""; el.classList.remove("mitw"); return; }   // Sonderbuchung: keine Saisonhinweise
   if (neu) { TERMIN_AUS = false; const bl = document.getElementById("calBlase"); if (bl) bl.hidden = true; }   // die Tageserklärung weicht der Termin-Box: nie zwei Boxen für denselben Fall
   if (TERMIN_AUS) { el.hidden = true; el.innerHTML = ""; el.classList.remove("mitw"); return; }
   const an = window._hilfeAn ? window._hilfeAn() : true;
@@ -4212,7 +4234,8 @@ function anfrageText(r) {
   z.push("Anfrage für das Chalet Tschenten (noch keine Reservation):");
   z.push("");
   z.push("Anreise: " + fmtTagV(ARR));
-  z.push("Abreise: " + fmtTagV(DEP) + " (" + x.nights + " Nächte)");
+  z.push("Abreise: " + fmtTagV(DEP) + " (" + x.nights + (x.nights === 1 ? " Nacht)" : " Nächte)"));
+  if (SOND) z.push("Sonderbuchung (eure Vorlage): " + sondBed(SOND));
   z.push("");
   const kkTxt = x.KK > 0 ? ", davon " + x.KK + " im Kinderbettchen" : "";
   z.push("Familie: " + S.wer + (S.wer === MFG ? " (" + S.fam + " Personen)" : "") + kkTxt);
@@ -4222,7 +4245,7 @@ function anfrageText(r) {
   z.push("Freunde: " + (listeModus() ? listeN(x) : x.GE));
   if (zpA && zpA.kk.length) z.push("Davon Kleinkinder ohne Bett: " + zpA.kk.length);
   if (x.GE > 0 && !listeModus() && typeof S.kinder === "number") z.push("Davon Kinder von 6 bis 15 Jahren: " + S.kinder);
-  if (x.GE > 0 && !x.lock) { const zn = zpA && zpA.zr >= 0 && zpA.zi.length > 1; z.push("Freund im selben Zimmer: " + x.ZE + (zn ? " (Freund/in " + (zpA.zr + 1) + ")" : "")); if (zn) ersetz.push([z.length - 1, "Freund im selben Zimmer: Ja (" + zpA.l[zpA.zr].vorname + ")"]); }
+  if (x.GE > 0 && !x.lock && !x.SOND) { const zn = zpA && zpA.zr >= 0 && zpA.zi.length > 1; z.push("Freund im selben Zimmer: " + x.ZE + (zn ? " (Freund/in " + (zpA.zr + 1) + ")" : "")); if (zn) ersetz.push([z.length - 1, "Freund im selben Zimmer: Ja (" + zpA.l[zpA.zr].vorname + ")"]); }
   if (zpA) zpA.minder.forEach((i) => {
     const zk = zpA.zahler[i]; if (!zk.length) return;
     const w = (k, nm) => k === "ich" ? (nm ? "ich" : "Familie") : k === "partner" ? (nm ? partnerDa() : "Partner/in") : k === "self" ? (nm ? zpA.l[i].vorname + " selbst" : "selbst") : nm ? zpA.l[Number(k.slice(1))].vorname : "Freund/in " + (Number(k.slice(1)) + 1);
@@ -4231,23 +4254,23 @@ function anfrageText(r) {
     z.push("Für Freund/in " + (i + 1) + " (unter 18) " + verb(zN) + ": " + und(zN));
     ersetz.push([z.length - 1, "Für " + zpA.l[i].vorname + " (" + zpA.alt[i] + ") " + (zV.length === 1 && zV[0] === "ich" ? "zahle ich" : verb(zV) + ": " + und(zV))]);
   });
-  if (stornoStreng(x)) z.push("Verbindlich: Stornierung spätestens am " + fmtTagV(stornoBis()) + " (" + STORNO_TAGE + " Tage vor der Anreise)");
-  if (!x.VERB) z.push("Zimmer 1 unberührt: " + (S.spar === "Ja" ? "Ja" : "Nein"));
+  if (!SOND && stornoStreng(x)) z.push("Verbindlich: Stornierung spätestens am " + fmtTagV(stornoBis()) + " (" + STORNO_TAGE + " Tage vor der Anreise)");
+  if (!x.VERB && !x.SOND) z.push("Zimmer 1 unberührt: " + (S.spar === "Ja" ? "Ja" : "Nein"));
   if (S.inLuecke) { const lv = lueckeVon(ARR); z.push("Lücke: " + (!lv ? "Lücke wegen Vorlaufzeit" : (lv[0] === ARR && lv[1] === DEP ? "die ganze Lücke" : "ein Teil der Lücke vom " + fmtTagV(lv[0]) + " bis " + fmtTagV(lv[1]))) + ", ohne Vorbehalt."); }
   if (x.LG) { z.push("Ganze Lücke: nur Zimmer 2 mit blauem Bad" + (x.KK > 0 ? ", das Kleinkind im Kinderbettchen in Zimmer 3 oder bei den Erwachsenen in Zimmer 2" : "") + ", ohne Freunde, eigene Bettwäsche, Handtücher und Küchentücher, Reinigung durch die Eltern " + chf(P.reinigung)); }
-  if (x.GE > 0) z.push(/^Nach /.test(S.reinig) ? "Reinigung n" + S.reinig.slice(1) : "Reinigung: " + S.reinig);   // «Reinigung nach Parteien: …» statt zwei Doppelpunkten (seit 3.9.3.6)
+  if (x.GE > 0 && !(x.SOND && x.RE === 0)) { const rw = x.SOND ? "Pauschale" : "Reinigung"; z.push(/^Nach /.test(S.reinig) ? rw + " n" + S.reinig.slice(1) : rw + ": " + S.reinig); }   // «Reinigung nach Parteien: …» statt zwei Doppelpunkten (seit 3.9.3.6)
   if (x.SB) z.push("Selbstreinigung: Ja");
   z.push("Bedingungen akzeptiert: Ja");   // letzte Angabe vor dem Total (seit 3.10.3.2)
   z.push("");
   if (x.LR > 0 && !spitzTermin()) z.push("Lückenpreis (" + x.LR + " % auf die Übernachtungen)");
-  const spA = spitzTermin();
+  const spA = SOND ? null : spitzTermin();
   if (spA) z.push("Spitzenzeit" + (spA[2] ? " (" + spA[2] + ")" : "") + ": Preis auf Anfrage");
-  else { const ktA = kurtaxeRechnen(x.GE, S.kinder, x.nights, zahlendeAlter(listeN(x))); z.push(ktA.summe > 0 ? "Total: " + chf2(r.TOT + ktA.summe) + ", davon Kurtaxe Adelboden für die Freunde " + chf2(ktA.summe) : "Total laut Rechner: " + chf(r.TOT)); }   // ein Gesamtbetrag mit Kurtaxe (seit 3.9.3.6)
+  else { const ktA = SOND && !SOND.kt ? kurtaxeRechnen(0, 0, 0) : kurtaxeRechnen(x.GE, S.kinder, x.nights, zahlendeAlter(listeN(x))); z.push(ktA.summe > 0 ? "Total: " + chf2(r.TOT + ktA.summe) + ", davon Kurtaxe Adelboden für die Freunde " + chf2(ktA.summe) : "Total laut Rechner: " + chf(r.TOT)); }   // ein Gesamtbetrag mit Kurtaxe (seit 3.9.3.6)
   if (x.SB) z.push("Reinigungskosten sind erst nach Ablauf der Familienstaffel bekannt und werden nachbelastet.");
   if (x.SM && S.selbst === "Nein") { const u = staffelUnterbruch(ARR); if (u.length) z.push("Achtung: Unterbricht die Familienstaffel von " + u.join(", ") + ".") ; }
-  if (festStay(ARR, DEP)) z.push("Fester Termin (" + festTxt() + "): bitte in Airbnb sperren.");
+  if (!SOND && festStay(ARR, DEP)) z.push("Fester Termin (" + festTxt() + "): bitte in Airbnb sperren.");
   if (x.VERB) z.push("Verbindliche Buchung: Wir buchen verbindlich vom " + fmtTagV(ARR) + " bis " + fmtTagV(DEP) + " (" + x.nights + " Nächte) die Ferienwohnung. Bitte blockiert die Zeit in Airbnb. Mit Endreinigung durch die Eltern.");
-  if (provSel()) z.push("Mit Vorbehalt: Der Termin wird nicht in Airbnb gesperrt, ein Airbnb-Gast hat Vorrang. Das Risiko wurde vom Absender bestätigt." + " " + provSicherZeile(ARR, DEP));
+  if (!SOND && provSel()) z.push("Mit Vorbehalt: Der Termin wird nicht in Airbnb gesperrt, ein Airbnb-Gast hat Vorrang. Das Risiko wurde vom Absender bestätigt." + " " + provSicherZeile(ARR, DEP));
   z.push("");
   z.push("Liebe Grüsse, " + ABSENDER);
   z.push("");
@@ -4304,7 +4327,6 @@ function endreinigungInfo(r) {
 }
 
 
-let ELTERN = false;
 let RECH_OFFEN = false;
 const AUF_AUF = new Set();
 let STOPP = false;   // Schritt für Schritt: nach der ersten offenen Frage bleiben die folgenden ausgeblendet (seit 3.10.2.0, Wänu)   // aufgeklappte Zeilen der Aufteilung (seit 3.9.1.0)
@@ -4312,58 +4334,7 @@ function aufKlapp(z, auf) { const d = z.nextElementSibling; if (!d) return; d.hi
 let RECH_SIG = "";
 let TRINK_OFFEN = false;
 let TRINK = "";
-let EMPF = "";
-const KINDER = ["Jerome", "Deborah", "Miriam", "Manuel"];
-function einladungText() {
-  const x = derive(S);
-  const allein = S.wer === "Nur ich";
-  const WIE = {
-    "Nur ich": "du alleine",
-    "Ich und Partner/in": "ihr als Paar",
-    "Ich und 1 Familienmitglied": "ihr zu zweit",
-    "Ich und Kleinkind": "du mit 1 Kleinkind",
-    "Ich, Familienmitglied, Kleinkind": "ihr zu zweit mit 1 Kleinkind",
-    "Ich und 1 Kind": "du mit 1 Kind",
-    "Ich und 2 Kinder": "du mit 2 Kindern",
-    "Ich, Partner/in und 1 Kind": "ihr als Familie mit 1 Kind",
-    "Ich, Partner/in und 2 Kinder": "ihr als Familie mit 2 Kindern"
-  };
-  const wer = S.wer === MFG ? S.fam + " Personen aus der Familie" : (WIE[S.wer] || S.wer);
-  const z = ["Hoi " + EMPF, "", allein ? "Wir laden dich ein:" : "Wir laden euch ein:", "", "Anreise: " + fmtTagV(ARR), "Abreise: " + fmtTagV(DEP) + " (" + S.nights + " Nächte)", ""];
-  const fe = famSauber(famListe()[EMPF]), kw = /2 Kinder/.test(S.wer) ? 2 : /1 Kind|Kleinkind/.test(S.wer) ? 1 : 0;   // Namen der Enkel nur auf Papis Handy (seit 3.9.4.0)
-  z.push("Eingeladen: " + wer + (x.KK > 0 ? (fe && fe.k.length === kw && x.KK === kw ? "\nIm Kinderbettchen: " + fe.k.join(", ") : ", davon " + x.KK + " im Kinderbettchen") : ""));
-  if (x.GE > 0) {
-    z.push("Freunde: " + x.GE);
-    if (!x.lock) z.push("Freund im selben Zimmer: " + x.ZE);
-  } else z.push("Keine weiteren Freunde");
-  z.push("Zimmer 1 unberührt: " + (S.spar === "Ja" ? "Ja" : "Nein"));
-  z.push("");
-  if (x.SM) {
-    z.push(S.selbst === "Ja"
-      ? (istStaffelStart(ARR)
-        ? "Ihr beginnt die Staffel: Das Chalet ist gereinigt und bezogen, ihr braucht keine eigene Wäsche mitzubringen. Dafür nehmt ihr die benutzte Wäsche beim Abreisen mit (Betten abziehen, die Moltons bleiben) und " + (S.waesche === W_SE ? "sendet sie" : "bringt sie uns") + " spätestens " + WAESCHE_TAGE + " Tage nach eurer Rückreise, also bis " + fmtTagV(addDays(DEP, WAESCHE_TAGE)) + ". Das Chalet reinigt ihr am Schluss selbst."
-        : "Wir bitten euch, eigene Bettwäsche, Frottee- und Küchentücher mitzubringen, so wie im Tschent-O-Mat beschrieben. Das Chalet reinigt ihr am Schluss selbst.")
-      : "Ihr braucht keine eigene Bettwäsche und keine Frotteewäsche mitzubringen. Beides ist im Chalet vorhanden.");
-    z.push("");
-  }
-  if (x.GE > 0) z.push((allein ? "Du und " + (x.GE === 1 ? "dein Freund" : "deine Freunde") : "Ihr und " + (x.GE === 1 ? "euer Freund" : "eure Freunde")) + " seid eingeladen. Wir tragen alle Kosten: Übernachtungen und Endreinigung.");
-  else z.push((allein ? "Du bist unser Gast." : "Ihr seid unsere Gäste.") + " Wir tragen alle Kosten: Übernachtungen und Endreinigung.");
-  return z.join("\n") + grussVon(EMPF);
-}
-function elternKasten() {
-  if (!(ARR && DEP)) return "";
-  const ok = EMPF !== "";
-  const t = ok ? einladungText() : "";
-  LETZTE_EINLADUNG = t;
-  return '<div class="pay" id="elternBox"><strong>💌 Einladung senden</strong>' +
-    '<span class="hint">Nur für die Eltern. Ihr ladet ein Kind mit Familie ein und tragt alle Kosten. WhatsApp öffnet sich mit dem fertigen Text, dort wählst du die Person.</span>' +
-    '<div class="field"><label for="empf">Wen ladet ihr ein?</label><select id="empf" class="' + (ok ? "done" : "missing") + '"><option value="">– wählen –</option>' +
-    KINDER.map((n) => '<option value="' + n + '"' + (n === EMPF ? " selected" : "") + '>' + n + '</option>').join("") + '</select></div><div class="btns">' +
-    (ok ? '<a class="btn" href="https://wa.me/?text=' + encodeURIComponent(t) + '" target="_blank" rel="noopener">Per WhatsApp senden</a>' : '<span class="btn off" aria-disabled="true">Per WhatsApp senden</span>') +
-    '<button type="button" class="btn" id="copyEinl"' + (ok ? "" : " disabled") + '>Einladung kopieren</button></div></div>';
-}
 const WA_SVG = '<svg class="wa" viewBox="0 0 32 32" width="22" height="22" aria-hidden="true"><path fill="#25D366" d="M16 2.5A13.4 13.4 0 0 0 4.4 22.6L2.5 29.5l7.1-1.9A13.4 13.4 0 1 0 16 2.5z"/><path fill="#fff" d="M22.6 19.4c-.3-.2-2-1-2.3-1.1-.3-.1-.5-.2-.8.2l-1 1.2c-.2.2-.4.3-.7.1a9 9 0 0 1-4.5-3.9c-.3-.6.3-.6.9-1.8.1-.2.1-.4 0-.6l-1-2.4c-.3-.6-.5-.5-.8-.5h-.6a1.2 1.2 0 0 0-.9.4 3.800 3.800 0 0 0-1.2 2.800c0 1.600 1.200 3.200 1.400 3.400.2.200 2.300 3.500 5.600 4.900 2.100.9 2.900 1 4 .8.600-.1 2-.8 2.300-1.600.3-.8.3-1.400.2-1.600l-.6-.3z"/></svg>';
-let LETZTE_EINLADUNG = "";
 let RISIKO_OK = "";   // Aufenthalt (arr_dep), für den das Risiko bestätigt wurde
 let BED_OK = "";   // Aufenthalt (arr_dep), für den «mit den Bedingungen einverstanden» bestätigt wurde
 const risikoKey = () => ARR + "_" + DEP;
@@ -4380,7 +4351,7 @@ function anfrageKasten(r) {
     (NAME_FIX && !TOKEN && ABSENDER ? '<div class="field"><label>Wer schickt die Anfrage?</label><p class="namefest">' + esc(ABSENDER) + ' ' + lockSvg(false) + '</p></div>' : '<div class="field"><label for="absender">Wer schickt die Anfrage?</label><select id="absender" class="' + (ok ? "done" : "missing") + '"><option value="">– wählen –</option>' +
     absOpt(ABSENDER) +
     '</select>' + (ABSENDER !== "" ? "" : '<p class="hint">Erst den Namen wählen, dann sind die Knöpfe aktiv.</p>') + '</div>') +
-    (stornoStreng(r.d) ? '<div class="note h storno-warn"><b>⚠️ Verbindlich:</b> ' + "Mit Freunden ist die Buchung in dieser Zeit verbindlich. Stornieren kannst du bis spätestens <b>" + esc(fmtTag(stornoBis())) + "</b> (" + STORNO_TAGE + " Tage vor der Anreise). Kommt ein Freund nicht mit, rechnen die Eltern neu, die übrigen zahlen dann etwas mehr. " + symBtn("b-storno", "📅") + "</div>" : "") +
+    (!SOND && stornoStreng(r.d) ? '<div class="note h storno-warn"><b>⚠️ Verbindlich:</b> ' + "Mit Freunden ist die Buchung in dieser Zeit verbindlich. Stornieren kannst du bis spätestens <b>" + esc(fmtTag(stornoBis())) + "</b> (" + STORNO_TAGE + " Tage vor der Anreise). Kommt ein Freund nicht mit, rechnen die Eltern neu, die übrigen zahlen dann etwas mehr. " + symBtn("b-storno", "📅") + "</div>" : "") +
     '<label class="risiko"><input type="checkbox" id="bedOk"' + (hok ? " checked" : "") + '> <span>Ich bin mit den <b>Bedingungen</b> einverstanden ' + symBtn("b-bedingungen", "📜") + ".</span></label>" +
     (prov ? '<label class="risiko"><input type="checkbox" id="risikoOk"' + (rok ? " checked" : "") + '> <span><b>Ich habe das Risiko verstanden:</b> Für diesen Termin gilt ein Vorbehalt. Kommt eine Airbnb-Buchung, muss ich weichen oder gar nicht erst reisen. Das Risiko trage ich selbst.</span></label>' + (rok ? "" : '<p class="hint">Erst das Risiko bestätigen, dann sind die Knöpfe aktiv.</p>') : "") + '<div class="btns">';
   if (!lok) h += '<p class="hint rot-txt">Erst die Liste deiner Freunde oben im Rechner vollständig ausfüllen, dann sind die Knöpfe aktiv.</p>';
@@ -4468,9 +4439,15 @@ function render() {
   {   // Hochsaison ohne Wahl: gleich oben sagen, dass der Termin mit Vorbehalt gilt und warum (seit 2.125.6.0)
     let hh = document.getElementById("hochHinweis");
     if (!hh) { hh = document.createElement("div"); hh.id = "hochHinweis"; hh.className = "notice"; hh.setAttribute("role", "status"); const fm = document.getElementById("form"); fm.insertBefore(hh, fm.firstChild); }
-    const n = ARR && DEP ? diffDays(ARR, DEP) : 0, zeig = n > 0 && P.hochNachtMin > 0 && S.hochN > 0 && S.verbOK !== true && !S.luecke && !festStay(ARR, DEP) && provSel();
+    const n = ARR && DEP ? diffDays(ARR, DEP) : 0, zeig = !SOND && n > 0 && P.hochNachtMin > 0 && S.hochN > 0 && S.verbOK !== true && !S.luecke && !festStay(ARR, DEP) && provSel();
     hh.hidden = !zeig;
     if (zeig) hh.innerHTML = "🔓 Mit Vorbehalt: Dieser Termin liegt in der Hochsaison und gilt mit Vorbehalt. Meldet sich ein Airbnb-Gast, hat er Vorrang. " + (spitzTermin() ? "In dieser Spitzenzeit ist verbindliches Buchen nicht möglich." : n < P.verbMin || S.hochN < P.verbMin ? "Verbindlich buchen (fest, in Airbnb gesperrt, " + chf(P.hochNachtMin) + " pro Nacht) geht erst ab " + P.verbMin + " Nächten in der Hochsaison." : "Verbindlich buchen geht nur bis " + P.verbMax + " Nächte.");
+  }
+  { let sh = document.getElementById("sondHinweis");   // Sonderbuchung: Bedingungen der Eltern zuoberst (seit 3.14.0.0)
+    if (!sh) { sh = document.createElement("div"); sh.id = "sondHinweis"; sh.className = "note h sond-h"; const fm = document.getElementById("form"); fm.insertBefore(sh, fm.firstChild); }
+    sh.hidden = !SOND;
+    if (SOND) sh.innerHTML = "<b>⭐ Sonderbuchung</b> (Vorlage von " + esc(inkEltern()) + ")<br>" + esc(fmtTag(SOND.arr)) + " bis " + esc(fmtTag(SOND.dep)) + " · " + esc(sondBed(SOND)) + '<p class="hint">Die Daten und die Bedingungen sind fest. Wähle, wer mitkommt. Tippst du im Kalender einen anderen Tag an, gilt wieder der normale Rechner.</p>';
+    const rl = document.querySelector("#f-reinig label"); if (rl) { if (!rl.dataset.orig) rl.dataset.orig = rl.innerHTML; rl.innerHTML = SOND ? "🍰 Wie wird die Pauschale (" + esc(chf(d.RE)) + ") aufgeteilt?" : rl.dataset.orig; }
   }
   { let th = document.getElementById("terminHinweis");   // Hinweis statt Fragen, solange der Termin fehlt (seit 3.10.1.0)
     if (!th) { th = document.createElement("p"); th.id = "terminHinweis"; th.className = "hint"; const fm = document.getElementById("form"); fm.insertBefore(th, fm.firstChild); }
@@ -4553,7 +4530,7 @@ function render() {
       if (n && freundeListe(n).some((f, i) => kkZeile(i) && f.geb && ARR && !istKleinkind(f.geb, ARR))) r.msg = "Bitte prüfen: Kleinkind älter als 2½ Jahre";
       else if (n && !listeVoll(n)) r.msg = "Bitte ausfüllen: Liste deiner Freunde";
       else if (n && zi && zimmerRow(d, zi) === -2 && !/selben Zimmer/.test(r.msg)) r.msg = "Bitte wählen: Wer mit dir im selben Zimmer schläft";
-      else if (n && parteiOffen(n) && /Reinigung/.test(r.msg)) r.msg = freundeListe(n).some((f) => f.zv) ? "Bitte bestätigen: Wer gehört zusammen" : "Bitte wählen: Wer gehört zusammen";
+      else if (n && parteiOffen(n) && /Reinigung|Pauschale/.test(r.msg)) r.msg = freundeListe(n).some((f) => f.zv) ? "Bitte bestätigen: Wer gehört zusammen" : "Bitte wählen: Wer gehört zusammen";
     }
     const wahl = /^Bitte (wählen|ausfüllen)/.test(r.msg);
     res.hidden = wahl;   // «Bitte wählen» steht in der Leiste unten, das Preisfeld bleibt dann weg
@@ -4569,15 +4546,15 @@ function render() {
   const totTxt = tip > 0 ? "Total inkl. Trinkgeld für " : "Total für ";
   lab.textContent = totTxt + nTxt; val.innerHTML = chf(r.TOT + tip);   // ohne «Details» (seit 3.10.0.1) bar.dataset.klick = "1";
   if (r.d.SB) lab.innerHTML = totTxt + nTxt + "<br><small class=\"max\">maximal " + chf(r.TOT + tip + P.reinigung) + " mit Endreinigung</small>";
-  const zh = zielHinweis(r);
+  const zh = SOND ? null : zielHinweis(r);
   if (zh && zh.frei) { bar.classList.add("gratis"); lab.innerHTML += '<br><small class="ziel">✔ ' + (S.wer === "Nur ich" ? "Für dich" : "Für die Familie") + ' ohne Kosten</small>'; }
   else if (zh && zh.zeilen.length) lab.innerHTML += '<br><small class="ziel' + (zh.zeilen[0].frei ? ' frei' : '') + '">' + esc(zh.zeilen[0].t) + '</small>';
   const sb = sparBetrag(r.d);
   if (sb > 0) lab.innerHTML += '<br><small class="spar"><span class="stern s1" aria-hidden="true">⭐</span>Bleibt Zimmer 1 zu, sparst du ' + chf(sb) + '<span class="stern s2" aria-hidden="true">⭐</span></small>';
   const x = r.d;
   const ktAl = zahlendeAlter(listeN(x)), ktFolgt = listeModus() && listeN(x) > 0 && !ktAl;   // Liste noch unvollständig: Kurtaxe folgt
-  const kt = ktFolgt ? kurtaxeRechnen(0, 0, 0) : kurtaxeRechnen(x.GE, S.kinder, x.nights, ktAl), ktS = kt.summe > 0 ? chf2(kt.summe) : "";   // Kurtaxe nur für Freunde, kommt am Schluss zum Preis dazu
-  const spR = spitzTermin();
+  const kt = ktFolgt || (SOND && !SOND.kt) ? kurtaxeRechnen(0, 0, 0) : kurtaxeRechnen(x.GE, S.kinder, x.nights, ktAl), ktS = kt.summe > 0 ? chf2(kt.summe) : "";   // Kurtaxe nur für Freunde, kommt am Schluss zum Preis dazu
+  const spR = SOND ? null : spitzTermin();
   if (spR) {
     SNAP_BER = [];
     lab.textContent = "Spitzenzeit: Preis auf Anfrage"; val.textContent = ""; delete bar.dataset.klick;
@@ -4639,12 +4616,13 @@ function render() {
   if (famAuf) { who = who.replace(/^<tr>.*?<\/tr>/, famAuf.nm); whoN = whoN.replace(/^<tr>.*?<\/tr>/, famAuf.nn); }
   {   // jede Zeile der Aufteilung aufklappbar mit der genauen Aufschlüsselung, nur auf dem Handy, nicht gespeichert (seit 3.9.1.0)
     const D = (c) => '<i class="dot ' + c + '"></i>';   // Farbpunkt wie im Balken (seit 3.10.0.1)
-    const L = (a, b, k, c) => '<li><span>' + (c ? '<i class="dot ' + c + '"></i>' : "") + a + (k ? ' <small class="ktk">' + k + "</small>" : "") + "</span><span>" + chf2(b) + "</span></li>";   // c: Farbe wie im Balken (seit 3.10.0.1)
+    const L = (a, b, k, c) => SOND && Math.abs(b) < 0.005 ? "" : '<li><span>' + (c ? '<i class="dot ' + c + '"></i>' : "") + a + (k ? ' <small class="ktk">' + k + "</small>" : "") + "</span><span>" + chf2(b) + "</span></li>";   // c: Farbe wie im Balken (seit 3.10.0.1)
     const nTxt = x.nights + " " + (x.nights === 1 ? "Nacht" : "Nächte");
     const famUeb = r.FZ - x.FA, famRei = zpl ? zpl.FA2 : x.FA;
     const vn = (i) => esc(zpl.l[i].vorname);
     const proN = (b) => x.nights > 1 && b > 0 ? x.nights + " × " + chf2(b / x.nights) : "";   // Rechnung klein in der Zeile (seit 3.9.5.4)
     const reTxt = (b) => { const RE = x.RE || P.reinigung, w = REINIG.indexOf(S.reinig) === 1 ? "Parteien" : "Personen"; if (!(b > 0) || !RE || Math.abs(b - RE) < 0.005) return "";
+      if (w === "Personen") { const q = x.ER + x.GE, pz = Math.round(b / RE * q); if (q > 1 && pz > 0 && Math.abs(pz / q * RE - b) < 0.005) return pz + " von " + q + " Personen (" + chf(RE) + ")"; }   // nicht kürzen: «2 von 4 Personen» statt «÷ 2» (seit 3.14.0.0)
       for (let q = 2; q <= 12; q++) { const pz = Math.round(b / RE * q); if (pz > 0 && Math.abs(pz / q * RE - b) < 0.005) return pz === 1 ? chf(RE) + " ÷ " + q + " " + w : pz + " von " + q + " " + w + " (" + chf(RE) + ")"; }
       return "Anteil an " + chf(RE); };
     const anteil = (k) => zpl && zpl.zahler[k] ? zpl.zahler[k].length : 1;
@@ -4699,31 +4677,35 @@ function render() {
     }
     const rows = who.match(/<tr>[\s\S]*?<\/tr>/g) || [];
     const balken = (q) => { if (!q || !(q.tot > 0.004)) return ""; const rr = Math.max(0, q.r), kk = Math.max(0, q.k), u = Math.max(0, q.tot - rr - kk);   // Balken zuunterst in der aufgeklappten Zeile (seit 3.10.0.1, Wänu)
-      return '<li class="ueb-li"><div class="ueb-b">' + (u > 0.004 ? '<i class="su" style="flex:' + u + '"></i>' : "") + (rr > 0.004 ? '<i class="sr" style="flex:' + rr + '"></i>' : "") + (kk > 0.004 ? '<i class="sk" style="flex:' + kk + '"></i>' : "") + '</div><div class="ueb-leg"><span><i class="su"></i>Übernachtung</span>' + (rr > 0.004 ? '<span><i class="sr"></i>Reinigung</span>' : "") + (kk > 0.004 ? '<span><i class="sk"></i>Kurtaxe</span>' : "") + "</div></li>"; };
+      return '<li class="ueb-li"><div class="ueb-b">' + (u > 0.004 ? '<i class="su" style="flex:' + u + '"></i>' : "") + (rr > 0.004 ? '<i class="sr" style="flex:' + rr + '"></i>' : "") + (kk > 0.004 ? '<i class="sk" style="flex:' + kk + '"></i>' : "") + '</div><div class="ueb-leg">' + (u > 0.004 ? '<span><i class="su"></i>Übernachtung</span>' : "") + (rr > 0.004 ? '<span><i class="sr"></i>Reinigung</span>' : "") + (kk > 0.004 ? '<span><i class="sk"></i>Kurtaxe</span>' : "") + "</div></li>"; };
     if (rows.length === bd.length) bd.forEach((t, k) => { if (t) bd[k] = t + (rows.length === sg.length ? balken(sg[k]) : ""); });
     if (rows.length === bd.length) who = rows.map((rw, k) => !bd[k] ? rw : rw.replace("<tr>", '<tr class="auf-z' + (AUF_AUF.has(k) ? " auf" : "") + '" data-auf="' + k + '" role="button" tabindex="0" aria-expanded="' + (AUF_AUF.has(k) ? "true" : "false") + '">') +
       '<tr class="auf-d"' + (AUF_AUF.has(k) ? "" : " hidden") + '><td colspan="2"><ul>' + bd[k] + "</ul></td></tr>").join("");
   }
   let det = "";
   const row = (a, b) => '<tr><td>' + a + '</td><td>' + b + '</td></tr>';
-  if (!r.VERB) det += row(S.wer === "Nur ich" ? "Du pro Nacht" : "Familie pro Nacht", chf(x.FN));
+  const RW = x.SOND ? "Pauschale" : "Reinigung";   // Sonderbuchung: die Pauschale wird wie die Reinigung aufgeteilt
+  if (!r.VERB && !x.SOND) det += row(S.wer === "Nur ich" ? "Du pro Nacht" : "Familie pro Nacht", chf(x.FN));
   const TK = (i) => "\u0001" + i + "\u0002";   // Platzhalter für Namen: auf dem Handy Vorname, gespeichert «Freund/in N» (seit 3.7.2.1)
-  if (zpl) { zpl.ord.forEach((i, pos) => { det += row(TK(i) + " pro Nacht", chf(pos === 0 ? x.HN : x.GN)); }); zpl.kk.forEach((i) => { det += row(TK(i) + ' <small class="ktk">Kleinkind ohne Bett, gratis</small>', chf(0)); }); }
-  else {
+  if (zpl) { if (!x.SOND) zpl.ord.forEach((i, pos) => { det += row(TK(i) + " pro Nacht", chf(pos === 0 ? x.HN : x.GN)); }); zpl.kk.forEach((i) => { det += row(TK(i) + ' <small class="ktk">Kleinkind ohne Bett, gratis</small>', chf(0)); }); }
+  else if (!x.SOND) {
     if (x.GE >= 1) det += row("Freund 1 pro Nacht", chf(x.HN));
     for (let g = 2; g <= x.GE; g++) det += row('Freund ' + g + ' pro Nacht', chf(x.GN));
   }
+  if (x.SOND) { det += row("Sonderbuchung: Pauschale pro Nacht", chf(SOND.preis)); det += row("Pauschale (" + x.nights + (x.nights === 1 ? " Nacht" : " Nächte") + ")", chf(SOND.preis * x.nights)); det += row("Reinigung", SOND.rein ? chf(P.reinigung) : "keine"); if (SOND.rein) det += row("Pauschale mit Reinigung", chf(x.RE)); if (!SOND.kt) det += row("Kurtaxe", "keine"); }
+  else {
   det += row("Übernachtung (" + x.nights + " Nächte)", chf(r.VERB ? r.TOT - x.RE : x.UE));
   det += row("Reinigung", chf(x.RE));
+  }
   if (zpl && REINIG.indexOf(S.reinig) === 1) {   // Reinigung nach Parteien (seit 3.8.0.0)
-    det += row(S.wer === "Nur ich" ? "Reinigung: dein Anteil" : "Reinigung: Anteil Familie", chf2(zpl.FA2));
-    zpl.parteien.forEach((pp) => { det += row("Reinigung: Partei " + pp.glieder.map(TK).join(", ") + (pp.erw.length > 1 ? ' <small class="ktk">je ' + chf2(zpl.teil / pp.erw.length) + "</small>" : ""), chf2(zpl.teil)); });
+    det += row(S.wer === "Nur ich" ? RW + ": dein Anteil" : RW + ": Anteil Familie", chf2(zpl.FA2));
+    zpl.parteien.forEach((pp) => { det += row(RW + ": Partei " + pp.glieder.map(TK).join(", ") + (pp.erw.length > 1 ? ' <small class="ktk">je ' + chf2(zpl.teil / pp.erw.length) + "</small>" : ""), chf2(zpl.teil)); });
   } else if (zpl) {   // Reinigung wie in der Tabelle «Aufteilung unter euch»
-    det += row(S.wer === "Nur ich" ? "Reinigung: dein Anteil" : "Reinigung: Anteil Familie", chf2(zpl.FA2));
-    det += row("Reinigung: Anteil pro Freund", chf2(zpl.gs[zpl.zi[0]]));
+    det += row(S.wer === "Nur ich" ? RW + ": dein Anteil" : RW + ": Anteil Familie", chf2(zpl.FA2));
+    det += row(RW + ": Anteil pro Freund", chf2(zpl.gs[zpl.zi[0]]));
   } else {
-    if (x.GE >= 1) det += row(S.wer === "Nur ich" ? "Reinigung: dein Anteil" : "Reinigung: Anteil Familie", chf(x.FA));
-    if (x.GE >= 1) det += row("Reinigung: Anteil pro Freund", chf(x.GS));
+    if (x.GE >= 1) det += row(S.wer === "Nur ich" ? RW + ": dein Anteil" : RW + ": Anteil Familie", chf(x.FA));
+    if (x.GE >= 1) det += row(RW + ": Anteil pro Freund", chf(x.GS));
   }
   if (r.AUF) det += row("Aufschlag bis zum Mindestpreis " + (r.HOCH ? "in der Hochsaison" : (r.LUEB ? "in der Lücke" : "im " + esc(festTxt()))), "+" + chf(r.AUF));
   if (r.GRATIS) det += row("Gesamtpreis vorher: " + chf(r.TOT0) + ". Entlastung Familie", "−" + chf(r.D));
@@ -4741,7 +4723,7 @@ function render() {
   if (r.VERB) notes += '<p class="note"><b>Verbindliche Buchung:</b> ' + r.HN_ + (r.HN_ === 1 ? ' Nacht' : ' Nächte') + ' in der Hochsaison zu ' + chf(P.hochNachtMin) + (x.nights - r.HN_ > 0 ? ', ' + (x.nights - r.HN_) + (x.nights - r.HN_ === 1 ? ' Nacht' : ' Nächte') + ' zum normalen Familienpreis von ' + chf(x.FN) : '') + ', dazu die Endreinigung ' + chf(x.RE) + '. Der Termin ist fest und wird in Airbnb gesperrt.</p>';
   if (r.GRATIS) notes += '<p class="note"><b>Mindestpreis:</b> ' + (r.FZ === 0 ? (S.wer === "Nur ich" ? "Du zahlst deinen" : "Die Familie zahlt ihren") + ' eigenen Anteil (' + chf(r.FZ0) + ') nicht. ' : (S.wer === "Nur ich" ? "Du zahlst" : "Die Familie zahlt") + ' noch ' + chf(r.FZ) + ' statt ' + chf(r.FZ0) + '. ') + 'Der Gesamtpreis sinkt nie unter ' + chf(r.BODEN) + ' (' + (r.HOCH ? chf(P.hochNachtMin) + ' pro Nacht plus Endreinigung' : (r.LUEB ? chf(P.lueckeGastNacht) + ' pro Nacht für die Übernachtungen plus Endreinigung' : chf(r.FEST ? P.festBodenWoche : (x.LUE && P.lueckeMindestpreisWoche > 0 ? P.lueckeMindestpreisWoche : P.mindestpreisWoche)) + ' pro 7 Nächte')) + '). Die Freunde zahlen ihre Anteile wie berechnet.</p>';
   if (r.AUF) notes += '<p class="note"><b>Mindestpreis ' + (r.HOCH ? "in der Hochsaison" : (r.LUEB ? "in der Lücke" : "im " + esc(festTxt()))) + ':</b> Das Total beträgt mindestens ' + chf(r.BODEN) + ' (' + (r.HOCH ? chf(P.hochNachtMin) + ' pro Nacht plus Endreinigung' : (r.LUEB ? chf(P.lueckeGastNacht) + ' pro Nacht für die Übernachtungen plus Endreinigung' : chf(P.festBodenWoche) + ' pro 7 Nächte, inklusive Endreinigung')) + '). ' + (x.GE >= 1 ? 'Der fehlende Betrag von ' + chf(r.AUF) + ' wird gleichmässig auf alle Personen verteilt, dich und die Freunde. Mit mehr Freunden sinkt dein Anteil.' : 'Du zahlst den Mindestpreis. Mit Freunden sinkt dein Anteil.') + '</p>';
-  if (x.GE >= 1) notes += '<p class="note">Reinigung aufgeteilt: ' + S.reinig + '.</p>';
+  if (x.GE >= 1 && !(x.SOND && x.RE === 0)) notes += '<p class="note">' + RW + ' aufgeteilt: ' + S.reinig + '.</p>';
   const zahlung = '<div class="pay"><strong>Die Familie überweist den ganzen Betrag: ' + (kt.summe > 0 ? chf2(r.TOT + tip + kt.summe) : chf(r.TOT + tip)) + '</strong>' +
       (kt.summe > 0 ? '<span>davon Kurtaxe für Adelboden: ' + ktS + '</span>' : '') +
       (tip > 0 ? '<span>davon Trinkgeld für Mami: ' + chf(tip) + ' (freiwillig)</span>' : '') +
@@ -4753,6 +4735,7 @@ function render() {
   const aufteilung = '<h3 class="split-h auf-h">' + (teilt ? "💸 Aufteilung unter euch" : "🧮 So setzt sich der Preis zusammen") + "</h3>" +
     '<p class="hint">' + (teilt ? "Das Geld der Freunde sammelt ihr selbst ein. Die Tabelle zeigt, wie viel jeder schuldet." + (kt.summe > 0 ? " Die Kurtaxe ist bei jedem Freund schon im Betrag enthalten." : "") + " " : "") + "Tippe eine Zeile an, dann siehst du die Rechnung und zuunterst einen Balken: Übernachtung, Reinigung und Kurtaxe in eigenen Farben.</p>" +
     '<table class="auf-tab"><tbody>' + who + totZ + "</tbody></table>" + notes + (x.SB ? endreinigungInfo(r) : "");
+  const aufS = !x.SOND ? aufteilung : aufteilung.replace(/<i class="dot su"><\/i>Übernachtung CHF 0\.00( \(im selben Zimmer\))?(, )?/g, "").replace(/Reinigungsanteil/g, "Anteil Pauschale").replace(/Reinigung/g, "Pauschale");   // Sonderbuchung: keine Übernachtung, die Pauschale wird wie die Reinigung aufgeteilt
   const detN = det.replace(/\u0001(\d+)\u0002/g, (m, i) => "Freund/in " + (Number(i) + 1));
   det = det.replace(/\u0001(\d+)\u0002/g, (m, i) => zpl ? esc(zpl.l[Number(i)].vorname) : "Freund");
   SNAP_BER = schnappBer(whoN, detN, notes, x.GE >= 1 || !!famAuf);
@@ -4762,7 +4745,7 @@ function render() {
     '<span class="big">' + chf(r.TOT) + '</span>' + (kt.summe > 0 ? '<span class="small">dazu Kurtaxe Adelboden ' + ktS + ' für die Freunde</span>' : (ktFolgt ? '<span class="small">dazu Kurtaxe Adelboden für die Freunde: folgt, sobald die Geburtsdaten in der Liste stehen</span>' : '')) + '</div>' +
     (zh && !zh.frei && zh.zeilen.length ? '<div class="zielbox">' + zh.zeilen.map((z) => '<p' + (z.frei ? ' class="frei"' : '') + '>' + esc(z.t) + '</p>').join("") + '</div>' : '') +
     (x.LR > 0 ? '<p class="note"><b>Lückenpreis:</b> ' + x.LR + ' % günstiger auf die Übernachtungen, die Reinigung bleibt gleich.</p>' : '') +
-    aufteilung +
+    aufS +
     anfrageKasten(r) +
     '<h3 class="split-h">' + symBtn('b-zahlung', '💰') + ' Zahlung</h3>' +
     '<div class="acc">' + symBtn('b-trinkgeld', '<span class="an-schwein">🐖</span>') + '<button type="button" class="acc-t" id="trinkTgl" data-body="trinkBody" aria-expanded="' + (TRINK_OFFEN ? 'true' : 'false') + '" aria-controls="trinkBody">Trinkgeld' + (tip > 0 ? ' ' + chf(tip) + ' 🙏' : '') + '</button></div>' +
@@ -4771,10 +4754,10 @@ function render() {
     zahlung +
     '<details><summary>' + symBtn('b-geld', '<span class="an-hand" ><span class="hd">🤲</span><i class="bn b1"></i><i class="bn b2"></i><i class="bn b3"></i></span>') + ' Geldverwendung</summary><div class="rows">' + GELD_TEXT +
     '</div></details>' +
-    '<div class="marke" id="marke"><span data-z="0">ankommen</span><span class="pt">·</span><span data-z="1">durchatmen</span><span class="pt">·</span><span data-z="2">geniessen</span></div>' + (ELTERN ? elternKasten() : '');
+    '<div class="marke" id="marke"><span data-z="0">ankommen</span><span class="pt">·</span><span data-z="1">durchatmen</span><span class="pt">·</span><span data-z="2">geniessen</span></div>';
 }
 
-document.getElementById("reset").addEventListener("click", () => { gmEntwurfSetzen([]); try { localStorage.removeItem("tm2_gmEntwurfKey"); } catch (e) {} GM_ENTW_GEN++;   /* Neu beginnen: auch die Liste der Freunde leeren (seit 3.7.0.1) */ ELTERN = false; EMPF = ""; TRINK = ""; RECH_OFFEN = false; TRINK_OFFEN = false; S = Object.assign({}, EMPTY); ARR = ""; DEP = ""; initKalenderMonat(); NOTICES = {}; render(); renderKalender(); ZURUECK = null; document.getElementById("zurueck").hidden = true; setHilfe(false); hilfeZuklappen(); setRechner(false); window.scrollTo({ top: 0 }); });
+document.getElementById("reset").addEventListener("click", () => { SOND = null; gmEntwurfSetzen([]); try { localStorage.removeItem("tm2_gmEntwurfKey"); } catch (e) {} GM_ENTW_GEN++;   /* Neu beginnen: auch die Liste der Freunde leeren (seit 3.7.0.1) */ TRINK = ""; RECH_OFFEN = false; TRINK_OFFEN = false; S = Object.assign({}, EMPTY); ARR = ""; DEP = ""; initKalenderMonat(); NOTICES = {}; render(); renderKalender(); ZURUECK = null; document.getElementById("zurueck").hidden = true; setHilfe(false); hilfeZuklappen(); setRechner(false); window.scrollTo({ top: 0 }); });
 function wendeEinstellungenAn(j) {
   if (!j || typeof j !== "object") return;
   Object.keys(P).forEach((k) => {
@@ -4834,28 +4817,6 @@ document.getElementById("result").addEventListener("change", (e) => {
     render(); bestZeigen();
   }
 });
-let ZONE_STAND = 0, ZONE_ZEIT = 0;
-function elternUmschalten() {
-  ELTERN = !ELTERN;
-  render();
-  if (ELTERN) { const b = document.getElementById("elternBox"); if (b) b.scrollIntoView({ block: "center" }); }
-}
-// Versteckte Wörter in der Markenzeile: erst das mittlere, dann das linke, dann das rechte antippen. Öffnet und schliesst die Einladung.
-const ZONE_FOLGE = [1, 0, 2];
-document.getElementById("result").addEventListener("pointerup", (e) => {
-  const z = e.target.closest("[data-z]");
-  if (!z) return;
-  const i = Number(z.dataset.z);
-  const t = Date.now();
-  if (ZONE_STAND > 0 && t - ZONE_ZEIT > 3000) ZONE_STAND = 0;
-  ZONE_ZEIT = t;
-  if (i === ZONE_FOLGE[ZONE_STAND]) ZONE_STAND++;
-  else ZONE_STAND = (i === ZONE_FOLGE[0]) ? 1 : 0;
-  if (ZONE_STAND === ZONE_FOLGE.length) { ZONE_STAND = 0; elternUmschalten(); }
-});
-document.getElementById("result").addEventListener("change", (e) => {
-  if (e.target && e.target.id === "empf") { EMPF = KINDER.indexOf(e.target.value) >= 0 ? e.target.value : ""; render(); }
-});
 document.addEventListener("click", async (e) => {   // Reinigungstag setzen oder entfernen (nur Papi, seit 2.126.0.0)
   const b = e.target.closest("[data-reinset]"); if (!b || !TOKEN || ABSENDER) return;
   const k = b.getAttribute("data-reinset"), weg = REIN_TAGE.some((r) => r.tag === k), ab = reinAbFuer(k);
@@ -4871,8 +4832,6 @@ document.addEventListener("click", (e) => { const b = e.target.closest("[data-ib
 document.getElementById("result").addEventListener("click", (e) => {
   const b = e.target.closest("#copyIban");
   if (b) { kopiere(IBAN.replace(/\s+/g, ""), b, "IBAN kopiert", "IBAN kopieren"); return; }
-  const ce = e.target.closest("#copyEinl");
-  if (ce) { kopiere(LETZTE_EINLADUNG, ce, "Einladung kopiert", "Einladung kopieren"); return; }
   const q = e.target.closest("#copyReq");
   if (q) kopiere(LETZTE_ANFRAGE, q, "Anfrage kopiert", "Anfrage kopieren");
   if (q || e.target.closest("#waReq")) { gmEntwurfUebernehmen(); inkSpeichern(); aufentSpeichern(); aufHinweisZeigen(); }
@@ -4943,8 +4902,9 @@ function buchungenAn(j) {
   const bes = (b) => (typeof b.bescheid === "string" && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(b.bescheid) ? b.bescheid : "");
   BUCH_ABGEL = gut.filter((b) => b.status === "abgelehnt").map((b) => ({ name: b.name.trim(), arr: b.arr, dep: b.dep, bescheid: bes(b) }));
   BUCH_STORNO = gut.filter((b) => b.status === "storniert").map((b) => Object.assign({}, b, { name: b.name.trim() }));   // seit 2.124.0.0 mit Datum und Aufgaben (Bestätigung, Airbnb, Pimlical)
+  VORL = Array.isArray(j.vorlagen) ? j.vorlagen.filter((v) => v && typeof v.name === "string" && DKEY.test(v.arr) && DKEY.test(v.dep) && v.arr < v.dep).map((v) => ({ id: String(v.id || bKey(v)), name: v.name.trim(), arr: v.arr, dep: v.dep, preis: Math.max(0, Math.round(Number(v.preis) || 0)), rein: v.rein === true, kt: v.kt === true, t: String(v.t || "") })) : [];   // Sonderbuchungen (seit 3.14.0.0)
   BUCH = gut.filter((b) => b.status !== "abgelehnt" && b.status !== "storniert")
-    .map((b) => ({ name: b.name.trim(), arr: b.arr, dep: b.dep, sb: b.selbst === true, lg: b.luecke === true, prov: PROV_AN && b.prov === true, verb: b.verb === true, waesche: b.waesche === "bringen" || b.waesche === "senden" ? b.waesche : "", rolle: b.rolle === "start" || b.rolle === "folge" ? b.rolle : "", endeInfo: typeof b.endeInfo === "string" && /^\d{4}-\d{2}-\d{2}/.test(b.endeInfo) ? b.endeInfo : "", endreinInfo: typeof b.endreinInfo === "string" && /^\d{4}-\d{2}-\d{2}/.test(b.endreinInfo) ? b.endreinInfo : "", endreinBezahlt: typeof b.endreinBezahlt === "string" && /^\d{4}-\d{2}-\d{2}/.test(b.endreinBezahlt) ? b.endreinBezahlt : "", endreinAnteile: typeof b.endreinAnteile === "string" ? b.endreinAnteile : "", waescheInfo: typeof b.waescheInfo === "string" && /^\d{4}-\d{2}-\d{2}/.test(b.waescheInfo) ? b.waescheInfo : "", waescheZurueck: typeof b.waescheZurueck === "string" && /^\d{4}-\d{2}-\d{2}/.test(b.waescheZurueck) ? b.waescheZurueck : "", gesperrt: typeof b.gesperrt === "string" && /^\d{4}-\d{2}-\d{2}/.test(b.gesperrt) ? b.gesperrt : "", kurtaxeAm: typeof b.kurtaxeAm === "string" && /^\d{4}-\d{2}-\d{2}/.test(b.kurtaxeAm) ? b.kurtaxeAm : "", pers: Math.max(1, Number(b.pers) || 1), bescheid: bes(b), betrag: Number(b.betrag) > 0 ? Math.round(Number(b.betrag)) : 0, rechnung: typeof b.rechnung === "string" ? b.rechnung.slice(0, 4000) : "", bestaetigt: typeof b.bestaetigt === "string" && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(b.bestaetigt) ? b.bestaetigt : "", bezahlt: typeof b.bezahlt === "string" && /^\d{4}-\d{2}-\d{2}/.test(b.bezahlt) ? b.bezahlt : "", pimlical: typeof b.pimlical === "string" && /^\d{4}-\d{2}-\d{2}/.test(b.pimlical) ? b.pimlical : "", erinnert: Array.isArray(b.erinnert) ? b.erinnert.filter((t) => typeof t === "string" && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(t)) : [], angepasst: b.angepasst && typeof b.angepasst === "object" && DKEY.test(b.angepasst.arr) && DKEY.test(b.angepasst.dep) ? { arr: b.angepasst.arr, dep: b.angepasst.dep, betrag: Math.round(Number(b.angepasst.betrag) || 0), t: String(b.angepasst.t || "") } : null }))
+    .map((b) => ({ name: b.name.trim(), arr: b.arr, dep: b.dep, sb: b.selbst === true, lg: b.luecke === true, prov: PROV_AN && b.prov === true, verb: b.verb === true, waesche: b.waesche === "bringen" || b.waesche === "senden" ? b.waesche : "", rolle: b.rolle === "start" || b.rolle === "folge" ? b.rolle : "", endeInfo: typeof b.endeInfo === "string" && /^\d{4}-\d{2}-\d{2}/.test(b.endeInfo) ? b.endeInfo : "", endreinInfo: typeof b.endreinInfo === "string" && /^\d{4}-\d{2}-\d{2}/.test(b.endreinInfo) ? b.endreinInfo : "", endreinBezahlt: typeof b.endreinBezahlt === "string" && /^\d{4}-\d{2}-\d{2}/.test(b.endreinBezahlt) ? b.endreinBezahlt : "", endreinAnteile: typeof b.endreinAnteile === "string" ? b.endreinAnteile : "", waescheInfo: typeof b.waescheInfo === "string" && /^\d{4}-\d{2}-\d{2}/.test(b.waescheInfo) ? b.waescheInfo : "", waescheZurueck: typeof b.waescheZurueck === "string" && /^\d{4}-\d{2}-\d{2}/.test(b.waescheZurueck) ? b.waescheZurueck : "", gesperrt: typeof b.gesperrt === "string" && /^\d{4}-\d{2}-\d{2}/.test(b.gesperrt) ? b.gesperrt : "", kurtaxeAm: typeof b.kurtaxeAm === "string" && /^\d{4}-\d{2}-\d{2}/.test(b.kurtaxeAm) ? b.kurtaxeAm : "", pers: Math.max(1, Number(b.pers) || 1), bescheid: bes(b), betrag: Number(b.betrag) > 0 ? Math.round(Number(b.betrag)) : 0, rechnung: typeof b.rechnung === "string" ? b.rechnung.slice(0, 4000) : "", bestaetigt: typeof b.bestaetigt === "string" && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(b.bestaetigt) ? b.bestaetigt : "", bezahlt: typeof b.bezahlt === "string" && /^\d{4}-\d{2}-\d{2}/.test(b.bezahlt) ? b.bezahlt : "", pimlical: typeof b.pimlical === "string" && /^\d{4}-\d{2}-\d{2}/.test(b.pimlical) ? b.pimlical : "", erinnert: Array.isArray(b.erinnert) ? b.erinnert.filter((t) => typeof t === "string" && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(t)) : [], sond: b.sond && typeof b.sond === "object" ? { preis: Math.max(0, Math.round(Number(b.sond.preis) || 0)), rein: b.sond.rein === true, kt: b.sond.kt === true } : null, angepasst: b.angepasst && typeof b.angepasst === "object" && DKEY.test(b.angepasst.arr) && DKEY.test(b.angepasst.dep) ? { arr: b.angepasst.arr, dep: b.angepasst.dep, betrag: Math.round(Number(b.angepasst.betrag) || 0), t: String(b.angepasst.t || "") } : null }))
     .sort((p, q) => (p.arr < q.arr ? -1 : 1));
   LOGBUCH = Array.isArray(j.logbuch) ? j.logbuch.filter((e) => e && typeof e.t === "string" && typeof e.text === "string").slice(-200) : [];
   BUCH_TAG.clear();
@@ -5054,6 +5014,7 @@ function aufentZeigen() {
     const sl = ABSENDER ? BUCH_STORNO.filter((b) => eigenN(b.name) && b.dep >= heuteKey() && ok.indexOf(bKey(b)) < 0 && !BUCH.some((a) => a.name === b.name && ueb(a, b)) && !(AUFENT && b.name === ABSENDER && ueb(AUFENT, b))) : [];   // keine Meldung, wenn für diese Tage eine neue Buchung oder Anfrage besteht (seit 2.119.3.0)
     if (sl.length) { st.hidden = false; st.innerHTML += sl.map((b) => '<div class="note h"><b>❌ Storniert:</b> ' + (b.name === ABSENDER ? "Dein Aufenthalt" : "Der Aufenthalt von " + esc(b.name)) + ' vom ' + esc(fmtTag(b.arr)) + ' bis ' + esc(fmtTag(b.dep)) + ' wurde von den Eltern gelöscht. Die Knöpfe dazu sind weg. <button type="button" class="ov-back" data-stok="' + esc(bKey(b)) + '">OK, gelesen</button></div>').join(""); }
   }
+  vorlZeigen();
   gmKindZeigen();
   inkZeigen();
   mailPruefen();
@@ -6127,6 +6088,7 @@ function erledigenHtml(x) {
 function festKarte(x, direkt) {   // direkt: nur die Karte (neue Verwaltung pro Person), sonst wie früher in einem aufklappbaren Titel
   const key = esc(bKey(x)), prov = !!x.prov, konf = prov && provKonflikt(x);
   let st = "";
+  if (x.sond) st += "<span>⭐ Sonderbuchung: " + esc(sondBed(x.sond)) + "</span>";
   if (prov) st += "<span>" + (konf ? "⚠️ Konflikt mit Airbnb-Gast" : "Nicht in Airbnb gesperrt" + (provSicher(x) ? " · praktisch sicher ✓" : "")) + "</span>";
   st += bescheidStatus(x);
   if (x.pimlical) st += "<span>🗓️ In Pimlical eingetragen am " + esc(fmtTag(x.pimlical.slice(0, 10))) + "</span>"; else if (pimOffen(x)) st += '<span><b class="bs-fehlt">🗓️ Noch nicht in Pimlical eingetragen</b></span>';
@@ -6644,8 +6606,32 @@ function meinKnopf() {
 // Pro Aufenthalt ein Klappbereich (seit 3.12.1.0, Wänu): Liste der Freunde, Zu bezahlen, Geld einsammeln, Stornierung. Die Kästen werden wie bisher gezeichnet und hier nach Aufenthalt verteilt.
 var MEIN_GEN = {}, MEIN_TEILE = {};
 var MEIN_ST_AUF = null;
-var MEIN_TYPEN = [["gm", "gmBox", "data-gmk"], ["zb", "zahlBox", "data-bk"], ["ink", "inkBox", "data-ink"], ["ab", "absageBox", "data-bk"]];
+var MEIN_TYPEN = [["vo", "vorlBox", "data-bk"], ["gm", "gmBox", "data-gmk"], ["zb", "zahlBox", "data-bk"], ["ink", "inkBox", "data-ink"], ["ab", "absageBox", "data-bk"]];
+// Vorlagen der Eltern beim Kind (Sonderbuchungen, seit 3.14.0.0): annehmen öffnet den Rechner mit festen Daten, ablehnen schickt eine WhatsApp
+function vorlWeg() { try { const l = JSON.parse(localStorage.getItem("tm2_vorlWeg") || "[]"); return Array.isArray(l) ? l : []; } catch (e) { return []; } }
+function vorlMeine() { if (!ABSENDER) return []; const h = heuteKey(), w = vorlWeg(); return VORL.filter((v) => eigenN(v.name) && v.dep >= h && w.indexOf(v.id) < 0 && !BUCH.some((b) => eigenN(b.name) && b.arr === v.arr && b.dep === v.dep)); }
+var VORL_AB = "";   // Vorlage, bei der «Ablehnen» offen ist
+function vorlZeigen() {
+  const box = document.getElementById("vorlBox"); if (!box) return;
+  const l = vorlMeine();
+  box.hidden = !l.length; box.dataset.gen = String((+box.dataset.gen || 0) + 1);
+  box.innerHTML = l.map((v) => {
+    const n = diffDays(v.arr, v.dep), ges = !!(AUFENT && AUFENT.arr === v.arr && AUFENT.dep === v.dep);
+    const ab = (PARTNER_ABS.indexOf(ABSENDER) >= 0 ? "Hallo Marianne und Silvan" : "Hallo Mami und Papi") + "\n\nDanke für die Vorlage vom " + fmtTagV(v.arr) + " bis " + fmtTagV(v.dep) + ". Sie passt mir leider nicht.\n\nLiebe Grüsse, " + ABSENDER;
+    return '<div class="note h vorl' + (ges ? "" : " steht") + '" data-bk="' + esc(bKey({ name: ABSENDER, arr: v.arr, dep: v.dep })) + '"><b>📩 Vorlage von ' + esc(inkEltern()) + "</b><p>" + esc(fmtTag(v.arr)) + " bis " + esc(fmtTag(v.dep)) + " (" + n + (n === 1 ? " Nacht" : " Nächte") + ")<br>" + esc(sondBed(v)) + "</p>" +
+      (ges ? '<p class="hint">⏳ Anfrage gesendet. Sobald die Eltern bestätigen, steht der Aufenthalt bei deinen Buchungen.</p><button type="button" class="btn" data-vorl-an="' + esc(v.id) + '">🧮 Nochmals im Rechner öffnen</button>'
+        : '<p class="hint">«Annehmen» öffnet den Rechner mit diesen Daten. Dort wählst du, wer mitkommt, ergänzt deine Freunde und schickst die Anfrage.</p><div class="btns"><button type="button" class="btn main" data-vorl-an="' + esc(v.id) + '">✅ Annehmen</button><button type="button" class="btn" data-vorl-ab="' + esc(v.id) + '">✖ Ablehnen</button></div>' +
+          (VORL_AB === v.id ? '<p class="hint">Die Eltern bekommen eine WhatsApp, danach verschwindet die Vorlage.</p><a class="btn" data-vorl-weg="' + esc(v.id) + '" href="https://wa.me/?text=' + encodeURIComponent(ab) + '" target="_blank" rel="noopener">' + WA_SVG + "Absage senden</a>" : "")) + "</div>";
+  }).join("");
+}
+function vorlKlick(e) {
+  const an = e.target.closest("[data-vorl-an]"), ab = e.target.closest("[data-vorl-ab]"), weg = e.target.closest("[data-vorl-weg]");
+  if (an) { const v = VORL.find((x) => x.id === an.getAttribute("data-vorl-an")); if (!v) return; const mk = document.getElementById("meinKasten"); if (mk && !mk.hidden) document.getElementById("btnMein").click(); sondStart(v); setRechner(true); setTimeout(() => { const f = document.getElementById("sondHinweis"); if (f) f.scrollIntoView({ behavior: "smooth", block: "start" }); }, 60); return; }
+  if (ab) { const id = ab.getAttribute("data-vorl-ab"); VORL_AB = VORL_AB === id ? "" : id; vorlZeigen(); meinKnopf(); return; }
+  if (weg) { const l = vorlWeg(); l.push(weg.getAttribute("data-vorl-weg")); try { localStorage.setItem("tm2_vorlWeg", JSON.stringify(l.slice(-30))); } catch (e2) {} VORL_AB = ""; setTimeout(() => { vorlZeigen(); meinKnopf(); }, 300); }   // der Link öffnet WhatsApp, danach ist die Vorlage weg
+}
 function beide(id, t, f, c) { [id, "meinAuf"].forEach((x) => document.getElementById(x).addEventListener(t, f, c)); }   // Lauscher für die Startseite (Papi «Ansicht als») und die Kinder-Verwaltung
+beide("vorlBox", "click", vorlKlick);
 function meinVerteilen() {
   const ma = document.getElementById("meinAuf"); if (!ma || !MEIN_TYPEN) return;
   if (!meinModus()) { ma.innerHTML = ""; Object.keys(MEIN_GEN).forEach((t) => delete MEIN_GEN[t]); return; }
@@ -6654,11 +6640,11 @@ function meinVerteilen() {
     if (MEIN_GEN[t] !== g) { MEIN_GEN[t] = g; MEIN_TEILE[t] = [...c.children].filter((x) => x.getAttribute(at)).map((x) => ({ k: x.getAttribute(at), el: x })); }
     c.hidden = true;
   });
-  MEIN_TEILE.li = liTeile(); MEIN_N.li = MEIN_TEILE.li.reduce((s, x) => s + x.o, 0);
-  const ORD = ["gm", "zb", "ink", "li", "ab"];
+  MEIN_TEILE.li = liTeile(); const voN = (MEIN_TEILE.vo || []).filter((x) => x.el.classList.contains("steht")).length; MEIN_N.li = MEIN_TEILE.li.reduce((s, x) => s + x.o, 0) + voN;   // offene Vorlagen zählen orange (seit 3.14.0.0)
+  const ORD = ["vo", "gm", "zb", "ink", "li", "ab"];
   const keys = [...new Set(ORD.flatMap((t) => (MEIN_TEILE[t] || []).map((x) => x.k)))].sort((p, q) => (p.split("|")[1] < q.split("|")[1] ? -1 : 1));
   const zahl = (k) => (MEIN_TEILE.gm || []).filter((x) => x.k === k && x.el.classList.contains("gm-offen")).length + (MEIN_TEILE.zb || []).filter((x) => x.k === k).length + (MEIN_TEILE.ink || []).filter((x) => x.k === k && x.el.classList.contains("brennt")).length;
-  const orz = (k) => MEIN_TEILE.li.filter((x) => x.k === k).reduce((s, x) => s + x.o, 0);
+  const orz = (k) => MEIN_TEILE.li.filter((x) => x.k === k).reduce((s, x) => s + x.o, 0) + (MEIN_TEILE.vo || []).filter((x) => x.k === k && x.el.classList.contains("steht")).length;
   const auf = MEIN_ST_AUF || new Set(keys.filter((k) => zahl(k) + orz(k) > 0).slice(0, 1));
   [...ma.querySelectorAll(":scope > details.mein-st")].forEach((d) => { if (keys.indexOf(d.dataset.st) < 0) d.remove(); });
   const leer = ma.querySelector(":scope > .mein-leer"); if (leer) leer.remove();
@@ -6670,7 +6656,8 @@ function meinVerteilen() {
     ma.appendChild(d);   // Reihenfolge nach Anreise
     const n = zahl(k), o = orz(k), [, arr, dep] = k.split("|");
     d.classList.toggle("brennt", n > 0); d.classList.toggle("steht", !n && o > 0);
-    d.querySelector("summary").innerHTML = '<span><span class="gm-ico">🗓️</span><b>' + esc(fmtTag(arr)) + " bis " + esc(fmtTag(dep)) + "</b></span>" + (n ? '<span class="alarm-n rot">' + n + "</span>" : "") + (o ? '<span class="alarm-n"' + (n ? ' style="margin-left:0"' : "") + ">" + o + "</span>" : "");
+    const sd = BUCH.some((b) => bKey(b) === k && b.sond) || (MEIN_TEILE.vo || []).some((x) => x.k === k);   // Sonderbuchung oder Vorlage
+    d.querySelector("summary").innerHTML = '<span><span class="gm-ico">' + (sd ? "⭐" : "🗓️") + "</span><b>" + esc(fmtTag(arr)) + " bis " + esc(fmtTag(dep)) + "</b></span>" + (n ? '<span class="alarm-n rot">' + n + "</span>" : "") + (o ? '<span class="alarm-n"' + (n ? ' style="margin-left:0"' : "") + ">" + o + "</span>" : "");
     d.querySelector(".mein-st-b").replaceChildren(...ORD.flatMap((t) => (MEIN_TEILE[t] || []).filter((x) => x.k === k).map((x) => x.el)));
   });
 }
@@ -6898,6 +6885,7 @@ function bestZeigen() {
     s += persListe();
     { const rl = reinigungsTermine(), r0 = rl.find((r) => r.art !== "offen") || rl[0];
       s += '<div class="ps-abst"></div>' + persTitel("__reinigung", "🧽 Reinigungstermine", r0 ? "nächste: " + esc(fmtTag(r0.frueh)) + (r0.art === "spanne" && r0.spaet ? " bis " + esc(fmtTag(r0.spaet)) : "") : "keine geplant", 0, false, false, PERS_STAND.get("__reinigung") === true, reinigungsListeHtml()); }
+    s += '<div class="ps-abst"></div>' + sondHtml();   // Sonderbuchungen (seit 3.14.0.0)
     // Block «Weiteres»: offene Anfragen, Weihnachtssperre und alles zum Nachschlagen
     const xo = xmasOffen(), fremd = BUCH.filter((x) => ABS.indexOf(x.name) < 0).sort((p, q) => (p.arr < q.arr ? -1 : 1));   // fremd: Buchung ohne bekannten Namen (sollte nicht vorkommen)
     const nW = (xo.length ? 1 : 0) + fremd.reduce((n, x) => n + aufgZahl(x), 0);
@@ -7133,6 +7121,52 @@ document.getElementById("btnAnsichten").addEventListener("click", () => {
   zeigAns = !zeigAns;
   if (zeigAns) { ZURUECK = null; document.getElementById("zurueck").hidden = true; setHilfe(false); hilfeZuklappen(); setRechner(false); setChem(false); PERS_STAND.clear(); VK_OFFEN.clear(); }   // Verwaltung öffnet immer mit allen Titeln zugeklappt
   bestZeigen();
+});
+// ===== Sonderbuchungen (seit 3.14.0.0, Wänu): Papi legt eine Vorlage für ein Kind an (eigene Pauschale, Reinigung und Kurtaxe wählbar, auch 1 Nacht). Das Kind sieht sie in der App, nimmt an oder lehnt ab.
+var SOND_F = { name: "", arr: "", dep: "", preis: "", rein: false, kt: true }, SOND_MSG = "";
+const appUrl = () => location.origin + location.pathname;
+function sondWaText(v) { const n = diffDays(v.arr, v.dep); return waHoi(v.name) + "Wir haben dir im TSCHENT-O-MAT eine Vorlage für einen Aufenthalt bereitgelegt:\n\n" + waZeit(v) + " (" + n + (n === 1 ? " Nacht" : " Nächte") + ")\n" + sondBed(v) + "\n\nDu findest sie unter «👤 Meine Verwaltung». Dort nimmst du sie an, ergänzt die Gäste und schickst uns die Anfrage. Passt sie dir nicht, kannst du sie ablehnen.\n\n" + appUrl() + grussVon(v.name); }
+function sondHtml() {
+  const h = heuteKey(), l = VORL.filter((v) => v.dep >= h).sort((p, q) => (p.arr < q.arr ? -1 : 1)), f = SOND_F;
+  const karten = l.map((v) => { const da = OFFEN.some((y) => bKey(y) === bKey(v)); return vkKarte(v, "", "", esc(sondBed(v)) + "<br>" + (da ? "📨 Die Anfrage ist da, du findest sie bei " + esc(v.name) + "." : "Noch keine Anfrage. Lehnt " + esc(v.name) + " ab, kommt eine WhatsApp, dann löschst du die Vorlage hier."),
+    '<a class="btn" href="https://wa.me/?text=' + encodeURIComponent(sondWaText(v)) + '" target="_blank" rel="noopener">' + WA_SVG + "WhatsApp an " + esc(v.name) + '</a><button type="button" class="btn" data-sond-del="' + esc(v.id) + '">🗑️ Löschen</button>'); }).join("");
+  const inh = '<p class="hint">Eine Vorlage mit deinen Bedingungen für ein Kind, auch für 1 Nacht und das ganze Jahr. Mindestnächte und Saisonregeln gelten nicht. Das Kind sieht sie in «👤 Meine Verwaltung», wählt die Gäste und schickt dir die Anfrage wie gewohnt. Mit Pauschale 0, ohne Reinigung und ohne Kurtaxe ist es eine Einladung. Airbnb sperrst du wie immer selbst.</p>' +
+    '<div class="sond-f"><div class="field"><label for="sondName">Für wen?</label><select id="sondName" data-sf="name"><option value="">– wählen –</option>' + absOpt(f.name) + "</select></div>" +
+    '<div class="sond-d"><div class="field"><label for="sondArr">Anreise</label><input type="date" id="sondArr" data-sf="arr" value="' + esc(f.arr) + '"></div><div class="field"><label for="sondDep">Abreise</label><input type="date" id="sondDep" data-sf="dep" value="' + esc(f.dep) + '"></div></div>' +
+    '<div class="field"><label for="sondPreis">Pauschale pro Nacht für das ganze Chalet (CHF)</label><input type="text" inputmode="numeric" id="sondPreis" data-sf="preis" maxlength="5" placeholder="z. B. 600" value="' + esc(f.preis) + '"></div>' +
+    '<label class="ink-sw"><input type="checkbox" data-sf="rein"' + (f.rein ? " checked" : "") + "> 🧽 Reinigung dazu (" + esc(chf(P.reinigung)) + ")</label>" +
+    '<label class="ink-sw"><input type="checkbox" data-sf="kt"' + (f.kt ? " checked" : "") + "> 🎟️ Kurtaxe für die Freunde dazu (nach Alter)</label>" +
+    '<button type="button" class="btn main full" data-sond-neu="1">💾 Vorlage speichern</button>' + (SOND_MSG ? '<p class="hint sond-msg">' + SOND_MSG + "</p>" : "") + "</div>" +
+    (karten ? '<p class="wt">📩 Offene Vorlagen</p>' + karten : "");
+  return persTitel("__sond", "⭐ Sonderbuchungen", l.length ? l.length + (l.length === 1 ? " offene Vorlage" : " offene Vorlagen") : "keine offene Vorlage", 0, false, false, PERS_STAND.get("__sond") === true, inh);
+}
+document.getElementById("bestKasten").addEventListener("input", (e) => { const t = e.target.closest && e.target.closest("[data-sf]"); if (!t) return; const k = t.getAttribute("data-sf"); if (k === "preis") t.value = t.value.replace(/\D/g, "").slice(0, 5); SOND_F[k] = t.type === "checkbox" ? t.checked : t.value; });
+document.getElementById("bestKasten").addEventListener("change", (e) => { const t = e.target.closest && e.target.closest("[data-sf]"); if (!t) return; SOND_F[t.getAttribute("data-sf")] = t.type === "checkbox" ? t.checked : t.value; });
+document.getElementById("bestKasten").addEventListener("click", async (e) => {
+  const neu = e.target.closest("[data-sond-neu]"), del = e.target.closest("[data-sond-del]"); if (!neu && !del) return;
+  if (!TOKEN) return;
+  if (del) {
+    const v = VORL.find((x) => x.id === del.getAttribute("data-sond-del")); if (!v) return;
+    if (!(await appFrage("Vorlage für " + v.name + " (" + fmtTag(v.arr) + " bis " + fmtTag(v.dep) + ") löschen? " + v.name + " sieht sie danach nicht mehr.", "Ja, löschen", "Abbrechen"))) return;
+    del.disabled = true; del.textContent = "Löscht …";
+    try { const j = await ghAendern((l, jj) => { jj.vorlagen = (Array.isArray(jj.vorlagen) ? jj.vorlagen : []).filter((x) => String(x.id) !== v.id); logEintrag(jj, "Vorlage gelöscht: " + v.name + ", " + v.arr + " bis " + v.dep); return l; }); buchungenAn(j); try { localStorage.setItem("tm2_buchungen", JSON.stringify(j)); } catch (e2) {} SOND_MSG = "🗑️ Vorlage gelöscht."; }
+    catch (err) { SOND_MSG = "⚠️ " + esc(err && err.message ? err.message : "Nicht gelöscht."); }
+    PERS_STAND.set("__sond", true); bestZeigen(); return;
+  }
+  const f = SOND_F, h = heuteKey(), preis = Math.round(Number(f.preis) || 0);
+  const fehl = !f.name ? "Bitte wählen, für wen die Vorlage ist." : !DKEY.test(f.arr) || !DKEY.test(f.dep) ? "Bitte Anreise und Abreise wählen." : f.dep <= f.arr ? "Die Abreise muss nach der Anreise liegen." : f.arr < h ? "Die Anreise liegt in der Vergangenheit." : diffDays(f.arr, f.dep) > P.maxNaechte ? "Höchstens " + P.maxNaechte + " Nächte." : String(f.preis).trim() === "" ? "Bitte die Pauschale eingeben (0 für gratis)." : "";
+  const ueb = BUCH.find((b) => b.arr < f.dep && f.arr < b.dep), uv = VORL.find((v) => v.arr < f.dep && f.arr < v.dep);
+  SOND_MSG = fehl ? "⚠️ " + esc(fehl) : ueb ? "⚠️ Überschneidet sich mit dem Aufenthalt von " + esc(ueb.name) + " (" + esc(fmtTag(ueb.arr)) + " bis " + esc(fmtTag(ueb.dep)) + ")." : uv ? "⚠️ Überschneidet sich mit der Vorlage für " + esc(uv.name) + "." : "";
+  if (SOND_MSG) { PERS_STAND.set("__sond", true); bestZeigen(); return; }
+  const v = { id: Date.now().toString(36), name: f.name, arr: f.arr, dep: f.dep, preis: preis, rein: !!f.rein, kt: !!f.kt, t: jetztStr() };
+  neu.disabled = true; neu.textContent = "Speichert …";
+  try {
+    const j = await ghAendern((l, jj) => { jj.vorlagen = (Array.isArray(jj.vorlagen) ? jj.vorlagen : []).filter((x) => x && x.dep >= h).concat([v]); logEintrag(jj, "Vorlage für " + v.name + ": " + v.arr + " bis " + v.dep + ", " + sondBed(v)); return l; });
+    buchungenAn(j); try { localStorage.setItem("tm2_buchungen", JSON.stringify(j)); } catch (e2) {}
+    SOND_F = { name: "", arr: "", dep: "", preis: "", rein: false, kt: true };
+    SOND_MSG = "✅ Gespeichert. Tippe unten auf «WhatsApp an " + esc(v.name) + "», damit " + esc(v.name) + " nachschaut.";
+  } catch (err) { SOND_MSG = "⚠️ " + esc(err && err.message ? err.message : "Nicht gespeichert."); }
+  PERS_STAND.set("__sond", true); bestZeigen();
 });
 document.getElementById("bestKasten").addEventListener("click", async (e) => {   // Zahlungsfrist der Freunde speichern (seit 3.11.0.0)
   const b = e.target.closest("[data-freundtage]"); if (!b) return;
@@ -7505,7 +7539,9 @@ document.getElementById("bestKasten").addEventListener("click", async (e) => {
   try {
     if (ja) {
       const x = find(OFFEN, ja); if (!x) { bestBusy = false; bestZeigen(); return; }
-      const pv = x.verb ? false : provStay(x.arr, x.dep), eintrag = { name: x.name, arr: x.arr, dep: x.dep, selbst: x.selbst, pers: x.pers };
+      const vo = VORL.find((v) => v.name === x.name && v.arr === x.arr && v.dep === x.dep);   // Sonderbuchung aus einer Vorlage (seit 3.14.0.0)
+      const pv = x.verb || vo ? false : provStay(x.arr, x.dep), eintrag = { name: x.name, arr: x.arr, dep: x.dep, selbst: x.selbst, pers: x.pers };
+      if (vo) eintrag.sond = { preis: vo.preis, rein: vo.rein, kt: vo.kt };
       if (x.verb) eintrag.verb = true;
       if (pv) eintrag.prov = true;
       if (x.luecke) eintrag.luecke = true;
@@ -7514,7 +7550,7 @@ document.getElementById("bestKasten").addEventListener("click", async (e) => {
       if (x.betrag > 0) eintrag.betrag = x.betrag;
       if (x.rechnung) eintrag.rechnung = x.rechnung;
       eintrag.bestaetigt = jetztStr();
-      const j = await ghAendern((l, jj) => { logEintrag(jj, "Bestätigt: " + keyText(ja) + (eintrag.betrag ? ", CHF " + eintrag.betrag : "") + (pv ? ", mit Vorbehalt" : "") + (x.verb ? ", verbindlich" : "") + (eintrag.waesche ? ", Wäsche: " + (eintrag.waesche === "senden" ? "per Post senden" : "persönlich bringen") + " bis " + fmtTag(waescheBis(eintrag)) : "")); return l.filter((y) => bKey(y) !== ja).concat([eintrag]); });
+      const j = await ghAendern((l, jj) => { if (vo && Array.isArray(jj.vorlagen)) jj.vorlagen = jj.vorlagen.filter((v) => String(v.id) !== vo.id); logEintrag(jj, "Bestätigt: " + (vo ? "⭐ Sonderbuchung, " : "") + keyText(ja) + (eintrag.betrag ? ", CHF " + eintrag.betrag : "") + (pv ? ", mit Vorbehalt" : "") + (x.verb ? ", verbindlich" : "") + (eintrag.waesche ? ", Wäsche: " + (eintrag.waesche === "senden" ? "per Post senden" : "persönlich bringen") + " bis " + fmtTag(waescheBis(eintrag)) : "")); return l.filter((y) => bKey(y) !== ja).concat([eintrag]); });
       buchungenAn(j); try { localStorage.setItem("tm2_buchungen", JSON.stringify(j)); } catch (e2) {}
       OFFEN = OFFEN.filter((y) => bKey(y) !== ja); listeSichern("tm2_offen", OFFEN);
       bestMsg = ""; PERS_ZIEL = x.name; PERS_STAND.set(x.name, true);
