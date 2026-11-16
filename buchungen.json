@@ -29,10 +29,6 @@
   ],
   "logbuch": [
     {
-      "t": "2026-11-03T19:01",
-      "text": "Bestätigt: Miriam, Fr 20.11.2026 bis Mo 23.11.2026, CHF 165"
-    },
-    {
       "t": "2026-11-03T22:47",
       "text": "Bestätigt: Deborah, Sa 12.12.2026 bis Di 15.12.2026, CHF 870"
     },
@@ -827,8 +823,24 @@
     {
       "t": "2026-11-16T21:01",
       "text": "Bestätigt: ⭐ Sonderbuchung, Manuel, Mo 7.06.2027 bis Do 10.06.2027, CHF 1500"
+    },
+    {
+      "t": "2026-11-16T21:07",
+      "text": "Vorlage für Manuel: 2027-06-10 bis 2027-06-13, geänderte Preise: CHF 600.– pro Nacht für das ganze Chalet, ohne Reinigung, ohne Kurtaxe"
     }
   ],
   "reinigung": [],
-  "vorlagen": []
+  "vorlagen": [
+    {
+      "id": "mwjp3ntf",
+      "name": "Manuel",
+      "arr": "2027-06-10",
+      "dep": "2027-06-13",
+      "pa": true,
+      "preis": 600,
+      "rein": false,
+      "kt": false,
+      "t": "2026-11-16T21:07"
+    }
+  ]
 }
