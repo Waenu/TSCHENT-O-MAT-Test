@@ -16,10 +16,6 @@
   ],
   "logbuch": [
     {
-      "t": "2026-11-03T15:37",
-      "text": "Bestätigt: Deborah, Di 3.11.2026 bis Do 5.11.2026, CHF 110, Wäsche: persönlich bringen bis So 8.11.2026"
-    },
-    {
       "t": "2026-11-03T15:39",
       "text": "Entfernt: Deborah, Di 3.11.2026 bis Do 5.11.2026"
     },
@@ -814,8 +810,21 @@
     {
       "t": "2026-11-16T20:01",
       "text": "Endgültig gelöscht: Manuel, Mo 7.06.2027 bis Do 10.06.2027"
+    },
+    {
+      "t": "2026-11-16T20:49",
+      "text": "Vorlage für Manuel: 2027-06-07 bis 2027-06-10, normale Preise wie bei einer gewöhnlichen Buchung, ohne Mindestnächte"
     }
   ],
   "reinigung": [],
-  "vorlagen": []
+  "vorlagen": [
+    {
+      "id": "mwjogonb",
+      "name": "Manuel",
+      "arr": "2027-06-07",
+      "dep": "2027-06-10",
+      "pa": false,
+      "t": "2026-11-16T20:49"
+    }
+  ]
 }
