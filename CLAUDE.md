@@ -130,6 +130,7 @@ Bedienkonzept Wänu (14.11.2026, ersetzt wo abweichend die Punkte oben; erst nac
 - 3.10.4.1 (Wänu): Knopf `[data-gmkk]` bei 2 belegten Kinderbettchen ausgeblendet statt grau, Hinweis «👶 Beide Kinderbettchen sind belegt, weitere Kleinkinder sind nicht möglich.»
 - 3.10.5.0 (Wänu): Hinweise «wer» (mit Namen), «zimmer», «spar», «waesche», «reinig» je Wahl eine Zeile «{{Wahl}} · Satz», nach der Wahl nur die gewählte (wie «art», dort zusätzlich die Zeile zur anderen Art). `CHIP_WAHL` gibt nichts mehr zurück (Bedeutung steht im Hinweis). Chip-Klick auf den gewählten Chip setzt `sel.value = ""` (Wahl aufheben, gleicher Weg über `change`). Kasten «Wer kommt mit?» (eigener Haushalt): «Tippe alle an, die mitkommen. Kommst du selbst nicht mit, tippe Ich ab.»
 - 3.10.5.1 (Wänu: «sei konsequent»): auch «art» nach der Wahl nur die gewählte Zeile, keine Zeile zur anderen Art mehr.
+- 3.10.5.2 (Wänu): Kleinkind-Zeile mit Kind über 2½: `.gm-alt.gm-warn` rot und fett «⚠️ Vorname ist älter als 2½ Jahre …», Fieldset `.gm-alt-rot` rot umrandet; Leiste «Bitte prüfen: Kleinkind älter als 2½ Jahre» (vor «Bitte ausfüllen: Liste deiner Freunde»). `.gm-ptbox` nur bei `listeVoll(n)` (vorher nur bei ausgefüllten Feldern: Box ohne Vorschlag, weil `ptVorschlag` erst bei `listeVoll` läuft).
 
 ## Offen: Airbnb-Belegung ins App-Repo umziehen (Wänu «ja», 13.11.2026, nächste Woche)
 - Heute: Workflow `belegung.yml` + `belegung.py` im alten Repo `Waenu/Tschentomat` (Secret `AIRBNB_ICAL`) schreibt `belegt.json`; die App liest `/Tschentomat/belegt.json`.
