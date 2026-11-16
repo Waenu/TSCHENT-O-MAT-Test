@@ -455,7 +455,10 @@ if (TEST_MODUS) {
   .ink-opt label { display: flex; flex-direction: column; gap: 4px; font-weight: 700; margin-top: 8px; } .ink-opt input { min-height: 48px; font: inherit; color: var(--fg); padding: 8px 12px; border: 2px solid var(--line); border-radius: 6px; background: var(--surface); }
   .bigbtn.rot-rand { border-color: var(--error-line); box-shadow: 0 0 0 1px var(--error-line); } #btnMein .alarm-n { margin-left: auto; font-size: 1rem; padding: 2px 10px; } .alarm-n.rot { background: #E5534B; color: #fff; }
   .mein-sek { margin: 6px 0 14px; } .mein-h { margin: 4px 0 8px; font-size: 1.1rem; } #meinTodo > .note, #meinTodo > div > .note, #meinTodo .gm-k { margin-top: 8px; } #meinProfil > summary { cursor: pointer; font-weight: 700; padding: 8px 14px; }
-  .note.h.brennt, details.note.h.brennt { border-color: var(--error-line); }   /* offene Aufgabe in «Meine Verwaltung» rot umrandet wie der Knopf (seit 3.12.0.1) */
+  .note.h.brennt, details.note.h.brennt { border-color: var(--error-line); }
+  .note.h.steht, details.note.h.steht { border-color: var(--missing-line); }   /* Liste steht an: orange (seit 3.13.0.0) */
+  .bigbtn.or-rand { border-color: var(--missing-line); box-shadow: 0 0 0 1px var(--missing-line); } .bigbtn .alarm-n.or-n { margin-left: auto; font-size: 1rem; padding: 2px 10px; } #btnMein .alarm-n + .alarm-n { margin-left: 6px; }
+  .li-k { margin-top: 10px; } .li-k .li-b { display: flex; align-items: center; gap: 8px; width: 100%; text-align: left; margin-top: 8px; } .li-k .li-b small { display: block; font-weight: 400; opacity: .8; } .li-k .li-b .alarm-n { margin-left: auto; } .li-k .li-b.steht { border-color: var(--missing-line); box-shadow: 0 0 0 1px var(--missing-line); }   /* offene Aufgabe in «Meine Verwaltung» rot umrandet wie der Knopf (seit 3.12.0.1) */
   .ink-b.brennt { border: 2px solid var(--error-line); border-radius: 8px; padding: 6px 8px; margin-top: 10px; }
   #meinAuf > .mein-st { margin: 0 0 12px; } .mein-st > summary .gm-ico { margin-right: 4px; } .mein-st > summary, .mein-st[open] > summary { display: flex; align-items: center; gap: 8px; border: 0; background: none; color: inherit; padding: 0 4px 0 0; min-height: 40px; white-space: normal; font-size: 1.05rem; } .mein-st > summary .alarm-n { margin-left: auto; } .mein-st > summary::after, .mein-st[open] > summary::after { margin-left: 8px; color: var(--accent); }   /* Rahmen kommt vom Kasten, Pfeil grün rechts */
   .mein-st-b > * { margin-top: 10px; } .mein-teil .mein-t { margin: 0 0 6px; } .mein-st .absage { margin-top: 12px; }
@@ -1412,7 +1415,7 @@ if (TEST_MODUS) {
           <p>Sobald Anreise und Abreise gewählt sind, erscheint unter dem Kalender <b>eine einzige Box</b> mit kurzen Sätzen zu deinem Termin. Ist der Rahmen blau, <b>erklärt</b> sie etwas. Ist er orange, steht dort eine <b>⚠️ Warnung</b>: etwas, das den Aufenthalt oder den Preis verändert. Das orange unterstrichene Symbol am Ende einer Zeile springt zur ausführlichen Erklärung hier im Glossar.</p>
           <p><b>❓ Kalender-Hilfe:</b> Im Kalender schwebt unten rechts ein runder Knopf <span class="zei hilfe">?</span>. Ist er gelb gefüllt, erklärt sich jeder Tag, den ihr antippt, in einer Box unter dem Kalender. Mit einem Tipp auf den Knopf schaltet ihr die Hilfe aus (der Knopf ist dann durchgestrichen: <span class="zei hilfe aus">?</span>) und wieder ein. Beim nächsten Öffnen der Seite ist die Hilfe wieder an. Warnungen bleiben immer sichtbar.</p>
           <p><b>🎬 Erklärvideos:</b> Wo ihr das Symbol 🎬 seht (Termin mit Vorbehalt, Lücken, Familienstaffel), startet ein kurzer Film mit dem Ablauf im Kalender. Mit dem Regler spult ihr vor und zurück, mit «Pause» haltet ihr an.</p>
-          <p><b>Nach der Bestätigung:</b> Sobald du die Anfrage sendest, merkt sich dein Handy den Aufenthalt und zeigt «Anfrage gesendet». Erst wenn die Eltern bestätigt haben, erscheinen auf der Startseite deine Knöpfe <b>✅ Reinigungs-Checkliste</b> (die Arbeiten am Abreisetag) und, bei Selbstreinigung, <b>🧳 Anreise-Wäsche</b> <button type="button" class="sym" data-info="b-ruhe" aria-label="Zur Erklärung springen">🧹</button>. Lade die Seite 1 bis 2 Minuten nach der Bestätigung neu. Abhaken kannst du die Listen, sobald sie da sind, ohne weiteres Neuladen: Tippe in den Listen jeden Punkt an, wenn du ihn erledigt hast. Am Tag nach der Abreise verschwinden die Knöpfe wieder.</p>
+          <p><b>Nach der Bestätigung:</b> Sobald du die Anfrage sendest, merkt sich dein Handy den Aufenthalt und zeigt «Anfrage gesendet». Erst wenn die Eltern bestätigt haben, erscheinen auf der Startseite deine Knöpfe <b>✅ Reinigungs-Checkliste</b> (die Arbeiten am Abreisetag) und, bei Selbstreinigung, <b>🧳 Anreise-Wäsche</b> <button type="button" class="sym" data-info="b-ruhe" aria-label="Zur Erklärung springen">🧹</button>. Lade die Seite 1 bis 2 Minuten nach der Bestätigung neu. Abhaken kannst du die Listen, sobald sie da sind, ohne weiteres Neuladen: Tippe in den Listen jeden Punkt an, wenn du ihn erledigt hast. Am Tag nach der Abreise verschwinden die Knöpfe wieder. Die Startseite zeigt immer die Liste, die du als nächste brauchst. In <b>👤 Meine Verwaltung</b> findest du die Listen bei jedem Aufenthalt. Orange (Rahmen und Zähler) heisst: Die Liste steht an und ist noch nicht ganz abgehakt. Die Anreise-Wäsche ab 7 Tagen vor der Anreise, die Reinigungs-Checkliste ab dem Anreisetag.</p>
           <p><b>💻 Am Computer:</b> Der TSCHENT-O-MAT ist fürs Handy gebaut und am PC mit Google Chrome (oder Edge) getestet. In Firefox und anderen Browsern kann die Darstellung oder Bedienung abweichen. Wenn etwas komisch aussieht oder nicht reagiert, nehmt bitte Chrome oder Edge.</p>
           <p>Der Knopf <span class="zei menue">↑ Menü</span> unten links erscheint, sobald ihr nach unten scrollt. Ein Tipp darauf bringt euch nach oben zu den grossen Schaltflächen. Eure Eingaben bleiben dabei erhalten.</p>
         </details>
@@ -1581,7 +1584,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.12.1.0";
+let VERSION = "3.13.0.0";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -4986,6 +4989,21 @@ let AUF_LISTE = [];   // alle kommenden eigenen Aufenthalte (aufent() füllt sie
 const brauchtWaesche = (a) => !!(a && a.ok && ((a.sb && !a.start) || a.lg));
 function aufentW() { aufent(); return AUF_LISTE.find(brauchtWaesche) || null; }   // Anreise-Wäsche: der nächste Aufenthalt, für den Wäsche mitkommt, auch wenn vorher ein anderer liegt (seit 2.120.4.0)
 const hk = (a) => HAKEN[a.arr + "|" + a.dep] || (HAKEN[a.arr + "|" + a.dep] = {});
+// Listen pro Aufenthalt (seit 3.13.0.0, Wänu): in «Meine Verwaltung» an jeder Buchung, orange solange sie anstehen und nicht abgehakt sind
+var LIST_AUF = null;   // {arr, dep}: Liste aus der Verwaltung geöffnet; null = wie auf der Startseite
+function ovAuf(w) { aufent(); const a = LIST_AUF ? AUF_LISTE.find((x) => x.ok && x.arr === LIST_AUF.arr && x.dep === LIST_AUF.dep) : null; return a || (w ? aufentW() : aufent()); }
+const hkL = (a) => HAKEN[a.arr + "|" + a.dep] || {};
+const waeStand = (a) => { const h = hkL(a), l = waescheListe(a.pers); return [l.filter((w) => h["w:" + w[0]]).length, l.length]; };
+const chkStand = (a) => { const h = hkL(a), l = checkListe(a); return [l.filter((i) => h[i]).length, l.length]; };
+const fertig = (st) => st[1] > 0 && st[0] === st[1];
+const listeOrW = (a) => !!a && brauchtWaesche(a) && heuteKey() >= addDays(a.arr, -7) && heuteKey() <= a.arr && !fertig(waeStand(a));   // packen: 7 Tage vor der Anreise bis zum Anreisetag
+const listeOrC = (a) => !!(a && a.ok) && heuteKey() >= a.arr && heuteKey() <= a.dep && !fertig(chkStand(a));   // während des Aufenthalts bis zum Abreisetag
+function orKnopf(el, an) {   // oranger Rahmen und Zähler am Knopf der Startseite
+  el.classList.toggle("or-rand", an);
+  let b = el.querySelector(".alarm-n.or-n"); if (!b) { b = document.createElement("span"); b.className = "alarm-n or-n"; b.textContent = "1"; b.title = "Liste steht an"; el.appendChild(b); }
+  b.hidden = !an;
+}
+function listenFarbe() { const a = aufent(), aw = aufentW(); orKnopf(document.getElementById("btnAnreise"), listeOrW(aw)); orKnopf(document.getElementById("btnCheck"), listeOrC(a)); meinKnopf(); }
 function aufentSpeichern() {
   if (!(ARR && DEP)) return;
   const x = derive(S);
@@ -4998,12 +5016,13 @@ function aufHinweisZeigen() {
   const el = document.getElementById("aufHinweis"), a = aufent();
   if (!el || !a) return;
   el.hidden = false;
-  el.innerHTML = a.ok ? '<b>✅ Bestätigt.</b> Deine Knöpfe ' + (((a.sb && !a.start) || a.lg) ? '«Anreise-Wäsche» und ' : '') + '«Reinigungs-Checkliste» findest du oben auf der Startseite. <button type="button" class="ov-back" id="zuKnoepfe">👆 Zu den Knöpfen</button><p>🕓 ' + esc(zeitenKurz()) + '.</p>' + (a.ok && !a.start && a.sb && a.waesche ? '<p><b>🧺 Neu:</b> Vor dir ist inzwischen eine Staffel eingetragen. Du bringst jetzt eigene Wäsche mit, siehe «Anreise-Wäsche».</p>' : '') + (a.start ? '<p><b>🧺 Du beginnst die Staffel:</b> Das Chalet ist gereinigt und bezogen, du bringst keine Wäsche mit. Dafür nimmst du die benutzte Wäsche beim Abreisen mit und ' + (a.waesche === "senden" ? "sendest sie" : "bringst sie den Eltern") + ' bis spätestens ' + esc(fmtTag(addDays(a.dep, WAESCHE_TAGE))) + '.</p>' : '') : '<b>📨 Anfrage gemerkt.</b> Sobald Papi bestätigt hat, erscheinen auf der Startseite deine Knöpfe ' + (((a.sb && !a.start) || a.lg) ? '«Anreise-Wäsche» und ' : '') + '«Reinigungs-Checkliste». Lade die Seite dann neu (1 bis 2 Minuten nach der Bestätigung).';
+  el.innerHTML = a.ok ? '<b>✅ Bestätigt.</b> Deine Knöpfe ' + (((a.sb && !a.start) || a.lg) ? '«Anreise-Wäsche» und ' : '') + '«Reinigungs-Checkliste» findest du oben auf der Startseite' + (meinModus() ? ', alle Listen deiner Aufenthalte in «👤 Meine Verwaltung»' : '') + '. <button type="button" class="ov-back" id="zuKnoepfe">👆 Zu den Knöpfen</button><p>🕓 ' + esc(zeitenKurz()) + '.</p>' + (a.ok && !a.start && a.sb && a.waesche ? '<p><b>🧺 Neu:</b> Vor dir ist inzwischen eine Staffel eingetragen. Du bringst jetzt eigene Wäsche mit, siehe «Anreise-Wäsche».</p>' : '') + (a.start ? '<p><b>🧺 Du beginnst die Staffel:</b> Das Chalet ist gereinigt und bezogen, du bringst keine Wäsche mit. Dafür nimmst du die benutzte Wäsche beim Abreisen mit und ' + (a.waesche === "senden" ? "sendest sie" : "bringst sie den Eltern") + ' bis spätestens ' + esc(fmtTag(addDays(a.dep, WAESCHE_TAGE))) + '.</p>' : '') : '<b>📨 Anfrage gemerkt.</b> Sobald Papi bestätigt hat, erscheinen auf der Startseite deine Knöpfe ' + (((a.sb && !a.start) || a.lg) ? '«Anreise-Wäsche» und ' : '') + '«Reinigungs-Checkliste». Lade die Seite dann neu (1 bis 2 Minuten nach der Bestätigung).';
 }
 function aufentZeigen() {
   const a = aufent(), aw = aufentW();
   document.getElementById("btnAnreise").hidden = !aw;   // Listen erst nach der Bestätigung durch Papi
   document.getElementById("btnCheck").hidden = !(a && a.ok);
+  orKnopf(document.getElementById("btnAnreise"), listeOrW(aw)); orKnopf(document.getElementById("btnCheck"), listeOrC(a));
   { const ws = document.getElementById("wsHinweis"), n = a && a.ok && a.sb && a.start && a.rolle === "folge";   // Staffelbeginn erst nachträglich: Hinweis beim Kind (seit 2.120.6.0)
     const bk = a && a.ok && a.sb && !a.start && a.rolle === "start" ? BUCH.find((b) => b.arr === a.arr && b.dep === a.dep && eigenN(b.name)) : null, sbk = bk ? staffelBeginner(bk) : null;   // umgekehrt: jemand beginnt jetzt vor dir (seit 2.123.2.0)
     if (!n && bk) { ws.hidden = false; ws.innerHTML = '<div class="note h"><b>🧺 Neu bringst du eigene Wäsche mit</b> (' + esc(fmtTag(a.arr)) + " bis " + esc(fmtTag(a.dep)) + "): " + (sbk && sbk !== bk ? esc(sbk.name) + " beginnt jetzt vor dir die Staffel" : "Vor dir beginnt jetzt jemand die Staffel") + ". Du findest keine bezogenen Betten vor. Was du mitbringst, steht unter «Anreise-Wäsche».</div>"; } else
@@ -5414,7 +5433,7 @@ function ovWeg(a) {
     '<p class="hint">Die Knöpfe verschwinden am Tag nach der Abreise von selbst (am ' + fmtTagV(addDays(a.dep, 1)) + ').</p>';
 }
 function anreiseZeichnen() {
-  const a = aufentW(); if (!a) return;
+  const a = ovAuf(true); if (!a) return;
   const n = a.pers, h = hk(a);
   const key = (w) => "w:" + w[0];
   const WL = waescheListe(n);
@@ -5430,7 +5449,7 @@ function anreiseZeichnen() {
     '<p class="hint">Alles aus Stoff, das ihr im Chalet braucht, bringt ihr selbst mit: Bettwäsche, Frottiertücher, Waschlappen, Geschirrtücher und Waschlappen für die Küche. Bettdecken und Kissen nie ohne frischen Bezug benutzen. Alles nehmt ihr wieder mit. Nur die Moltons bleiben nach dem Benutzen auf der Matratze.</p>' + ovWeg(a);
 }
 function checkZeichnen() {
-  const a = aufent(); if (!a) return;
+  const a = ovAuf(false); if (!a) return;
   const h = hk(a);
   const liste = checkListe(a);
   const done = liste.filter((i) => h[i]).length;
@@ -5656,8 +5675,8 @@ document.addEventListener("toggle", (e) => {
   });
   document.getElementById("ovVer").addEventListener("click", (e) => { if (e.target.closest("[data-ov]")) ovOeffnen("ovVer", false); });
 })();
-document.getElementById("btnAnreise").addEventListener("click", () => { anreiseZeichnen(); ovOeffnen("ovAnreise", true); });
-document.getElementById("btnCheck").addEventListener("click", () => { checkZeichnen(); ovOeffnen("ovCheck", true); });
+document.getElementById("btnAnreise").addEventListener("click", () => { LIST_AUF = null; anreiseZeichnen(); ovOeffnen("ovAnreise", true); });
+document.getElementById("btnCheck").addEventListener("click", () => { LIST_AUF = null; checkZeichnen(); ovOeffnen("ovCheck", true); });
 // Eigenes Bestätigungsfenster statt des Browser-Fensters «Auf … wird Folgendes angezeigt»
 function appFrage(text, ok, abbr) {
   return new Promise((res) => {
@@ -5688,12 +5707,12 @@ document.getElementById("aufStatus").addEventListener("click", aufentWeg);
 ["ovAnreise", "ovCheck"].forEach((id) => document.getElementById(id).addEventListener("click", (e) => {
   const c = e.target.closest("[data-ov]");
   if (c) { ovOeffnen(c.dataset.ov, false); return; }
-  const a = aufent();
+  const a = ovAuf(false);
   const k = e.target.closest("[data-chk]");
-  if (k && a) { const i = checkListe(a)[Number(k.dataset.chk)]; if (i !== undefined) { const h = hk(a); h[i] = !h[i]; aufentSichern(); checkZeichnen(); } return; }
+  if (k && a) { const i = checkListe(a)[Number(k.dataset.chk)]; if (i !== undefined) { const h = hk(a); h[i] = !h[i]; aufentSichern(); checkZeichnen(); listenFarbe(); } return; }
   const wk = e.target.closest("[data-wa]");
-  const aw = aufentW();
-  if (wk && aw) { const w = waescheListe(aw.pers)[Number(wk.dataset.wa)]; if (w) { const h = hk(aw); h["w:" + w[0]] = !h["w:" + w[0]]; aufentSichern(); anreiseZeichnen(); } return; }
+  const aw = ovAuf(true);
+  if (wk && aw) { const w = waescheListe(aw.pers)[Number(wk.dataset.wa)]; if (w) { const h = hk(aw); h["w:" + w[0]] = !h["w:" + w[0]]; aufentSichern(); anreiseZeichnen(); listenFarbe(); } return; }
   aufentWeg(e);
 }));
 // ===== Bestätigen durch die Eltern: Link aus der Anfrage, Eintrag in buchungen.json über die GitHub-Schnittstelle =====
@@ -6610,15 +6629,17 @@ beide("inkBox", "click", (e) => {
 });
 // --- Meine Verwaltung des Kindes (seit 3.11.0.0): Name, Mail, TWINT, IBAN; alles nur auf dem Handy, die Mail geht wie bisher an den Briefkasten ---
 const meinModus = () => !!ABSENDER && !TOKEN && !MAMI;
-let MEIN_N = { gm: 0, zb: 0, ink: 0 };   // offene Aufgaben für den Zähler am Knopf (seit 3.12.0.0)
+let MEIN_N = { gm: 0, zb: 0, ink: 0, li: 0 };   // li: anstehende Listen (orange, seit 3.13.0.0)   // offene Aufgaben für den Zähler am Knopf (seit 3.12.0.0)
 function meinKnopf() {
   const kn = document.getElementById("btnMein"), k = document.getElementById("meinKasten"); if (!kn) return;
   const an = meinModus(); kn.hidden = !an; if (!an && k) k.hidden = true;
   meinVerteilen();
-  const n = an ? MEIN_N.gm + MEIN_N.zb + MEIN_N.ink : 0;
-  kn.classList.toggle("rot-rand", n > 0);
-  let b = kn.querySelector(".alarm-n"); if (!b) { b = document.createElement("span"); b.className = "alarm-n rot"; kn.appendChild(b); }
+  const n = an ? MEIN_N.gm + MEIN_N.zb + MEIN_N.ink : 0, o = an ? MEIN_N.li : 0;
+  kn.classList.toggle("rot-rand", n > 0); kn.classList.toggle("or-rand", !n && o > 0);
+  let b = kn.querySelector(".alarm-n.rot"); if (!b) { b = document.createElement("span"); b.className = "alarm-n rot"; kn.appendChild(b); }
   b.textContent = String(n); b.hidden = !n; b.title = n + (n === 1 ? " offene Aufgabe" : " offene Aufgaben");
+  let bo = kn.querySelector(".alarm-n.or-n"); if (!bo) { bo = document.createElement("span"); bo.className = "alarm-n or-n"; kn.appendChild(bo); }
+  bo.textContent = String(o); bo.hidden = !o; bo.title = o + (o === 1 ? " Liste steht an" : " Listen stehen an");
 }
 // Pro Aufenthalt ein Klappbereich (seit 3.12.1.0, Wänu): Liste der Freunde, Zu bezahlen, Geld einsammeln, Stornierung. Die Kästen werden wie bisher gezeichnet und hier nach Aufenthalt verteilt.
 var MEIN_GEN = {}, MEIN_TEILE = {};
@@ -6633,9 +6654,12 @@ function meinVerteilen() {
     if (MEIN_GEN[t] !== g) { MEIN_GEN[t] = g; MEIN_TEILE[t] = [...c.children].filter((x) => x.getAttribute(at)).map((x) => ({ k: x.getAttribute(at), el: x })); }
     c.hidden = true;
   });
-  const keys = [...new Set(MEIN_TYPEN.flatMap(([t]) => (MEIN_TEILE[t] || []).map((x) => x.k)))].sort((p, q) => (p.split("|")[1] < q.split("|")[1] ? -1 : 1));
+  MEIN_TEILE.li = liTeile(); MEIN_N.li = MEIN_TEILE.li.reduce((s, x) => s + x.o, 0);
+  const ORD = ["gm", "zb", "ink", "li", "ab"];
+  const keys = [...new Set(ORD.flatMap((t) => (MEIN_TEILE[t] || []).map((x) => x.k)))].sort((p, q) => (p.split("|")[1] < q.split("|")[1] ? -1 : 1));
   const zahl = (k) => (MEIN_TEILE.gm || []).filter((x) => x.k === k && x.el.classList.contains("gm-offen")).length + (MEIN_TEILE.zb || []).filter((x) => x.k === k).length + (MEIN_TEILE.ink || []).filter((x) => x.k === k && x.el.classList.contains("brennt")).length;
-  const auf = MEIN_ST_AUF || new Set(keys.filter((k) => zahl(k) > 0).slice(0, 1));
+  const orz = (k) => MEIN_TEILE.li.filter((x) => x.k === k).reduce((s, x) => s + x.o, 0);
+  const auf = MEIN_ST_AUF || new Set(keys.filter((k) => zahl(k) + orz(k) > 0).slice(0, 1));
   [...ma.querySelectorAll(":scope > details.mein-st")].forEach((d) => { if (keys.indexOf(d.dataset.st) < 0) d.remove(); });
   const leer = ma.querySelector(":scope > .mein-leer"); if (leer) leer.remove();
   if (!keys.length) { ma.insertAdjacentHTML("beforeend", '<p class="hint mein-leer">✅ Im Moment ist nichts zu erledigen.</p>'); return; }
@@ -6644,12 +6668,25 @@ function meinVerteilen() {
     if (!d) { d = document.createElement("details"); d.className = "note h mein-st"; d.dataset.st = k; d.innerHTML = '<summary></summary><div class="mein-st-b"></div>'; }
     if (!MEIN_ST_AUF || !d.isConnected) d.open = auf.has(k);   // bis zum ersten Tipp: der erste Aufenthalt mit offenen Aufgaben ist offen
     ma.appendChild(d);   // Reihenfolge nach Anreise
-    const n = zahl(k), [, arr, dep] = k.split("|");
-    d.classList.toggle("brennt", n > 0);
-    d.querySelector("summary").innerHTML = '<span><span class="gm-ico">🗓️</span><b>' + esc(fmtTag(arr)) + " bis " + esc(fmtTag(dep)) + "</b></span>" + (n ? '<span class="alarm-n rot">' + n + "</span>" : "");
-    d.querySelector(".mein-st-b").replaceChildren(...MEIN_TYPEN.flatMap(([t]) => (MEIN_TEILE[t] || []).filter((x) => x.k === k).map((x) => x.el)));
+    const n = zahl(k), o = orz(k), [, arr, dep] = k.split("|");
+    d.classList.toggle("brennt", n > 0); d.classList.toggle("steht", !n && o > 0);
+    d.querySelector("summary").innerHTML = '<span><span class="gm-ico">🗓️</span><b>' + esc(fmtTag(arr)) + " bis " + esc(fmtTag(dep)) + "</b></span>" + (n ? '<span class="alarm-n rot">' + n + "</span>" : "") + (o ? '<span class="alarm-n"' + (n ? ' style="margin-left:0"' : "") + ">" + o + "</span>" : "");
+    d.querySelector(".mein-st-b").replaceChildren(...ORD.flatMap((t) => (MEIN_TEILE[t] || []).filter((x) => x.k === k).map((x) => x.el)));
   });
 }
+function liTeile() {   // Knöpfe der Listen pro bestätigtem Aufenthalt (seit 3.13.0.0)
+  aufent();
+  return (AUF_LISTE || []).filter((a) => a.ok && a.dep >= heuteKey()).map((a) => {
+    const el = document.createElement("div"), ow = listeOrW(a), oc = listeOrC(a), sw = waeStand(a), sc = chkStand(a), la = esc(a.arr + "|" + a.dep);
+    const st = (s, f) => fertig(s) ? "✅ alles " + f : s[0] ? s[0] + " von " + s[1] + " " + f : "";
+    el.className = "mein-teil li-k";
+    el.innerHTML = (brauchtWaesche(a) ? '<button type="button" class="btn li-b' + (ow ? " steht" : "") + '" data-liste="w" data-la="' + la + '"><span>🧳 <b>Anreise-Wäsche</b><small>Mitnehmen am ' + esc(fmtTag(a.arr)) + (st(sw, "eingepackt") ? " · " + st(sw, "eingepackt") : "") + "</small></span>" + (ow ? '<span class="alarm-n">1</span>' : "") + "</button>" : "") +
+      '<button type="button" class="btn li-b' + (oc ? " steht" : "") + '" data-liste="c" data-la="' + la + '"><span>✅ <b>Reinigungs-Checkliste</b><small>Abreise am ' + esc(fmtTag(a.dep)) + (st(sc, "erledigt") ? " · " + st(sc, "erledigt") : "") + "</small></span>" + (oc ? '<span class="alarm-n">1</span>' : "") + "</button>";
+    return { k: bKey({ name: ABSENDER, arr: a.arr, dep: a.dep }), el, o: (ow ? 1 : 0) + (oc ? 1 : 0) };
+  });
+}
+document.getElementById("meinAuf").addEventListener("click", (e) => { const b = e.target.closest("[data-liste]"); if (!b) return; const [arr, dep] = b.dataset.la.split("|"); LIST_AUF = { arr, dep };
+  if (b.dataset.liste === "w") { anreiseZeichnen(); ovOeffnen("ovAnreise", true); } else { checkZeichnen(); ovOeffnen("ovCheck", true); } });
 function meinZeigen() {
   const k = document.getElementById("meinProfilInhalt"), m = mailLokal() || {};
   k.innerHTML = '<p class="hint">Diese Angaben bleiben nur auf deinem Handy. Nur die Mailadresse geht an die Eltern.</p>' +
