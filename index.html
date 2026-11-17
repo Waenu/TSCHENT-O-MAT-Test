@@ -1629,7 +1629,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.17.10.1";
+let VERSION = "3.17.10.2";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -2145,9 +2145,12 @@ function insZeichnen() {
   if (INS_SEL !== null && zi.indexOf(INS_SEL) < 0) INS_SEL = null;
   const teil = {}; zi.forEach((j) => insGruppen(j, l, zi).forEach((x) => { (gr[x.g] = gr[x.g] || []).push(j); if (x.a) teil[x.g + "|" + j] = x.a; }));
   let GI = "";   // aktuelle Insel beim Zeichnen (für den Anteil)
+  const KKI = {}, nmK = (j) => String((l[j] && l[j].name) || "").trim().toLowerCase();   // Kleinkinder der Freunde bei den Eltern (gleicher Nachname), nur zum Anzeigen (seit 3.17.10.2, Wänu)
+  kkFrL().forEach((x) => { const e = zi.find((j) => al(j) >= 18 && nmK(j) && nmK(j) === nmK(x.i)); let g = "kk"; if (e !== undefined) { const gg = insGruppe(e, l, zi); if (gg !== "o") g = gg; }
+    KKI[g] = (KKI[g] || "") + '<span class="ins-p ins-fix kk-ins"' + (g !== "kk" ? "" : ' style="--ic:' + INS_KIND + '"') + ">" + esc(x.nm || "Kleinkind") + "<small>🛏️ Kinderbettchen</small></span>"; });
   const pers = (j, f) => { const a = teil[GI + "|" + j]; return '<button type="button" class="ins-p' + (INS_SEL === j ? " sel" : "") + (a ? " geteilt" : "") + '" data-insp="' + j + '"' + (f ? ' style="--ic:' + f + '"' : "") + ">" + esc(vnK(l[j]) || "Freund/in " + (j + 1)) + (al(j) < 18 ? "<small>" + al(j) + " Jahre" + (a ? " · " + a : "") + "</small>" : "") + "</button>"; };
   const sort = (a) => a.sort((x, y) => (al(x) < 18) - (al(y) < 18) || x - y);
-  const insel = (key, f, t, gl, vor, vs) => (GI = String(key), "") + '<div class="ins-i' + (vs ? " vs" : "") + '" data-insi="' + key + '" style="--ic:' + f + '"><p class="ins-t">' + t + (vs ? ' <span style="font-weight:400">· Vorschlag</span>' : "") + '</p><div class="ins-ps">' + (vor || "") + sort(gl).map((j) => pers(j, f)).join("") + "</div></div>";
+  const insel = (key, f, t, gl, vor, vs) => (GI = String(key), "") + '<div class="ins-i' + (vs ? " vs" : "") + '" data-insi="' + key + '" style="--ic:' + f + '"><p class="ins-t">' + t + (vs ? ' <span style="font-weight:400">· Vorschlag</span>' : "") + '</p><div class="ins-ps">' + (vor || "") + sort(gl).map((j) => pers(j, f)).join("") + (KKI[key] || "").replace(/class="ins-p ins-fix kk-ins">/g, 'class="ins-p ins-fix kk-ins" style="--ic:' + f + '">') + "</div></div>";
   let h = (INS_MSG ? '<p class="notice">' + esc(INS_MSG) + "</p>" : "") + '<p class="hint">' + (INS_SEL !== null ? "Tippe jetzt auf die Partei, zu der " + esc(rn(l[INS_SEL]) || "diese Person") + " gehört, oder auf «Eigene Partei». Nochmals auf " + esc(rn(l[INS_SEL]) || "die Person") + " tippen bricht ab." : "Tippe eine Person an und danach ihre Partei, oder zieh sie mit dem Finger hinüber. Erwachsene brauchen eine Partei. Kinder zahlen nie selbst, für sie gilt, wer für sie zahlt: Ziehst du ein Kind in eine Partei, zahlen deren Erwachsene, sonst wählst du es weiter unten. Nimmst du ein Kind in die Familie, zahlst du für es.") + "</p>";
   if (gr.o) h += '<div class="ins-o"><p class="ins-t">🟠 Noch zuordnen</p><div class="ins-ps">' + sort(gr.o).map((j) => pers(j)).join("") + "</div></div>";
   const geschw = famGeschw().map((pp) => '<div class="ins-i" style="--ic:' + famFarbe(pp) + '"><p class="ins-t">' + famParteiText(pp, 1, false) + ' <span style="font-weight:400">(Partei ' + ((famParteien() || []).findIndex((q) => q.h.m[0] === pp.h.m[0]) + 1) + ')</span></p><div class="ins-ps">' + pp.namen.map((x) => '<span class="ins-p ins-fix" style="--ic:' + famFarbe(pp) + '">' + esc(x) + "</span>").join("") + "</div></div>").join("");   // Haushalte der Geschwister: eigene Insel, nicht zum Hineinziehen (seit 3.17.6.0)
@@ -2157,6 +2160,7 @@ function insZeichnen() {
     h += insel(k, f, "Partei von " + esc(rn(l[k]) || vnK(l[k])) + (gl.some((j) => al(j) < 18) ? ' <span style="font-weight:400">· zahlt für ' + (gl.filter((j) => al(j) < 18).length > 1 ? "die Kinder" : "das Kind") + "</span>" : ""), gl, "", gl.some((j) => l[j].zv)); });
   Object.keys(gr).filter((g) => g !== "o" && g !== "fam" && ptKoepfe(l, zi).indexOf(Number(g)) < 0).forEach((g) => {   // Kind ohne Partei: Zahler wählst du unten
     h += insel(g, INS_KIND, esc(rn(l[g])) + ' <span style="font-weight:400">· wer für ' + esc(rn(l[g])) + ' zahlt, wählst du weiter unten</span>', gr[g]); });
+  if (KKI.kk) h += '<div class="ins-i" style="--ic:' + INS_KIND + '"><p class="ins-t">Kleinkind ohne Bett</p><div class="ins-ps">' + KKI.kk + "</div></div>";
   h += '<div class="ins-neu" data-insi="neu">＋ Eigene Partei</div>';
   c.innerHTML = h; INS_MSG = "";
 }
