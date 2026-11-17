@@ -37,17 +37,6 @@
       "bestaetigt": "2026-11-17T10:08"
     },
     {
-      "name": "Deborah",
-      "arr": "2027-03-26",
-      "dep": "2027-03-28",
-      "selbst": true,
-      "pers": 4,
-      "rolle": "folge",
-      "betrag": 120,
-      "rechnung": "Gesendet am Di 17.11.2026, 10:10 Uhr. App-Version 3.16.2.0.\nAnreise\tFreitag 26.03.2027\nAbreise\tSonntag 28.03.2027 (2 Nächte)\nFamilie\tIch, Partner/in und 2 Kinder\nFreunde\t0\nZimmer 1 unberührt\tJa\nSelbstreinigung\tJa\nBedingungen akzeptiert\tJa\nTotal laut Rechner\tCHF 120.–\nReinigungskosten sind erst nach Ablauf der Familienstaffel bekannt und werden nachbelastet.\n#Preisberechnung\nFamilie pro Nacht\tCHF 60.–\nÜbernachtung (2 Nächte)\tCHF 120.–\nReinigung\tCHF 0.–\nZimmer 1 und rotes Bad bleiben unberührt: CHF 10.– weniger pro Nacht, die Familie zahlt CHF 60.– statt CHF 70.–.",
-      "bestaetigt": "2026-11-17T10:11"
-    },
-    {
       "name": "Miriam",
       "arr": "2027-03-29",
       "dep": "2027-03-31",
@@ -68,10 +57,6 @@
     }
   ],
   "logbuch": [
-    {
-      "t": "2026-11-04T20:05",
-      "text": "Bestätigt: Miriam, Sa 19.06.2027 bis Sa 26.06.2027, CHF 660, mit Vorbehalt"
-    },
     {
       "t": "2026-11-04T20:08",
       "text": "Bestätigt: Miriam, So 11.07.2027 bis So 18.07.2027, CHF 660, mit Vorbehalt"
@@ -867,6 +852,10 @@
     {
       "t": "2026-11-17T15:24",
       "text": "Endgültig gelöscht: Jerome, Mi 25.11.2026 bis So 29.11.2026"
+    },
+    {
+      "t": "2026-11-17T15:24",
+      "text": "Endgültig gelöscht: Deborah, Fr 26.03.2027 bis So 28.03.2027"
     }
   ],
   "reinigung": [],
