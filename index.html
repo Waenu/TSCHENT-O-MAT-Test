@@ -276,9 +276,9 @@ if (TEST_MODUS) {
   .gm-ins { margin: 6px 0 10px; } .ins-i, .ins-o, .ins-neu { border-radius: 10px; padding: 6px 8px 8px; margin: 0 0 8px; }
   .ins-i { border: 2px solid var(--ic); background: color-mix(in srgb, var(--ic) 16%, transparent); } .ins-i.vs { border-style: dashed; }
   .ins-o { border: 2px dashed var(--missing-line); background: var(--missing-bg); } .ins-neu { border: 2px dashed var(--line); text-align: center; padding: 12px 8px; cursor: pointer; }
-  .ins-t { font-size: .85rem; margin: 0 0 6px; font-weight: 700; } .ins-ps { display: flex; flex-wrap: wrap; gap: 8px; }
-  .ins-p { min-width: 64px; min-height: 48px; border-radius: 24px; padding: 4px 12px; border: 2px solid var(--ic, var(--line)); background: var(--card, transparent); color: inherit; font: inherit; font-size: .9rem; line-height: 1.2; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; }
-  .ins-fix { display: inline-flex; flex-direction: column; justify-content: center; cursor: default; touch-action: auto; text-align: center; } .ins-p small { display: block; font-size: .75rem; opacity: .8; } .ins-p.geteilt { border-style: dashed; } .zz-pt { display: inline-block; width: .7em; height: .7em; border-radius: 50%; background: var(--pc); margin-right: .35em; vertical-align: .05em; } .ins-p.sel { outline: 3px solid var(--accent); outline-offset: 2px; } .ins-p.weg { opacity: .3; }
+  .ins-t { font-size: .85rem; margin: 0 0 6px; font-weight: 700; } .ins-ps { display: flex; flex-wrap: wrap; gap: 5px; }   /* gleich gross wie «Wer kommt mit?» (seit 3.17.6.3) */
+  .ins-p { min-width: 0; min-height: 38px; border-radius: 19px; padding: 2px 8px; font-weight: 600; border: 2px solid var(--ic, var(--line)); background: var(--card, transparent); color: inherit; font: inherit; font-weight: 600; font-size: .82em; line-height: 1.15; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; }
+  .ins-fix { display: inline-flex; flex-direction: column; justify-content: center; cursor: default; touch-action: auto; text-align: center; } .ins-p small { display: block; font-size: .85em; font-weight: 400; opacity: .8; } .ins-p.geteilt { border-style: dashed; } .zz-pt { display: inline-block; width: .7em; height: .7em; border-radius: 50%; background: var(--pc); margin-right: .35em; vertical-align: .05em; } .ins-p.sel { outline: 3px solid var(--accent); outline-offset: 2px; } .ins-p.weg { opacity: .3; }
   .ins-ziel { outline: 3px solid var(--accent); outline-offset: 2px; } .ins-gh { position: fixed; z-index: 9999; pointer-events: none; opacity: .9; margin: 0; }
   .gm-pt.missing select { background-color: var(--missing-bg) !important; border-color: var(--missing-line) !important; }
   .gm-k .gm-gs { display: flex; gap: 18px; } .gm-k .gm-gs label { display: flex; align-items: center; gap: 6px; min-height: 40px; }
@@ -1608,7 +1608,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.17.6.2";
+let VERSION = "3.17.6.3";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -4777,6 +4777,13 @@ function render() {
     if (wahl) lab.innerHTML = esc(r.msg) + "<br><small>Der Preis erscheint, sobald alles gewählt ist.</small>"; else lab.textContent = r.msg;
     val.textContent = ""; delete bar.dataset.klick;
     return;
+  }
+  if (listeModus() && r.d.GE > 0) {   // Preis stand schon, dann wurde etwas wieder offen (Wänu 17.11.2026): Leiste fragt nach, statt den alten Preis stehen zu lassen (seit 3.17.6.3)
+    const n = listeN(r.d); let m = "";
+    if (n && !mailOk()) m = "Bitte eintragen: Deine Mailadresse";
+    else if (n && !listeVoll(n)) m = "Bitte ausfüllen: Liste deiner Freunde";
+    else { const zp = zahlPlan(r, r.d); if (zp) { if (zp.zimmerOffen) m = "Bitte wählen: Wer mit dir im selben Zimmer schläft"; else if (zp.parteiOffen.length) m = zp.l.some((f) => f && f.zv) ? "Bitte bestätigen: Wer gehört zusammen" : "Bitte wählen: Wer gehört zusammen"; else if (zp.offen.length) m = "Bitte wählen: Wer die Übernachtungen von " + (rn(zp.l[zp.offen[0]]) || "Freund/in " + (zp.offen[0] + 1)) + " bezahlt"; } }
+    if (m) { res.hidden = true; res.innerHTML = ""; bar.classList.add("err", "wahl"); lab.innerHTML = esc(m) + "<br><small>Der Preis erscheint, sobald alles gewählt ist.</small>"; val.textContent = ""; delete bar.dataset.klick; return; }
   }
   bar.classList.remove("err", "wahl"); res.hidden = false;
   if (RECH_SIG !== ARR + "|" + DEP) { RECH_SIG = ARR + "|" + DEP; RECH_OFFEN = false; AUF_AUF.clear(); }   // anderer Termin: Details wieder zu
