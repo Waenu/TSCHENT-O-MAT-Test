@@ -614,13 +614,13 @@ if (TEST_MODUS) {
   .cal-leg .l-fest { border-color: var(--fest-line); background: var(--fest-bg); }
   .cal-leg .l-ruhe { border-color: var(--ruhe-line); background: var(--ruhe-bg); }
   .cal-leg .l-spitz { border-color: var(--spitz-line); background: var(--spitz-bg); }
-  a.btn, button.btn, span.btn { font: inherit; font-weight: 700; color: var(--accent); background: transparent; border: 2px solid var(--accent); border-radius: 6px; min-height: 48px; padding: 8px 14px; cursor: pointer; display: inline-flex; align-items: center; text-decoration: none; }
+  a.btn, button.btn, span.btn { font: inherit; font-weight: 700; color: var(--accent); background: transparent; border: 2px solid var(--accent); border-radius: 6px; min-height: 48px; padding: 8px 14px; cursor: pointer; display: flex; align-items: center; text-decoration: none; box-sizing: border-box; width: 100%; justify-content: center; text-align: center; flex: 1 1 max-content; min-width: min(100%, max-content); }   /* Knöpfe volle Breite, Text mittig; nebeneinander nur, wenn alle einzeilig Platz haben (seit 3.17.8.1, Wänu) */
   .btn.off, button.btn:disabled { opacity: 0.45; cursor: not-allowed; }
   .pay .btns { display: flex; flex-direction: column; gap: 10px; align-self: stretch; width: 100%; }
   .pay .btns .btn, .pay > button, .pay > .btns > button { width: 100%; box-sizing: border-box; justify-content: center; text-align: center; gap: 10px; min-height: 52px; border-radius: 6px; }
   .pay > button { align-self: stretch; display: flex; align-items: center; }
   .pay .field { align-self: stretch; width: 100%; }
-  .wa { flex: none; }
+  .wa { flex: none; } .btn > .bt { flex: 0 1 auto; min-width: 0; }   /* Text neben dem Symbol so breit wie die längste Zeile, Symbol sitzt direkt daneben (seit 3.17.8.1) */
   #trinkOk { width: 100%; min-height: 52px; box-sizing: border-box; font: inherit; font-weight: 700; color: var(--accent); background: transparent; border: 2px solid var(--accent); border-radius: 6px; padding: 8px 14px; cursor: pointer; }
   .note { background: var(--note-bg); border-radius: 6px; padding: 10px 12px; font-size: var(--t-text); margin: 0; }
 
@@ -1398,6 +1398,22 @@ if (TEST_MODUS) {
   .fv-fuss { position: sticky; bottom: -16px; z-index: 2; background: var(--bg); padding: 4px 0 16px; margin-bottom: -16px; }
   .fv-ctl { display: flex; gap: 8px; margin-top: 4px; }
   .fv-ctl button { flex: 1 1 0; min-width: 0; align-self: stretch; text-align: center; padding: 8px 6px; }
+
+  /* Einheitliche Rahmen und Knöpfe (seit 3.17.8.1, Wänu: «immer gewisse Regeln einhalten»): Rahmen innen 12 px, Rahmen untereinander 10 px */
+  :root { --rp: 12px; --rg: 10px; }
+  .note.h, .notice, .card, .pay, .gm-k .gm-f, .gm-ptbox, .zielbox, .todo-box, .afr-box, #bestKasten .vk, #bestKasten .ps-offen, .vh, .fs-karte, .fv-cap, .exsel, .rt-z, .kf-form, .ink-b.mein-teil { padding: var(--rp) !important; margin-left: 0 !important; margin-right: 0 !important; box-sizing: border-box; }
+  .card { gap: var(--rg); }
+  .mein-st-b > * { margin-top: var(--rg) !important; } .mein-st-b > *:first-child { margin-top: 0 !important; }
+  .mein-st-b > .absage, #absageBox { margin-top: var(--rg); } #absageBox > p, #absageBox > .hinweis, .mein-st .absage p { margin-left: 0; margin-right: 0; padding-left: 0; }
+  :is(.note.h, .notice, .pay) + :is(.note.h, .notice, .pay, .btn) { margin-top: var(--rg); }
+  :has(> .btn ~ .btn) { flex-wrap: wrap; }
+  /* Ausnahmen: Kalenderblase, Streifen «Zurück zu Papi», kleine Symbolknöpfe */
+  #calBlase a.btn, #calBlase button.btn, #kindStreifen .btn { display: inline-flex; width: auto; flex: 0 1 auto; min-width: 0; }
+  /* Listen-Knöpfe wie «Bezahlt am»: Text mittig, Zahl rechts */
+  .li-k .li-b { position: relative; flex-direction: column; justify-content: center; text-align: center; gap: 2px; padding-left: 44px; padding-right: 44px; }
+  #bestKasten .vk-acts { display: flex; flex-wrap: wrap; gap: var(--rg); }   /* zwei Knöpfe nebeneinander nur, wenn beide einzeilig passen */
+  .gm-key { display: flex; flex-direction: column; gap: 8px; } .gm-key input { width: 100%; box-sizing: border-box; min-height: 48px; }
+  .li-k .li-b .alarm-n { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); margin: 0; }
 </style>
 
 </head>
@@ -1608,7 +1624,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.17.8.0";
+let VERSION = "3.17.8.1";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -3881,7 +3897,19 @@ function angebotFit() {   // Schrift der geschlossenen Angebote-Auswahl so verkl
   const w = c.measureText(o.text).width, frei = sel.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - 30;   // 30 px: Platz für den Pfeil
   if (w > frei && frei > 0) sel.style.fontSize = Math.max(base * 0.7, base * frei / w).toFixed(2) + "px";
 }
-window.addEventListener("resize", () => { try { angebotFit(); } catch (e) {} try { kalTitelNeu(); } catch (e) {} });
+window.addEventListener("resize", () => { try { angebotFit(); } catch (e) {} try { kalTitelNeu(); } catch (e) {} knopfSymLater(); });
+// Knöpfe mit Symbol (z. B. WhatsApp): Text in <span class="bt"> mit der Breite der längsten Zeile, damit Symbol und Text gemeinsam mittig stehen (seit 3.17.8.1, Wänu)
+function knopfSym() {
+  document.querySelectorAll(".btn > svg").forEach((sv) => {
+    const b = sv.parentElement; let sp = b.querySelector(":scope > .bt");
+    if (!sp) { const ns = [...b.childNodes].filter((n) => n.nodeType === 3 ? n.textContent.trim() : n.nodeType === 1 && n.tagName !== "svg"); if (!ns.length) return; sp = document.createElement("span"); sp.className = "bt"; b.insertBefore(sp, ns[0]); ns.forEach((n) => sp.appendChild(n)); }
+    sp.style.width = ""; if (!b.offsetParent) return;
+    const r = document.createRange(); r.selectNodeContents(sp); const w = r.getBoundingClientRect().width; if (w) sp.style.width = Math.ceil(w) + 1 + "px";
+  });
+}
+let KS_T = 0; function knopfSymLater() { if (KS_T) return; KS_T = requestAnimationFrame(() => { KS_T = 0; try { knopfSym(); } catch (e) {} }); }
+new MutationObserver(knopfSymLater).observe(document.documentElement, { childList: true, subtree: true });
+document.addEventListener("toggle", knopfSymLater, true); document.addEventListener("click", () => setTimeout(knopfSymLater, 50), true);
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { try { angebotFit(); } catch (e) {} });
 let ANG_KOPF = [], ANG_I = 0;
 setInterval(() => {   // Beschriftung der geschlossenen Auswahl alle 60 Sekunden wechseln (seit 3.2.1.5, vorher 4 s), weich überblendet
