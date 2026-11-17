@@ -270,6 +270,14 @@ if (TEST_MODUS) {
   .gm-ptbox { border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px 4px; margin: 8px 0; } .gm-ptbox .gm-pt { padding: 6px 0; border-top: 1px solid rgba(127,127,127,.25); } .gm-ptbox .gm-pt-n { font-weight: 700; } .gm-ptbox[hidden], .gm-ptbox .gm-pt[hidden] { display: none; }
   .gm-pt.vorschlag .zchip[aria-pressed="true"] { background: transparent; color: var(--accent); border: 2px dashed var(--accent); } .gm-pt-ok { margin: 6px 0 8px; }   /* Vorschlag nach Nachname (seit 3.10.3.0) */
   .gm-pt select { display: none; } .gm-f.gm-kk { position: relative; } .gm-kkx { position: absolute; top: -24px; right: 8px; min-width: 40px; min-height: 36px; border: 0; background: none; color: inherit; font-size: 1.1rem; cursor: pointer; } .gm-kkdazu { margin: 6px 0 10px; } .hp { display: block; height: .6em; } .gm-pt .zchips { margin: 4px 0; }   /* Partei als Chips (seit 3.9.5.7) */
+  .gm-ptbox .gm-pt { display: none !important; }   /* Zeilen bleiben für die Werte, sichtbar sind die Inseln (seit 3.17.1.0) */
+  .gm-ins { margin: 6px 0 10px; } .ins-i, .ins-o, .ins-neu { border-radius: 10px; padding: 6px 8px 8px; margin: 0 0 8px; }
+  .ins-i { border: 2px solid var(--ic); background: color-mix(in srgb, var(--ic) 16%, transparent); } .ins-i.vs { border-style: dashed; }
+  .ins-o { border: 2px dashed var(--missing-line); background: var(--missing-bg); } .ins-neu { border: 2px dashed var(--line); text-align: center; padding: 12px 8px; cursor: pointer; }
+  .ins-t { font-size: .85rem; margin: 0 0 6px; font-weight: 700; } .ins-ps { display: flex; flex-wrap: wrap; gap: 8px; }
+  .ins-p { min-width: 64px; min-height: 48px; border-radius: 24px; padding: 4px 12px; border: 2px solid var(--ic, var(--line)); background: var(--card, transparent); color: inherit; font: inherit; font-size: .9rem; line-height: 1.2; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; }
+  .ins-p small { display: block; font-size: .75rem; opacity: .8; } .ins-p.sel { outline: 3px solid var(--accent); outline-offset: 2px; } .ins-p.weg { opacity: .3; }
+  .ins-ziel { outline: 3px solid var(--accent); outline-offset: 2px; } .ins-gh { position: fixed; z-index: 9999; pointer-events: none; opacity: .9; margin: 0; }
   .gm-pt.missing select { background-color: var(--missing-bg) !important; border-color: var(--missing-line) !important; }
   .gm-k .gm-gs { display: flex; gap: 18px; } .gm-k .gm-gs label { display: flex; align-items: center; gap: 6px; min-height: 40px; }
   .gm-k.gm-ok { border-left: 4px solid var(--gruen); }
@@ -1597,7 +1605,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.17.0.3";
+let VERSION = "3.17.1.0";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -2046,6 +2054,65 @@ function gmEntwurfUebernehmen() {   // beim Senden der Anfrage: Liste unter die 
   try { localStorage.setItem("tm2_gmWeg", JSON.stringify(gmWeg().filter((k) => k !== key))); } catch (e) {}
   karteiMerken(fr);
 }
+var INS_SEL = null, INS_N = 0, INS_ZOG = false, INS_MSG = "";   // Parteien als Inseln (seit 3.17.1.0, Wänu): Person antippen und dann ihre Partei, oder mit dem Finger hinüberziehen
+const INS_F = ["#3B82F6", "#22A06B", "#8B5CF6", "#E0679B", "#E8A33D", "#14B8A6", "#EF6B4A"];
+function insZeichnen() {
+  const c = document.querySelector("#gmRech .gm-ins"), n = INS_N, zi = zahlendeIdx(n); if (!c) return;
+  if (!zi || !zi.length) { c.innerHTML = ""; return; }
+  const l = freundeListe(n), al = (j) => alterAm(l[j].geb, ARR), off = (j) => ptOffen(j, l, zi) && !l[j].zv;
+  if (INS_SEL !== null && zi.indexOf(INS_SEL) < 0) INS_SEL = null;
+  const pers = (j, f) => '<button type="button" class="ins-p' + (INS_SEL === j ? " sel" : "") + '" data-insp="' + j + '"' + (f ? ' style="--ic:' + f + '"' : "") + ">" + esc(vnK(l[j]) || "Freund/in " + (j + 1)) + (al(j) < 18 ? "<small>" + al(j) + " Jahre</small>" : "") + "</button>";
+  const offen = zi.filter(off), koepfe = [...new Set(zi.filter((j) => !off(j)).map((j) => parteiKopf(j, l, zi)))].sort((a, b) => (al(a) < 18) - (al(b) < 18) || a - b);
+  let h = (INS_MSG ? '<p class="notice">' + esc(INS_MSG) + "</p>" : "") + '<p class="hint">' + (INS_SEL !== null ? "Tippe jetzt auf die Partei, zu der " + esc(rn(l[INS_SEL]) || "diese Person") + " gehört, oder auf «Eigene Partei». Nochmals auf " + esc(rn(l[INS_SEL]) || "die Person") + " tippen bricht ab." : "Tippe eine Person an und danach ihre Partei, oder zieh sie mit dem Finger hinüber.") + "</p>";
+  if (offen.length) h += '<div class="ins-o"><p class="ins-t">🟠 Noch zuordnen</p><div class="ins-ps">' + offen.map((j) => pers(j)).join("") + "</div></div>";
+  koepfe.forEach((k) => {
+    const gl = zi.filter((j) => !off(j) && parteiKopf(j, l, zi) === k).sort((a, b) => (al(a) < 18) - (al(b) < 18) || a - b), f = INS_F[k % INS_F.length];
+    const erw = gl.filter((j) => al(j) >= 18), vs = gl.some((j) => l[j].zv);
+    const t = erw.length ? "Partei von " + esc(rn(l[k]) || vnK(l[k])) + (gl.length > erw.length ? ' <span style="font-weight:400">· zahlt für die Kinder</span>' : "") : esc(rn(l[k])) + ' <span style="font-weight:400">· wer zahlt, wählst du weiter unten</span>';
+    h += '<div class="ins-i' + (vs ? " vs" : "") + '" data-insi="' + k + '" style="--ic:' + f + '"><p class="ins-t">' + t + (vs ? ' <span style="font-weight:400">· Vorschlag</span>' : "") + '</p><div class="ins-ps">' + gl.map((j) => pers(j, f)).join("") + "</div></div>";
+  });
+  h += '<div class="ins-neu" data-insi="neu">＋ Eigene Partei</div>';
+  c.innerHTML = h; INS_MSG = "";
+}
+function insZiehen(i, t) {   // i in die Partei von t (Zeile) oder "neu"; ein Kopf nimmt seine Partei mit, Kinder ohne Erwachsene kommen zur Partei von i
+  const n = INS_N, zi = zahlendeIdx(n); INS_SEL = null; if (!zi || zi.indexOf(i) < 0) { insZeichnen(); return; }
+  const l = freundeListe(n), erw = (j) => alterAm(l[j].geb, ARR) >= 18, a = gmEntwurf();
+  const set = (j, v) => { a[j] = Object.assign({}, a[j] || l[j]); a[j].zu = v; delete a[j].zv; };
+  const hi = parteiKopf(i, l, zi), mit = zi.filter((j) => j !== i && parteiKopf(j, l, zi) === i);
+  if (t === "neu") { if (hi === i && mit.length) { insZeichnen(); return; } set(i, -1); }
+  else {
+    if (zi.indexOf(t) < 0 || t === i) { insZeichnen(); return; }
+    const h = parteiKopf(t, l, zi);
+    if (h === hi) { set(i, i === h ? -1 : h); if (typeof l[h].zu !== "number" || l[h].zv) set(h, -1); }
+    else if (!erw(h)) {   // Ziel ohne Erwachsene: die Kinder kommen zur Partei von i
+      if (!erw(hi)) { INS_MSG = "Kinder können nur zu einer Partei mit einer erwachsenen Person."; insZeichnen(); return; }
+      zi.filter((j) => parteiKopf(j, l, zi) === h).forEach((j) => set(j, hi)); if (hi === i || typeof l[hi].zu !== "number" || l[hi].zv) set(hi, -1);
+    } else { set(i, h); mit.forEach((j) => set(j, h)); if (typeof l[h].zu !== "number" || l[h].zv) set(h, -1); }
+  }
+  gmEntwurfSetzen(a); render();
+}
+function insTipp(p, z) {
+  if (INS_SEL === null) { if (p) { INS_SEL = Number(p.dataset.insp); insZeichnen(); } return; }
+  if (p && Number(p.dataset.insp) === INS_SEL) { INS_SEL = null; insZeichnen(); return; }
+  if (p && p.closest(".ins-o")) { insZiehen(INS_SEL, Number(p.dataset.insp)); return; }
+  if (p) { insZiehen(INS_SEL, Number(p.closest("[data-insi]").dataset.insi)); return; }
+  if (z) insZiehen(INS_SEL, z.dataset.insi === "neu" ? "neu" : Number(z.dataset.insi));
+}
+(function () {   // Ziehen mit dem Finger (Pointer-Ereignisse, gilt auch für die Maus)
+  let st = null, gh = null;
+  const ziel = (x, y, di) => { if (gh) gh.style.display = "none"; const e = document.elementFromPoint(x, y); if (gh) gh.style.display = ""; if (!e || !e.closest(".gm-ins")) return null; const p = e.closest("[data-insp]"); if (p && Number(p.dataset.insp) !== di) return p; return e.closest("[data-insi]") || (p ? null : e.closest(".ins-o")); };
+  document.addEventListener("pointerdown", (e) => { const p = e.target.closest && e.target.closest(".gm-ins [data-insp]"); if (!p) return; st = { i: Number(p.dataset.insp), x: e.clientX, y: e.clientY, el: p }; });
+  document.addEventListener("pointermove", (e) => { if (!st) return;
+    if (!gh) { if (Math.hypot(e.clientX - st.x, e.clientY - st.y) < 8) return; gh = st.el.cloneNode(true); gh.classList.add("ins-gh"); gh.classList.remove("sel"); document.body.appendChild(gh); st.el.classList.add("weg"); }
+    gh.style.left = (e.clientX - gh.offsetWidth / 2) + "px"; gh.style.top = (e.clientY - gh.offsetHeight / 2) + "px";
+    document.querySelectorAll(".ins-ziel").forEach((x) => x.classList.remove("ins-ziel")); const z = ziel(e.clientX, e.clientY, st.i); if (z) z.classList.add("ins-ziel"); e.preventDefault(); });
+  const ende = (e, ok) => { if (!st) return; const s = st; st = null; if (!gh) return;
+    const z = ok ? ziel(e.clientX, e.clientY, s.i) : null; gh.remove(); gh = null; INS_ZOG = true; setTimeout(() => { INS_ZOG = false; }, 400);
+    document.querySelectorAll(".ins-ziel").forEach((x) => x.classList.remove("ins-ziel")); s.el.classList.remove("weg");
+    if (!z || z.classList.contains("ins-o")) { insZeichnen(); return; }
+    insZiehen(s.i, z.dataset.insi === "neu" ? "neu" : z.dataset.insp !== undefined ? (z.closest(".ins-o") ? Number(z.dataset.insp) : Number(z.closest("[data-insi]").dataset.insi)) : Number(z.dataset.insi)); };
+  document.addEventListener("pointerup", (e) => ende(e, true)); document.addEventListener("pointercancel", (e) => ende(e, false));
+})();
 function gmRechZeigen(d) {
   const box = document.getElementById("gmRech"); if (!box) return;
   const n = listeModus() && ARR && DEP && !document.getElementById("f-gaeste").hidden ? listeN(d) : 0;
@@ -2070,7 +2137,7 @@ function gmRechZeigen(d) {
     }
     h += '<div class="gm-kkdazu"><button type="button" class="btn" data-gmkk="1">👶 Kleinkind dazu (ohne Bett)</button><p class="hint gm-kkh"></p></div>';   // Kleinkinder der Freunde ohne Bett (seit 3.10.4.0)
     // «Wer gehört zusammen?» als eigener Bereich unter der Liste, erst wenn die Liste vollständig ist (seit 3.9.7.0, Wänu); vorher im Kasten jedes Freundes
-    h += '<p class="gm-r-st"></p><div class="gm-ptbox" hidden><p><b>🤝 Wer gehört zusammen?</b></p><p class="hint">Wer zusammengehört, zum Beispiel ein Paar oder eine Familie, bildet eine Partei. Bei der Reinigung «Nach Parteien» zahlt jede Partei gleich viel, und für Kinder zahlen die Erwachsenen ihrer Partei.</p>';
+    h += '<p class="gm-r-st"></p><div class="gm-ptbox" hidden><p><b>🤝 Wer gehört zusammen?</b></p><p class="hint">Wer zusammengehört, zum Beispiel ein Paar oder eine Familie, bildet eine Partei. Bei der Reinigung «Nach Parteien» zahlt jede Partei gleich viel, und für Kinder zahlen die Erwachsenen ihrer Partei.</p><div class="gm-ins"></div>';
     for (let i = 0; i < n; i++) h += '<div class="gm-pt" data-pi="' + i + '" hidden><label class="gm-pt-n"></label><select data-gf="zu" aria-label="Gehört zur Partei von"></select><div class="zchips gm-pt-c"></div><p class="hint gm-pt-h"></p></div>';
     h += '<button type="button" class="btn main gm-pt-ok" hidden>✓ Vorschlag passt</button>';
     box.innerHTML = h + "</div>";
@@ -2103,7 +2170,8 @@ function gmRechZeigen(d) {
   { const pb = box.querySelector(".gm-ptbox"), mj = (i) => l[i] && l[i].geb && ARR && alterAm(l[i].geb, ARR) < 18 ? 1 : 0;   // Erwachsene zuerst, Kinder zuletzt (seit 3.10.2.4)
     if (pb) [...pts].sort((x, y) => mj(+x.dataset.pi) - mj(+y.dataset.pi) || x.dataset.pi - y.dataset.pi).forEach((x) => pb.appendChild(x));
     const ok = pb && pb.querySelector(".gm-pt-ok"); if (ok) { pb.appendChild(ok); ok.hidden = ![...pts].some((x) => !x.hidden && x.classList.contains("vorschlag")); } }
-  { const pb = box.querySelector(".gm-ptbox"); if (pb) pb.hidden = offen.length > 0 || !listeVoll(n) || ![...pts].some((x) => !x.hidden); }   // erst bei gültiger Liste, sonst fehlt der Vorschlag nach Nachname (3.10.5.2)
+  { const pb = box.querySelector(".gm-ptbox"); if (pb) pb.hidden = offen.length > 0 || !listeVoll(n) || ![...pts].some((x) => !x.hidden); }
+  INS_N = n; insZeichnen();   // erst bei gültiger Liste, sonst fehlt der Vorschlag nach Nachname (3.10.5.2)
   const st = box.querySelector(".gm-r-st");
   st.className = "gm-r-st " + (offen.length ? "notice" : "note h");
   st.textContent = offen.length ? "Noch offen: Freund/in " + offen.join(", ") + ". Erst wenn die Liste vollständig ist, kannst du die Anfrage senden." : "✅ Liste vollständig.";
@@ -2385,6 +2453,7 @@ function build() {
         gmRechLesen(gb); render();
       });
       gb.addEventListener("click", async (e) => {
+        { const ip = e.target.closest("[data-insp]"), ii = e.target.closest("[data-insi]"); if (ip || ii) { if (!INS_ZOG) insTipp(ip, ii); return; } }   // Inseln (seit 3.17.1.0)
         const pc = e.target.closest("[data-ptv]");   // Partei-Chip: gleicher Weg wie die Liste (seit 3.9.5.7)
         if (pc) { pc.closest(".gm-pt").dataset.ok = "1"; const sl = pc.closest(".gm-pt").querySelector('[data-gf="zu"]'); sl.value = pc.dataset.ptv; sl.dispatchEvent(new Event("change", { bubbles: true })); return; }
         if (e.target.closest("[data-gmkk]")) { S.gkk = Math.min(2, nz(S.gkk) + 1); normalize(); render(); return; }   // Kleinkind ohne Bett dazu (seit 3.10.4.0)
