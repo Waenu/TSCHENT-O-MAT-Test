@@ -1629,7 +1629,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.17.11.0";
+let VERSION = "3.17.11.1";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -1997,12 +1997,12 @@ function kkFrL() {   // Kleinkinder der Freunde im Kinderbettchen: [{i, nm, pc}]
 }
 function kkFarbe(i, l, n) { const zi = zahlendeIdx(n); if (zi && listeVoll(n)) { const r = kkZiel(i, l, zi); if (r.g === "fam") return INS_FAM; if (typeof r.g === "number") return ptFarbe(r.g, l, zi); } return freundFarbe(i, l, n); }   // Farbe der Insel, zu der das Kleinkind gehört (seit 3.17.11.0)
 function kkFreunde() { return kkFrL().map((x) => x.nm); }
-function kkFrChips() { return kkFrL().map((x) => '<span class="zchip kk-fr" role="img" aria-pressed="true" aria-label="' + esc((x.nm || "Kleinkind") + " (Freunde) im Kinderbettchen") + '"' + pcStil(x.pc) + ">" + esc(x.nm || "Kleinkind") + "<small>🛏️ Kinderbettchen</small></span>").join(""); }
+function kkFrChips() { return kkFrL().map((x) => '<span class="zchip kk-fr" role="img" aria-pressed="true" aria-label="' + esc((x.nm || "Kleinkind") + " (Freunde) im Kinderbettchen") + '"' + pcStil(x.pc) + ">" + esc(x.nm || "Kleinkind") + "<small>👶 Kinderbettchen</small></span>").join(""); }
 function kkFrei() { return Math.max(0, 2 - kkFreunde().length); }   // Kinderbettchen, die der Familie bleiben
 function kkFrHint() {
   const k = kkFreunde(); if (!k.length) return "";
   const nm = k.filter(Boolean), wer = nm.length === k.length ? nm.map(esc).join(" und ") : (k.length === 1 ? "ein Kleinkind" : "Kleinkinder");
-  return '<p class="hint">🛏️ ' + (k.length >= 2 ? "Beide Kinderbettchen sind" : "1 Kinderbettchen ist") + " durch " + wer + " (Freunde) belegt" + (k.length >= 2 ? "." : ", für die Familie bleibt noch eines.") + "</p>";
+  return '<p class="hint">👶 ' + (k.length >= 2 ? "Beide Kinderbettchen sind" : "1 Kinderbettchen ist") + " durch " + wer + " (Freunde) belegt" + (k.length >= 2 ? "." : ", für die Familie bleibt noch eines.") + "</p>";
 }
 function kkBettchen(n) { const l = freundeListe(n); let k = 0; l.forEach((f, i) => { if (kkZeile(i) || (f.geb && ARR && istKleinkind(f.geb, ARR))) k++; }); return k; }   // Kleinkinder der Freunde (auch noch leere Zeilen)
 function fkkZaehlen() { if (!listeModus() || !ARR) return 0; const n = listeZ(); return freundeListe(n).filter((f) => f.geb && istKleinkind(f.geb, ARR)).length; }
@@ -2158,7 +2158,7 @@ function insZeichnen() {
   let GI = "";   // aktuelle Insel beim Zeichnen (für den Anteil)
   const KKI = {};   // Kleinkinder der Freunde: Vorschlag nach Nachname (gestrichelt), verschiebbar, zahlen nichts (seit 3.17.11.0, Wänu)
   kkIdx(n).forEach((i) => { const r = kkZiel(i, l, zi), g = r.g;
-    KKI[g] = (KKI[g] || "") + '<button type="button" class="ins-p kk-ins' + (r.v ? " geteilt" : "") + (INS_SEL === i ? " sel" : "") + '" data-insp="' + i + '"' + (g === "o" ? "" : ' style="--ic:§IC§"') + ">" + esc(rn(l[i]) || "Kleinkind") + "<small>🛏️ Kinderbettchen</small></button>"; });
+    KKI[g] = (KKI[g] || "") + '<button type="button" class="ins-p kk-ins' + (r.v ? " geteilt" : "") + (INS_SEL === i ? " sel" : "") + '" data-insp="' + i + '"' + (g === "o" ? "" : ' style="--ic:§IC§"') + ">" + esc(rn(l[i]) || "Kleinkind") + "<small>👶 Kinderbettchen</small></button>"; });
   const pers = (j, f) => { const a = teil[GI + "|" + j]; return '<button type="button" class="ins-p' + (INS_SEL === j ? " sel" : "") + (a ? " geteilt" : "") + '" data-insp="' + j + '"' + (f ? ' style="--ic:' + f + '"' : "") + ">" + esc(vnK(l[j]) || "Freund/in " + (j + 1)) + (al(j) < 18 ? "<small>" + al(j) + " Jahre" + (a ? " · " + a : "") + "</small>" : "") + "</button>"; };
   const sort = (a) => a.sort((x, y) => (al(x) < 18) - (al(y) < 18) || x - y);
   const insel = (key, f, t, gl, vor, vs) => (GI = String(key), "") + '<div class="ins-i' + (vs ? " vs" : "") + '" data-insi="' + key + '" style="--ic:' + f + '"><p class="ins-t">' + t + (vs ? ' <span style="font-weight:400">· Vorschlag</span>' : "") + '</p><div class="ins-ps">' + (vor || "") + sort(gl).map((j) => pers(j, f)).join("") + (KKI[key] || "").split("§IC§").join(f) + "</div></div>";
@@ -2340,7 +2340,7 @@ function eigenHtml() {   // Chips des eigenen Haushalts, «Ich» fest (seit 3.9.
   const leute = (f.p ? [f.p] : []).concat(f.k);
   const fehlt = famErwFehlt();
   let h = '<div class="field zrech ' + (fehlt ? "missing" : "done") + '"><label>👨‍👩‍👧‍👦 Wer kommt mit?</label><div class="zchips mfg-z">' + chip('data-ich="1"', ichDa(), ABSENDER ? 'Ich<small>(' + esc(rufname()) + ")</small>" : "Ich", false) +
-    leute.map((x) => chip('data-fe="' + esc(x) + '"', sel.indexOf(x) >= 0, esc(x) + (kk.indexOf(x) >= 0 ? "<small>🛏️ Kinderbettchen</small>" : ""), sel.indexOf(x) < 0 && voll && (f.k.indexOf(x) < 0 || kk.length >= 2))).join("") +
+    leute.map((x) => chip('data-fe="' + esc(x) + '"', sel.indexOf(x) >= 0, esc(x) + (kk.indexOf(x) >= 0 ? "<small>👶 Kinderbettchen</small>" : ""), sel.indexOf(x) < 0 && voll && (f.k.indexOf(x) < 0 || kk.length >= 2))).join("") +
     '</div>' + (erwWarnZeigen() ? '<p class="hint" style="color:var(--error-line);font-weight:600">Mindestens eine erwachsene Person muss mitkommen.</p>' : "") + '<p class="hint">Tippe alle an, die mitkommen. Kommst du selbst nicht mit, tippe <span class="hl">Ich</span> ab.</p></div>';
   const enk = f.k.filter((x) => sel.indexOf(x) >= 0);
   if (enk.length || kkFrL().length) h += '<div class="field zrech done"><label>👶 Wer schläft im Kinderbettchen?</label><div class="zchips">' + kkFrChips() + enk.map((x) => chip('data-fkk="' + esc(x) + '"', kk.indexOf(x) >= 0, esc(x), kk.indexOf(x) < 0 ? kk.length >= kkFrei() : voll)).join("") + '</div>' + kkFrHint() + '<p class="hint">Kinder bis etwa 2½ Jahren, höchstens zwei (es hat zwei Kinderbettchen). Sie belegen kein Bett und zählen bei der Reinigung nicht mit. Niemand: nichts antippen.</p></div>';
@@ -2355,7 +2355,7 @@ function mfgZeigen() {
   const fpp = famParteien() || [], hf = (h) => { const pp = fpp.find((q) => q.h.m[0] === h.m[0]); return pp ? famFarbe(pp) : h === eig ? INS_FAM : ""; };
   let HF = "";
   const chip = (attr, an, html, aus) => '<button type="button" class="zchip" ' + attr + ' aria-pressed="' + (an ? "true" : "false") + '"' + (aus ? " disabled" : "") + pcStil(HF) + ">" + html + "</button>";
-  const reihe = (h) => (HF = hf(h), "") + '<div class="zchips mfg-z">' + (h === eig ? chip('data-ich="1"', ichDa(), 'Ich<small>(' + esc(rufname()) + ")</small>", false) : "") + h.m.filter((x) => x !== ABSENDER).map((x) => chip('data-mfg="' + esc(x) + '"', sel.indexOf(x) >= 0, esc(x) + (kk.indexOf(x) >= 0 ? "<small>🛏️ Kinderbettchen</small>" : ""), voll && sel.indexOf(x) < 0 && (h.e.indexOf(x) < 0 || kk.length >= 2))).join("") + "</div>";
+  const reihe = (h) => (HF = hf(h), "") + '<div class="zchips mfg-z">' + (h === eig ? chip('data-ich="1"', ichDa(), 'Ich<small>(' + esc(rufname()) + ")</small>", false) : "") + h.m.filter((x) => x !== ABSENDER).map((x) => chip('data-mfg="' + esc(x) + '"', sel.indexOf(x) >= 0, esc(x) + (kk.indexOf(x) >= 0 ? "<small>👶 Kinderbettchen</small>" : ""), voll && sel.indexOf(x) < 0 && (h.e.indexOf(x) < 0 || kk.length >= 2))).join("") + "</div>";
   const betten = (ichDa() ? 1 : 0) + sel.length - kk.length, fehlt = famErwFehlt();
   let h = '<div class="field zrech ' + ((sel.length || ichDa()) && !fehlt ? "done" : "missing") + '"><label>👨‍👩‍👧‍👦 Wer kommt mit?</label>' + reihe(eig) + hs.filter((x) => x !== eig).map(reihe).join("") +
     '<p class="mfg-bett">🛏️ ' + betten + " von " + P.maxPersonen + " Betten belegt" + (kk.length + kkFreunde().length ? ", dazu " + (kk.length + kkFreunde().length) + " Kinderbettchen" + (kkFreunde().length ? " (davon " + kkFreunde().length + " für Freunde)" : "") : "") + "</p>" +
