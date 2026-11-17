@@ -20,14 +20,11 @@
       "selbst": false,
       "pers": 2,
       "betrag": 100,
-      "bestaetigt": "2026-11-17T12:50"
+      "bestaetigt": "2026-11-17T12:50",
+      "bezahlt": "2026-11-17T21:14"
     }
   ],
   "logbuch": [
-    {
-      "t": "2026-11-05T10:04",
-      "text": "Entfernt: Miriam, Sa 19.06.2027 bis Sa 26.06.2027"
-    },
     {
       "t": "2026-11-05T10:04",
       "text": "Entfernt: Miriam, So 11.07.2027 bis So 18.07.2027"
@@ -823,6 +820,10 @@
     {
       "t": "2026-11-17T21:12",
       "text": "Endgültig gelöscht: Manuel, Di 23.03.2027 bis Do 25.03.2027"
+    },
+    {
+      "t": "2026-11-17T21:14",
+      "text": "Zahlung eingegangen: Miriam, Di 10.11.2026 bis Sa 14.11.2026, CHF 100"
     }
   ],
   "reinigung": [],
