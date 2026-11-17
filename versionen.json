@@ -2,6 +2,21 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.17.5.0",
+      "datum": "17.11.2026",
+      "titel": "Übernachtungen von Kindern: Zahler pro Partei",
+      "arten": [
+        "Regel",
+        "Text"
+      ],
+      "punkte": [
+        "Die Frage heisst «🛏️ Wer bezahlt die Übernachtungen von …?». Gemeint sind Nachtpreis und Kurtaxe, die Reinigung kommt danach.",
+        "Zur Wahl stehen Parteien statt Personen: Familie, dann jede Partei der Freunde mit Farbpunkt.",
+        "Mehrere gewählt: Jede Partei zahlt gleich viel, in der Partei teilen die Erwachsenen. Die eigene Zeile für Partner/in fällt weg.",
+        "Der Hinweis zur Reinigung erklärt, wie Kinder der Freunde zählen. Das Total bleibt gleich."
+      ]
+    },
+    {
       "v": "3.17.4.0",
       "datum": "17.11.2026",
       "titel": "Kinder brauchen keine Partei mehr",
