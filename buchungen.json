@@ -24,13 +24,20 @@
       "betrag": 120,
       "rechnung": "Gesendet am Di 17.11.2026, 09:53 Uhr. App-Version 3.16.1.1.\nAnreise\tMittwoch 17.03.2027\nAbreise\tFreitag 19.03.2027 (2 Nächte)\nFamilie\tIch und Partner/in\nFreunde\t0\nZimmer 1 unberührt\tJa\nSelbstreinigung\tJa\nBedingungen akzeptiert\tJa\nTotal laut Rechner\tCHF 120.–\nReinigungskosten sind erst nach Ablauf der Familienstaffel bekannt und werden nachbelastet.\n#Preisberechnung\nFamilie pro Nacht\tCHF 60.–\nÜbernachtung (2 Nächte)\tCHF 120.–\nReinigung\tCHF 0.–\nZimmer 1 und rotes Bad bleiben unberührt: CHF 10.– weniger pro Nacht, die Familie zahlt CHF 60.– statt CHF 70.–.",
       "bestaetigt": "2026-11-17T09:54"
+    },
+    {
+      "name": "Manuel",
+      "arr": "2027-03-23",
+      "dep": "2027-03-25",
+      "selbst": true,
+      "pers": 2,
+      "rolle": "folge",
+      "betrag": 120,
+      "rechnung": "Gesendet am Di 17.11.2026, 10:07 Uhr. App-Version 3.16.2.0.\nAnreise\tDienstag 23.03.2027\nAbreise\tDonnerstag 25.03.2027 (2 Nächte)\nFamilie\tIch und Partner/in\nFreunde\t0\nZimmer 1 unberührt\tJa\nSelbstreinigung\tJa\nBedingungen akzeptiert\tJa\nTotal laut Rechner\tCHF 120.–\nReinigungskosten sind erst nach Ablauf der Familienstaffel bekannt und werden nachbelastet.\n#Preisberechnung\nFamilie pro Nacht\tCHF 60.–\nÜbernachtung (2 Nächte)\tCHF 120.–\nReinigung\tCHF 0.–\nZimmer 1 und rotes Bad bleiben unberührt: CHF 10.– weniger pro Nacht, die Familie zahlt CHF 60.– statt CHF 70.–.",
+      "bestaetigt": "2026-11-17T10:08"
     }
   ],
   "logbuch": [
-    {
-      "t": "2026-11-04T19:45",
-      "text": "Bestätigt: Miriam, Sa 14.08.2027 bis So 22.08.2027, CHF 1840, verbindlich"
-    },
     {
       "t": "2026-11-04T19:48",
       "text": "Entfernt: Jerome, Mo 16.11.2026 bis Do 19.11.2026"
@@ -826,6 +833,10 @@
     {
       "t": "2026-11-17T09:54",
       "text": "Bestätigt: Manuel, Mi 17.03.2027 bis Fr 19.03.2027, CHF 120, Wäsche: persönlich bringen bis Mo 22.03.2027"
+    },
+    {
+      "t": "2026-11-17T10:08",
+      "text": "Bestätigt: Manuel, Di 23.03.2027 bis Do 25.03.2027, CHF 120"
     }
   ],
   "reinigung": [],
