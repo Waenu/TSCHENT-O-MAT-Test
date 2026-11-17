@@ -1438,6 +1438,7 @@ if (TEST_MODUS) {
             <div class="exf"><span class="zchips ex-chips"><span class="zchip ex-miss">Ja</span><span class="zchip ex-miss">Nein</span></span><span>oranger Rand: noch wählen</span></div>
             <div class="exf"><span class="zchips ex-chips"><span class="zchip" aria-pressed="true">Ja</span><span class="zchip">Nein</span></span><span>grün: gewählt</span></div>
           </div>
+          <p>Tippst du einen gewählten Chip nochmals an, ist die Wahl wieder aufgehoben.</p>
           <p>Graue Chips sind noch gesperrt, bis die Frage davor beantwortet ist. Erst wenn alles gewählt ist, erscheint unten der Preis.</p>
         </div></details>
         <p class="gl-thema">Wer und wo</p>
@@ -1590,7 +1591,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.16.3.1";
+let VERSION = "3.16.3.2";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";

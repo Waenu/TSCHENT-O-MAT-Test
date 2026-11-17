@@ -159,6 +159,7 @@ Bedienkonzept Wänu (14.11.2026, ersetzt wo abweichend die Punkte oben; erst nac
 - 3.16.2.3 (Wänu, Handy laufende App): `famAlle()` nimmt bei Papi mit «Ansicht als» (TOKEN und ABSENDER) die Haushalte aus `tm2_famListe` wie die Testversion; vorher gab sie bei TOKEN immer [] zurück, MFG zeigte nur das alte Feld «fam» und die Leiste stoppte dort.
 - 3.16.3.0 (Wänu 1a «wie in der Testversion», 1b grau): `meinModus()` = ABSENDER und nicht Mami (auch Papi «Ansicht als»), `meinVorschau()` = meinModus und TOKEN: Profil mit Hinweis `.mein-vor`, alle Felder disabled und leer. Bei TOKEN und ABSENDER ist die Papi-Verwaltung (`#btnAnsichten`/`#bestKasten`) ausgeblendet; zurück nur über «Zurück zu Papi» (Wänu: Chips nur in seiner Verwaltung).
 - 3.16.3.1 (Wänu «immer 200.00», 1b ja): Aufteilung (`who`, `whoF`, Kleinkind/übernommen, Trinkgeld, `totZ`) immer `chf2`. Ohne Liste (`!zpl`, Papi) bekommt jede Zeile «Freund N zahlt» eine Aufschlüsselung: Übernachtung = HZ bzw. WZ/(GE−1) minus `x.GS` (Freund 1 «im selben Zimmer» bei `x.ZE` Ja), Reinigungsanteil `x.GS`, Kurtaxe. Geprüft: Papi gleiche Beträge wie das Kind.
+- 3.16.3.2 (Wänu): Glossar «Auswahlfelder» mit Satz «Tippst du einen gewählten Chip nochmals an, ist die Wahl wieder aufgehoben.»
 
 ## Offen: Airbnb-Belegung ins App-Repo umziehen (Wänu «ja», 13.11.2026, nächste Woche)
 - Heute: Workflow `belegung.yml` + `belegung.py` im alten Repo `Waenu/Tschentomat` (Secret `AIRBNB_ICAL`) schreibt `belegt.json`; die App liest `/Tschentomat/belegt.json`.
