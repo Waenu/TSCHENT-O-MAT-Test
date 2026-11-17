@@ -276,7 +276,7 @@ if (TEST_MODUS) {
   .ins-o { border: 2px dashed var(--missing-line); background: var(--missing-bg); } .ins-neu { border: 2px dashed var(--line); text-align: center; padding: 12px 8px; cursor: pointer; }
   .ins-t { font-size: .85rem; margin: 0 0 6px; font-weight: 700; } .ins-ps { display: flex; flex-wrap: wrap; gap: 8px; }
   .ins-p { min-width: 64px; min-height: 48px; border-radius: 24px; padding: 4px 12px; border: 2px solid var(--ic, var(--line)); background: var(--card, transparent); color: inherit; font: inherit; font-size: .9rem; line-height: 1.2; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; }
-  .ins-fix { display: inline-flex; flex-direction: column; justify-content: center; cursor: default; touch-action: auto; text-align: center; } .ins-p small { display: block; font-size: .75rem; opacity: .8; } .ins-p.sel { outline: 3px solid var(--accent); outline-offset: 2px; } .ins-p.weg { opacity: .3; }
+  .ins-fix { display: inline-flex; flex-direction: column; justify-content: center; cursor: default; touch-action: auto; text-align: center; } .ins-p small { display: block; font-size: .75rem; opacity: .8; } .ins-p.geteilt { border-style: dashed; } .ins-p.sel { outline: 3px solid var(--accent); outline-offset: 2px; } .ins-p.weg { opacity: .3; }
   .ins-ziel { outline: 3px solid var(--accent); outline-offset: 2px; } .ins-gh { position: fixed; z-index: 9999; pointer-events: none; opacity: .9; margin: 0; }
   .gm-pt.missing select { background-color: var(--missing-bg) !important; border-color: var(--missing-line) !important; }
   .gm-k .gm-gs { display: flex; gap: 18px; } .gm-k .gm-gs label { display: flex; align-items: center; gap: 6px; min-height: 40px; }
@@ -1606,7 +1606,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.17.3.1";
+let VERSION = "3.17.4.0";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -1997,7 +1997,8 @@ function rn(f) {   // Anzeigename eines Freundes: Rufname (bei zwei gleichen mit
 }
 function vnK(f) { if (rufVon(f)) return rn(f); const v = String((f && f.vorname) || "").trim(), n = String((f && f.name) || "").trim(); return v + (n ? " " + n.charAt(0).toUpperCase() + "." : ""); }   // «Nadine M.» bei Parteien und Zahlern (seit 3.10.2.2, Wänu)
 function parteiOffen(n) { const zi = zahlendeIdx(n); if (!zi) return false; const l = freundeListe(n); return zi.some((i) => ptOffen(i, l, zi)); }   // eine Partei noch nicht gewählt: Reinigung gesperrt (seit 3.9.7.0)
-function ptOffen(i, l, zi) { const z = l[i].zu; return ptZiele(i, l, zi).length > 0 && (!!l[i].zv || typeof z !== "number" || (z >= 0 && parteiKopf(i, l, zi) === i)); }   // zv = nur vorgeschlagen, noch nicht bestätigt (seit 3.10.3.0)
+function ptOffen(i, l, zi) { const z = l[i].zu; if (l[i].geb && ARR && alterAm(l[i].geb, ARR) < 18) return false;   // Kinder brauchen keine Partei, für sie zählt, wer zahlt (seit 3.17.4.0, Wänu)
+  return ptZiele(i, l, zi).length > 0 && (!!l[i].zv || typeof z !== "number" || (z >= 0 && parteiKopf(i, l, zi) === i)); }   // zv = nur vorgeschlagen, noch nicht bestätigt (seit 3.10.3.0)
 function ptVorschlag(n) {   // Vorschlag nach Nachname (Wänu 15.11.2026): gleicher Nachname = eine Partei, Kopf = älteste erwachsene Person; einzigartiger Nachname bei Erwachsenen = eigene Partei; nur Zeilen ohne Wahl, Kennzeichen zv bis zur Bestätigung
   const zi = zahlendeIdx(n); if (!zi || !zi.length) return false;
   const l = freundeListe(n), erw = (i) => alterAm(l[i].geb, ARR) >= 18, grp = {}; let neu = false;
@@ -2067,22 +2068,29 @@ function insGruppe(j, l, zi) {   // Insel einer Person: "o" offen, "fam" Familie
   const hs = [...new Set(z.map((k) => /^f\d+$/.test(k) ? parteiKopf(Number(k.slice(1)), l, zi) : -9))];
   return hs.length === 1 && hs[0] >= 0 ? hs[0] : j;
 }
+function insGruppen(j, l, zi) {   // Inseln einer Person mit Anteil: zahlen mehrere aus verschiedenen Parteien, steht das Kind in jeder Zahler-Insel (seit 3.17.4.0, Wänu)
+  const g0 = insGruppe(j, l, zi); if (g0 !== j || alterAm(l[j].geb, ARR) >= 18) return [{ g: g0, a: "" }];
+  const z = zahlerVon(j, zi, l); if (!z.length) return [{ g: j, a: "" }];
+  const c = {}; z.forEach((k) => { const g = k === "ich" || k === "partner" ? "fam" : parteiKopf(Number(k.slice(1)), l, zi); c[g] = (c[g] || 0) + 1; });
+  return Object.keys(c).map((g) => ({ g: g === "fam" ? "fam" : Number(g), a: c[g] * 2 === z.length ? "½" : c[g] + "/" + z.length }));
+}
 function insZeichnen() {
   const c = document.querySelector("#gmRech .gm-ins"), n = INS_N, zi = zahlendeIdx(n); if (!c) return;
   if (!zi || !zi.length) { c.innerHTML = ""; return; }
   const l = freundeListe(n), al = (j) => alterAm(l[j].geb, ARR), gr = {};
   if (INS_SEL !== null && zi.indexOf(INS_SEL) < 0) INS_SEL = null;
-  zi.forEach((j) => { const g = insGruppe(j, l, zi); (gr[g] = gr[g] || []).push(j); });
-  const pers = (j, f) => '<button type="button" class="ins-p' + (INS_SEL === j ? " sel" : "") + '" data-insp="' + j + '"' + (f ? ' style="--ic:' + f + '"' : "") + ">" + esc(vnK(l[j]) || "Freund/in " + (j + 1)) + (al(j) < 18 ? "<small>" + al(j) + " Jahre</small>" : "") + "</button>";
+  const teil = {}; zi.forEach((j) => insGruppen(j, l, zi).forEach((x) => { (gr[x.g] = gr[x.g] || []).push(j); if (x.a) teil[x.g + "|" + j] = x.a; }));
+  let GI = "";   // aktuelle Insel beim Zeichnen (für den Anteil)
+  const pers = (j, f) => { const a = teil[GI + "|" + j]; return '<button type="button" class="ins-p' + (INS_SEL === j ? " sel" : "") + (a ? " geteilt" : "") + '" data-insp="' + j + '"' + (f ? ' style="--ic:' + f + '"' : "") + ">" + esc(vnK(l[j]) || "Freund/in " + (j + 1)) + (al(j) < 18 ? "<small>" + al(j) + " Jahre" + (a ? " · " + a : "") + "</small>" : "") + "</button>"; };
   const sort = (a) => a.sort((x, y) => (al(x) < 18) - (al(y) < 18) || x - y);
-  const insel = (key, f, t, gl, vor, vs) => '<div class="ins-i' + (vs ? " vs" : "") + '" data-insi="' + key + '" style="--ic:' + f + '"><p class="ins-t">' + t + (vs ? ' <span style="font-weight:400">· Vorschlag</span>' : "") + '</p><div class="ins-ps">' + (vor || "") + sort(gl).map((j) => pers(j, f)).join("") + "</div></div>";
-  let h = (INS_MSG ? '<p class="notice">' + esc(INS_MSG) + "</p>" : "") + '<p class="hint">' + (INS_SEL !== null ? "Tippe jetzt auf die Partei, zu der " + esc(rn(l[INS_SEL]) || "diese Person") + " gehört, oder auf «Eigene Partei». Nochmals auf " + esc(rn(l[INS_SEL]) || "die Person") + " tippen bricht ab." : "Tippe eine Person an und danach ihre Partei, oder zieh sie mit dem Finger hinüber. Kinder deiner Freunde kannst du auch zu dir in die Familie nehmen, dann zahlst du für sie.") + "</p>";
+  const insel = (key, f, t, gl, vor, vs) => (GI = String(key), "") + '<div class="ins-i' + (vs ? " vs" : "") + '" data-insi="' + key + '" style="--ic:' + f + '"><p class="ins-t">' + t + (vs ? ' <span style="font-weight:400">· Vorschlag</span>' : "") + '</p><div class="ins-ps">' + (vor || "") + sort(gl).map((j) => pers(j, f)).join("") + "</div></div>";
+  let h = (INS_MSG ? '<p class="notice">' + esc(INS_MSG) + "</p>" : "") + '<p class="hint">' + (INS_SEL !== null ? "Tippe jetzt auf die Partei, zu der " + esc(rn(l[INS_SEL]) || "diese Person") + " gehört, oder auf «Eigene Partei». Nochmals auf " + esc(rn(l[INS_SEL]) || "die Person") + " tippen bricht ab." : "Tippe eine Person an und danach ihre Partei, oder zieh sie mit dem Finger hinüber. Erwachsene brauchen eine Partei. Kinder zahlen nie selbst, für sie gilt, wer für sie zahlt: Ziehst du ein Kind in eine Partei, zahlen deren Erwachsene, sonst wählst du es weiter unten. Nimmst du ein Kind in die Familie, zahlst du für es.") + "</p>";
   if (gr.o) h += '<div class="ins-o"><p class="ins-t">🟠 Noch zuordnen</p><div class="ins-ps">' + sort(gr.o).map((j) => pers(j)).join("") + "</div></div>";
   h += insel("fam", INS_FAM, "Familie (Partei 1)" + (gr.fam ? ' <span style="font-weight:400">· zahlt für die Kinder</span>' : ""), gr.fam || [], insFam());
   ptKoepfe(l, zi).forEach((k) => { const gl = gr[k] || [], f = ptFarbe(k, l, zi);
     h += insel(k, f, "Partei von " + esc(rn(l[k]) || vnK(l[k])) + (gl.some((j) => al(j) < 18) ? ' <span style="font-weight:400">· zahlt für die Kinder</span>' : ""), gl, "", gl.some((j) => l[j].zv)); });
   Object.keys(gr).filter((g) => g !== "o" && g !== "fam" && ptKoepfe(l, zi).indexOf(Number(g)) < 0).forEach((g) => {   // Kind ohne Partei: Zahler wählst du unten
-    h += insel(g, INS_KIND, esc(rn(l[g])) + ' <span style="font-weight:400">· wer zahlt, wählst du weiter unten</span>', gr[g]); });
+    h += insel(g, INS_KIND, esc(rn(l[g])) + ' <span style="font-weight:400">· wer für ' + esc(rn(l[g])) + ' zahlt, wählst du weiter unten</span>', gr[g]); });
   h += '<div class="ins-neu" data-insi="neu">＋ Eigene Partei</div>';
   c.innerHTML = h; INS_MSG = "";
 }
@@ -2273,7 +2281,7 @@ function zahlUiZeigen(d) {   // Chips: wer im selben Zimmer schläft, wer die Ko
       chip('data-zz="' + i + '|ich"', z.indexOf("ich") >= 0, !ABSENDER ? "Ich" : 'Ich<small>(' + esc(rufname()) + ')</small>') +
       (partnerDa() ? chip('data-zz="' + i + '|partner"', z.indexOf("partner") >= 0, esc(partnerDa())) : "") +
       erw.map((j) => chip('data-zz="' + i + "|f" + j + '"', z.indexOf("f" + j) >= 0, esc(vnK(l[j])))).join("") +
-      '</div><p class="hint">' + "Wer zahlt, übernimmt " + (al < 6 ? "Nachtpreis" : "Nachtpreis, Kurtaxe") + " und Reinigungsanteil von " + esc(vnK(l[i])) + ". " + (ok ? (z.length > 1 ? "Mehrere gewählt: gleich verteilt." : "") : "Bitte antippen. Mehrere sind möglich, dann wird gleich verteilt.") +
+      '</div><p class="hint">' + "Wer zahlt, übernimmt " + (al < 6 ? "Nachtpreis" : "Nachtpreis, Kurtaxe") + " und Reinigungsanteil von " + esc(vnK(l[i])).replace(/\.$/, "") + ". " + (ok ? (z.length > 1 ? "Mehrere gewählt: gleich verteilt." : "") : "Bitte antippen. Mehrere sind möglich, dann wird gleich verteilt.") +
 "</p></div>";
   }).join("");
 }

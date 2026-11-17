@@ -2,6 +2,22 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.17.4.0",
+      "datum": "17.11.2026",
+      "titel": "Kinder brauchen keine Partei mehr",
+      "arten": [
+        "Regel",
+        "Text"
+      ],
+      "punkte": [
+        "Kinder von Freunden müssen bei «Wer gehört zusammen?» nicht mehr zugeordnet werden. Für sie zählt nur, wer für sie zahlt.",
+        "Ein Kind ohne Partei steht in einer grauen Insel. Wählst du unten, wer zahlt, springt es in die Insel der Zahler.",
+        "Zahlen mehrere aus verschiedenen Parteien, steht das Kind in jeder Zahler-Insel mit gestricheltem Kreis und seinem Anteil, z. B. «½».",
+        "Ziehst du ein Kind in eine Partei, zahlen deren Erwachsene. Nimmst du es in die Familie, zahlst du.",
+        "Erklärung unter dem Titel angepasst. Am Preis ändert sich nichts."
+      ]
+    },
+    {
       "v": "3.17.3.1",
       "datum": "17.11.2026",
       "titel": "Familie-Insel mit allen, die mitkommen",
