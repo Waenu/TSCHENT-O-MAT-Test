@@ -1606,7 +1606,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.17.3.0";
+let VERSION = "3.17.3.1";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -2078,13 +2078,19 @@ function insZeichnen() {
   const insel = (key, f, t, gl, vor, vs) => '<div class="ins-i' + (vs ? " vs" : "") + '" data-insi="' + key + '" style="--ic:' + f + '"><p class="ins-t">' + t + (vs ? ' <span style="font-weight:400">· Vorschlag</span>' : "") + '</p><div class="ins-ps">' + (vor || "") + sort(gl).map((j) => pers(j, f)).join("") + "</div></div>";
   let h = (INS_MSG ? '<p class="notice">' + esc(INS_MSG) + "</p>" : "") + '<p class="hint">' + (INS_SEL !== null ? "Tippe jetzt auf die Partei, zu der " + esc(rn(l[INS_SEL]) || "diese Person") + " gehört, oder auf «Eigene Partei». Nochmals auf " + esc(rn(l[INS_SEL]) || "die Person") + " tippen bricht ab." : "Tippe eine Person an und danach ihre Partei, oder zieh sie mit dem Finger hinüber. Kinder deiner Freunde kannst du auch zu dir in die Familie nehmen, dann zahlst du für sie.") + "</p>";
   if (gr.o) h += '<div class="ins-o"><p class="ins-t">🟠 Noch zuordnen</p><div class="ins-ps">' + sort(gr.o).map((j) => pers(j)).join("") + "</div></div>";
-  h += insel("fam", INS_FAM, "Familie (Partei 1)" + (gr.fam ? ' <span style="font-weight:400">· zahlt für die Kinder</span>' : ""), gr.fam || [], '<span class="ins-p ins-fix" style="--ic:' + INS_FAM + '">' + (ABSENDER ? "Ich<small>" + esc(rufname()) + "</small>" : "Ich") + "</span>");
+  h += insel("fam", INS_FAM, "Familie (Partei 1)" + (gr.fam ? ' <span style="font-weight:400">· zahlt für die Kinder</span>' : ""), gr.fam || [], insFam());
   ptKoepfe(l, zi).forEach((k) => { const gl = gr[k] || [], f = ptFarbe(k, l, zi);
     h += insel(k, f, "Partei von " + esc(rn(l[k]) || vnK(l[k])) + (gl.some((j) => al(j) < 18) ? ' <span style="font-weight:400">· zahlt für die Kinder</span>' : ""), gl, "", gl.some((j) => l[j].zv)); });
   Object.keys(gr).filter((g) => g !== "o" && g !== "fam" && ptKoepfe(l, zi).indexOf(Number(g)) < 0).forEach((g) => {   // Kind ohne Partei: Zahler wählst du unten
     h += insel(g, INS_KIND, esc(rn(l[g])) + ' <span style="font-weight:400">· wer zahlt, wählst du weiter unten</span>', gr[g]); });
   h += '<div class="ins-neu" data-insi="neu">＋ Eigene Partei</div>';
   c.innerHTML = h; INS_MSG = "";
+}
+function insFam() {   // feste Chips der Familie: «Ich» (wenn ich mitkomme) und alle, die bei «Wer kommt mit?» gewählt sind (seit 3.17.3.1)
+  const fw = famWahl(), roh = eigenAktiv() ? (S.famSel || []) : mfgAktiv() ? (S.mfg || []) : (fw && fw.nm) || [];
+  const f = famNamen() || { p: "", k: [] }, ord = eigenAktiv() ? [f.p].concat(f.k) : mfgAktiv() ? [].concat(...famAlle().map((h) => h.m)) : [], sel = roh.slice().sort((a, b) => ord.indexOf(a) - ord.indexOf(b));
+  const pill = (t, u) => '<span class="ins-p ins-fix" style="--ic:' + INS_FAM + '">' + esc(t) + (u ? "<small>" + esc(u) + "</small>" : "") + "</span>";
+  return (ichDa() ? pill("Ich", ABSENDER ? rufname() : "") : "") + sel.map((n) => pill(n)).join("");
 }
 function insZiehen(i, t) {   // i zu t: "neu", "fam" oder Kopf einer Partei bzw. Zeile einer offenen Person; ein Kopf nimmt seine Partei mit, Kinder ohne Erwachsene kommen zur Partei von i
   const n = INS_N, zi = zahlendeIdx(n); INS_SEL = null; if (!zi || zi.indexOf(i) < 0) { insZeichnen(); return; }
