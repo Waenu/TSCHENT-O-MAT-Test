@@ -56,6 +56,15 @@
       "betrag": 800,
       "rechnung": "Gesendet am Di 17.11.2026, 10:14 Uhr. App-Version 3.16.2.0.\nAnreise\tMontag 29.03.2027\nAbreise\tMittwoch 31.03.2027 (2 Nächte)\nFamilie\tIch, Partner/in und 1 Kind, davon 1 im Kinderbettchen\nFreunde\t3\nZimmer 1 unberührt\tNein\nReinigung nach Parteien\tjede Partei zahlt gleich viel\nBedingungen akzeptiert\tJa\nTotal\tCHF 831.20, davon Kurtaxe Adelboden für die Freunde CHF 31.20\n#Preisberechnung\nFamilie pro Nacht\tCHF 70.–\nFreund/in 1 pro Nacht\tCHF 70.–\nFreund/in 2 pro Nacht\tCHF 70.–\nFreund/in 3 pro Nacht\tCHF 70.–\nÜbernachtung (2 Nächte)\tCHF 560.–\nReinigung\tCHF 240.–\nReinigung: Anteil Familie\tCHF 80.00\nReinigung: Partei Freund/in 1, Freund/in 2 je CHF 40.00\tCHF 80.00\nReinigung: Partei Freund/in 3\tCHF 80.00\nKurtaxe Adelboden (dazu) 3 Freunde ab 16 Jahren zu CHF 5.20 pro Nacht, 2 Nächte\tCHF 31.20\nTotal mit Kurtaxe\tCHF 831.20\n#Aufteilung unter den Freunden\nFamilie zahlt\tCHF 220.00\nFreund/in 1 und Freund/in 2 zahlen davon Kurtaxe CHF 20.80\tCHF 380.80\nFreund/in 3 zahlt davon Kurtaxe CHF 10.40 (ab 16 Jahren)\tCHF 230.40\nReinigung aufgeteilt: Nach Parteien: jede Partei zahlt gleich viel.",
       "bestaetigt": "2026-11-17T10:14"
+    },
+    {
+      "name": "Miriam",
+      "arr": "2026-11-10",
+      "dep": "2026-11-14",
+      "selbst": false,
+      "pers": 2,
+      "betrag": 100,
+      "bestaetigt": "2026-11-17T12:50"
     }
   ],
   "logbuch": [
