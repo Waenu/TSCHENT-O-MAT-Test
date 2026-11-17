@@ -2,6 +2,22 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.17.6.0",
+      "datum": "17.11.2026",
+      "titel": "Farben der Parteien von Anfang an",
+      "arten": [
+        "Funktion",
+        "Layout"
+      ],
+      "punkte": [
+        "«Wer kommt mit?»: Dein Haushalt ist beim Antippen gold, jeder Haushalt der Geschwister bekommt seine Farbe, sobald jemand von ihm angetippt ist.",
+        "Liste der Freunde: Jeder Kasten hat links die Farbe seiner Partei, gleicher Nachname gleiche Farbe. Bei «Wer gehört zusammen?» korrigierst du, die Farbe zieht mit.",
+        "Bei Geschwistern hat jeder Haushalt seine eigene Insel (Partei 2, 3 …).",
+        "Gleiche Farben auch in «Parteien der Familie», «🤝 Parteien» und in der Aufteilung.",
+        "WhatsApp-Anfrage: Zahler für Kinder nach Parteien gruppiert, z. B. «ich, Robert & Heide und Kurt»."
+      ]
+    },
+    {
       "v": "3.17.5.0",
       "datum": "17.11.2026",
       "titel": "Übernachtungen von Kindern: Zahler pro Partei",
