@@ -174,6 +174,8 @@ Bedienkonzept Wänu (14.11.2026, ersetzt wo abweichend die Punkte oben; erst nac
 - 3.17.6.1 (Wänu): Inseltitel «zahlt für das Kind» bei einem Kind, «für die Kinder» ab zwei.
 - 3.17.6.2 (Wänu: zwei Geschwister-Haushalte gleich blau): `famFarbe` vergleicht über `h.m[0]` (famParteien liefert neue Objekte, `indexOf` war immer −1).
 - 3.17.6.3 (Wänu: Preis blieb nach Abwählen der Zahler stehen): in `render` nach `r.ok` bei `listeModus()` und Freunden Prüfung Mail, `listeVoll`, `zahlPlan` (`zimmerOffen`, `parteiOffen`, `offen`); ist etwas offen, Leiste «Bitte wählen: Wer die Übernachtungen von X bezahlt» usw., `#result` versteckt, Rückkehr wie bei `!r.ok`. `.ins-p` gleich gross wie `.mfg-z .zchip` (38 px, .82em, 600), Abstand 5 px.
+- 3.17.6.4 (Wänu: «sauberes Bild»): `.mfg-z .zchip` ohne eigene Grösse (wie `.zchip`, 44 px, Umbruch erlaubt), `.ins-p` 44 px, Schrift wie `.zchip`, Abstand 8 px.
+- 3.17.6.5 (Wänu «wächst mit Button AAA»): `.zchip`/`.ins-p` `min-height: max(44px, 2.75rem)`, Eingabefelder und 📅/✕ der Liste `max(48px, 3rem)`; `html` hat `16px * var(--fs)`, also nur bei «gross» höher (49/54 px), nie unter 44/48 px.
 
 ## Offen: Airbnb-Belegung ins App-Repo umziehen (Wänu «ja», 13.11.2026, nächste Woche)
 - Heute: Workflow `belegung.yml` + `belegung.py` im alten Repo `Waenu/Tschentomat` (Secret `AIRBNB_ICAL`) schreibt `belegt.json`; die App liest `/Tschentomat/belegt.json`.

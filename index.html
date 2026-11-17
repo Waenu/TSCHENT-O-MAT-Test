@@ -247,18 +247,18 @@ if (TEST_MODUS) {
   .note.h.gm-k.gm-offen { border-color: #E5534B; }   /* Liste der Freunde noch offen: roter Rahmen (seit 3.4.0.1) */
   .gm-k .gm-f { border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px 10px; margin: 8px 0; display: flex; flex-direction: column; gap: 6px; }
   .gm-k .gm-f legend { font-weight: 700; padding: 0 4px; }
-  .gm-k input[type=text] { width: 100%; box-sizing: border-box; min-height: 48px; padding: 10px 12px; font-size: 1rem; }   /* gleich hoch wie 📅 und die Chips (seit 3.9.5.8) */
+  .gm-k input[type=text] { width: 100%; box-sizing: border-box; min-height: max(48px, 3rem); padding: 10px 12px; font-size: 1rem; }   /* gleich hoch wie 📅 und die Chips (seit 3.9.5.8) */
   .gm-k .gm-geb { display: flex; gap: 6px; align-items: center; position: relative; }
   .gm-k .gm-geb input[type=text] { flex: 1; }
   .gm-k .gm-kal { position: absolute; right: 0; bottom: 0; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
   .gm-k .gm-vor { display: flex; flex-direction: column; gap: 6px; } .gm-k .gm-vor .gv { display: flex; gap: 6px; } .gm-k .gm-vor .gv-w { flex: 1; text-align: left; justify-content: flex-start; } .gm-k .gm-vor .gv-x { flex: none; min-width: 44px; }
   .gm-k .gm-in { position: relative; display: block; } .gm-k .gm-in input { width: 100%; box-sizing: border-box; padding-right: 54px; } .gm-k .gm-in .gm-ab { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); width: 46px; height: 40px; border: 0; background: transparent; font-size: 1.35rem; line-height: 1; cursor: pointer; padding: 0; }
   .gm-k .gm-vor.gm-alle { max-height: 55vh; overflow-y: auto; border: 1px solid var(--line); border-radius: 6px; padding: 6px; } .gm-k .gv-k { margin: 0 0 2px; }
-  .gm-k .gm-geb .btn, .gm-k .gm-vor .gv-x { flex: none; width: 64px; min-width: 64px; padding: 0; justify-content: center; }   /* ✕ und 📅 gleich gross (seit 3.7.0.0) */
+  .gm-k .gm-geb .btn, .gm-k .gm-vor .gv-x { min-height: max(48px, 3rem); flex: none; width: 64px; min-width: 64px; padding: 0; justify-content: center; }   /* ✕ und 📅 gleich gross (seit 3.7.0.0) */
   .zchips { display: flex; flex-wrap: wrap; gap: 8px; }
-  .zchip { min-height: 44px; padding: 4px 14px; border-radius: 22px; border: 2px solid var(--line); background: var(--surface); color: var(--fg); font: inherit; font-weight: 600; cursor: pointer; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.15; }
+  .zchip { min-height: max(44px, 2.75rem); padding: 4px 14px; border-radius: max(22px, 1.375rem); border: 2px solid var(--line); background: var(--surface); color: var(--fg); font: inherit; font-weight: 600; cursor: pointer; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.15; }
   .zchip small { font-weight: 400; font-size: .75em; opacity: .85; }
-  .zchips.mfg-z { flex-wrap: nowrap; gap: 5px; margin-bottom: 6px; } .mfg-z .zchip { min-height: 38px; padding: 2px 8px; font-size: .82em; border-radius: 19px; flex: 0 1 auto; min-width: 0; line-height: 1.15; }   /* eine Familie = eine Zeile (seit 3.9.3.2) */
+  .zchips.mfg-z { margin-bottom: 6px; }   /* Namen-Chips gleich hoch wie alle Chips (seit 3.17.6.4, Wänu; vorher kleiner in einer Zeile) */
   .mfg-bett { font-size: .9em; margin: 4px 0 2px; }
   .zchip[aria-pressed="true"] { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
   .zchip[style*="--pc"][aria-pressed="true"] { background: var(--pc); border-color: var(--pc); color: #fff; } .zchip[style*="--pc:#C9A227"][aria-pressed="true"] { color: #111; }   /* Farbe der Partei schon beim Antippen (seit 3.17.6.0) */
@@ -276,8 +276,8 @@ if (TEST_MODUS) {
   .gm-ins { margin: 6px 0 10px; } .ins-i, .ins-o, .ins-neu { border-radius: 10px; padding: 6px 8px 8px; margin: 0 0 8px; }
   .ins-i { border: 2px solid var(--ic); background: color-mix(in srgb, var(--ic) 16%, transparent); } .ins-i.vs { border-style: dashed; }
   .ins-o { border: 2px dashed var(--missing-line); background: var(--missing-bg); } .ins-neu { border: 2px dashed var(--line); text-align: center; padding: 12px 8px; cursor: pointer; }
-  .ins-t { font-size: .85rem; margin: 0 0 6px; font-weight: 700; } .ins-ps { display: flex; flex-wrap: wrap; gap: 5px; }   /* gleich gross wie «Wer kommt mit?» (seit 3.17.6.3) */
-  .ins-p { min-width: 0; min-height: 38px; border-radius: 19px; padding: 2px 8px; font-weight: 600; border: 2px solid var(--ic, var(--line)); background: var(--card, transparent); color: inherit; font: inherit; font-weight: 600; font-size: .82em; line-height: 1.15; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; }
+  .ins-t { font-size: .85rem; margin: 0 0 6px; font-weight: 700; } .ins-ps { display: flex; flex-wrap: wrap; gap: 8px; }   /* gleich gross wie alle Chips (seit 3.17.6.4) */
+  .ins-p { min-width: 0; min-height: max(44px, 2.75rem); border-radius: max(22px, 1.375rem); padding: 4px 14px; font-weight: 600; border: 2px solid var(--ic, var(--line)); background: var(--card, transparent); color: inherit; font: inherit; font-weight: 600; line-height: 1.15; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; }
   .ins-fix { display: inline-flex; flex-direction: column; justify-content: center; cursor: default; touch-action: auto; text-align: center; } .ins-p small { display: block; font-size: .85em; font-weight: 400; opacity: .8; } .ins-p.geteilt { border-style: dashed; } .zz-pt { display: inline-block; width: .7em; height: .7em; border-radius: 50%; background: var(--pc); margin-right: .35em; vertical-align: .05em; } .ins-p.sel { outline: 3px solid var(--accent); outline-offset: 2px; } .ins-p.weg { opacity: .3; }
   .ins-ziel { outline: 3px solid var(--accent); outline-offset: 2px; } .ins-gh { position: fixed; z-index: 9999; pointer-events: none; opacity: .9; margin: 0; }
   .gm-pt.missing select { background-color: var(--missing-bg) !important; border-color: var(--missing-line) !important; }
@@ -1608,7 +1608,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.17.6.3";
+let VERSION = "3.17.6.5";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";

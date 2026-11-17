@@ -2,6 +2,28 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.17.6.5",
+      "datum": "17.11.2026",
+      "titel": "Chips wachsen mit der Schriftgrösse",
+      "arten": [
+        "Layout"
+      ],
+      "punkte": [
+        "Chips, Kreise bei «Wer gehört zusammen?» und die Felder der Liste der Freunde werden mit der Schrift «gross» (AAA) höher; bei «klein» und «mittel» bleiben sie gleich hoch wie bisher."
+      ]
+    },
+    {
+      "v": "3.17.6.4",
+      "datum": "17.11.2026",
+      "titel": "Namen-Chips gleich hoch wie alle Chips",
+      "arten": [
+        "Layout"
+      ],
+      "punkte": [
+        "Die Namen bei «Wer kommt mit?» und die Kreise bei «Wer gehört zusammen?» sind gleich hoch und gleich gross geschrieben wie alle anderen Chips (z. B. Ja/Nein)."
+      ]
+    },
+    {
       "v": "3.17.6.3",
       "datum": "17.11.2026",
       "titel": "Preis verschwindet, wenn wieder etwas offen ist; kleinere Kreise bei den Inseln",
