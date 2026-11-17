@@ -177,6 +177,7 @@ Bedienkonzept Wänu (14.11.2026, ersetzt wo abweichend die Punkte oben; erst nac
 - 3.17.6.4 (Wänu: «sauberes Bild»): `.mfg-z .zchip` ohne eigene Grösse (wie `.zchip`, 44 px, Umbruch erlaubt), `.ins-p` 44 px, Schrift wie `.zchip`, Abstand 8 px.
 - 3.17.6.5 (Wänu «wächst mit Button AAA»): `.zchip`/`.ins-p` `min-height: max(44px, 2.75rem)`, Eingabefelder und 📅/✕ der Liste `max(48px, 3rem)`; `html` hat `16px * var(--fs)`, also nur bei «gross» höher (49/54 px), nie unter 44/48 px.
 - 3.17.6.6 (Wänu 1a/2a ja): Bestätigung als `.gm-pt-okw` (Frage `.gm-pt-frage` «Passt der Vorschlag?», Knopf `.gm-pt-ok` «✓ Ja, passt» mit orangem Rand). `ptBestOffen(n)` = `parteiOffen(n)` oder ein `zv` (auch bei Kindern): solange wahr, sind `.gm-pt-sum` und `#zahlRech` leer/versteckt.
+- 3.17.6.7 (Wänu 1a ja): Chips in `#zahlRech` mit einem Kind-`span` (Punkt `.zz-pt` + Name inline, `.zchip` ist Flex-Spalte), Familie «Familie (Namen)» mit `.zz-n` statt `small` in eigener Zeile.
 
 ## Offen: Airbnb-Belegung ins App-Repo umziehen (Wänu «ja», 13.11.2026, nächste Woche)
 - Heute: Workflow `belegung.yml` + `belegung.py` im alten Repo `Waenu/Tschentomat` (Secret `AIRBNB_ICAL`) schreibt `belegt.json`; die App liest `/Tschentomat/belegt.json`.

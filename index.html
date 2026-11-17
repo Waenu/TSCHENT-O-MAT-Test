@@ -278,7 +278,7 @@ if (TEST_MODUS) {
   .ins-o { border: 2px dashed var(--missing-line); background: var(--missing-bg); } .ins-neu { border: 2px dashed var(--line); text-align: center; padding: 12px 8px; cursor: pointer; }
   .ins-t { font-size: .85rem; margin: 0 0 6px; font-weight: 700; } .ins-ps { display: flex; flex-wrap: wrap; gap: 8px; }   /* gleich gross wie alle Chips (seit 3.17.6.4) */
   .ins-p { min-width: 0; min-height: max(44px, 2.75rem); border-radius: max(22px, 1.375rem); padding: 4px 14px; font-weight: 600; border: 2px solid var(--ic, var(--line)); background: var(--card, transparent); color: inherit; font: inherit; font-weight: 600; line-height: 1.15; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; }
-  .ins-fix { display: inline-flex; flex-direction: column; justify-content: center; cursor: default; touch-action: auto; text-align: center; } .ins-p small { display: block; font-size: .85em; font-weight: 400; opacity: .8; } .ins-p.geteilt { border-style: dashed; } .zz-pt { display: inline-block; width: .7em; height: .7em; border-radius: 50%; background: var(--pc); margin-right: .35em; vertical-align: .05em; } .ins-p.sel { outline: 3px solid var(--accent); outline-offset: 2px; } .ins-p.weg { opacity: .3; }
+  .ins-fix { display: inline-flex; flex-direction: column; justify-content: center; cursor: default; touch-action: auto; text-align: center; } .ins-p small { display: block; font-size: .85em; font-weight: 400; opacity: .8; } .ins-p.geteilt { border-style: dashed; } .zz-n { font-weight: 400; }   /* Punkt vor dem Namen, eine Zeile (seit 3.17.6.7) */ .zz-pt { display: inline-block; width: .7em; height: .7em; border-radius: 50%; background: var(--pc); margin-right: .35em; vertical-align: .05em; } .ins-p.sel { outline: 3px solid var(--accent); outline-offset: 2px; } .ins-p.weg { opacity: .3; }
   .ins-ziel { outline: 3px solid var(--accent); outline-offset: 2px; } .ins-gh { position: fixed; z-index: 9999; pointer-events: none; opacity: .9; margin: 0; }
   .gm-pt.missing select { background-color: var(--missing-bg) !important; border-color: var(--missing-line) !important; }
   .gm-k .gm-gs { display: flex; gap: 18px; } .gm-k .gm-gs label { display: flex; align-items: center; gap: 6px; min-height: 40px; }
@@ -1608,7 +1608,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.17.6.6";
+let VERSION = "3.17.6.7";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -2307,8 +2307,8 @@ function zahlUiZeigen(d) {   // Chips: wer im selben Zimmer schläft, wer die Ko
   pb.innerHTML = minder.map((i) => {
     const z = zahlerVon(i, zi, l), ok = z.length > 0, al = alterAm(l[i].geb, ARR);   // Minderjährige zahlen nie selbst (seit 3.7.2.0)
     return '<div class="field zrech ' + (ok ? "done" : "missing") + '"><label>🛏️ Wer bezahlt die Übernachtungen von ' + esc(rn(l[i]) || vnK(l[i])) + " (" + al + ")?</label><div class=\"zchips\">" +
-      chip('data-zz="' + i + '|ich"', z.indexOf("ich") >= 0, '<span class="zz-pt" style="--pc:' + INS_FAM + '"></span>Familie<small>(' + esc(insFamNamen()) + ')</small>') +
-      ptKoepfe(l, zi).map((h) => { const ad = erw.filter((j) => parteiKopf(j, l, zi) === h); return chip('data-zz="' + i + "|p" + h + '"', z.indexOf("f" + h) >= 0, '<span class="zz-pt" style="--pc:' + ptFarbe(h, l, zi) + '"></span>' + esc(ad.map((j) => rn(l[j]) || vnK(l[j])).join(" & "))); }).join("") +
+      chip('data-zz="' + i + '|ich"', z.indexOf("ich") >= 0, '<span><span class="zz-pt" style="--pc:' + INS_FAM + '"></span>Familie <span class="zz-n">(' + esc(insFamNamen()) + ')</span></span>') +
+      ptKoepfe(l, zi).map((h) => { const ad = erw.filter((j) => parteiKopf(j, l, zi) === h); return chip('data-zz="' + i + "|p" + h + '"', z.indexOf("f" + h) >= 0, '<span><span class="zz-pt" style="--pc:' + ptFarbe(h, l, zi) + '"></span>' + esc(ad.map((j) => rn(l[j]) || vnK(l[j])).join(" & ")) + '</span>'); }).join("") +
       '</div><p class="hint">' + "Gemeint " + (al < 6 ? "ist der Nachtpreis" : "sind Nachtpreis und Kurtaxe") + " von " + esc(rn(l[i]) || vnK(l[i])) + ". Die Reinigung legst du gleich danach fest. " + (ok ? ([...new Set(z.map((k) => k === "ich" ? "ich" : parteiKopf(Number(k.slice(1)), l, zi)))].length > 1 ? "Mehrere gewählt: Jede Partei zahlt gleich viel." : "") : "Bitte antippen. Mehrere sind möglich, dann zahlt jede Partei gleich viel.") +
 "</p></div>";
   }).join("");
