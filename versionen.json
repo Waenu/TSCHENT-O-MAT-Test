@@ -2,6 +2,17 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.17.9.0",
+      "datum": "17.11.2026",
+      "titel": "Frühere Aufenthalte löschbar",
+      "arten": [
+        "Funktion"
+      ],
+      "punkte": [
+        "In der Verwaltung hat jeder frühere Aufenthalt rechts ein 🗑️. Nach einer Rückfrage wird er endgültig gelöscht (gleich wie «Endgültig löschen» bei kommenden Aufenthalten)."
+      ]
+    },
+    {
       "v": "3.17.8.2",
       "datum": "17.11.2026",
       "titel": "«Kopieren» und ✕ der Freunde-Liste",
