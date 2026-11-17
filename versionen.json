@@ -2,6 +2,19 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.17.7.0",
+      "datum": "17.11.2026",
+      "titel": "Fehlt oben etwas, verschwinden die Fragen darunter",
+      "arten": [
+        "Funktion"
+      ],
+      "punkte": [
+        "Ist die Liste der Freunde nicht vollständig, «Wer gehört zusammen?» nicht bestätigt oder für ein Kind noch kein Zahler gewählt, sind alle Fragen darunter ausgeblendet (Zimmer, Reinigung, Vergünstigung). Sobald alles gewählt ist, erscheinen sie mit den bisherigen Antworten wieder.",
+        "Die Leiste unten nennt immer die oberste offene Frage.",
+        "Fehler behoben: Bestand eine Partei nur aus einer Person (z. B. Robert allein), fehlte der Knopf «✓ Ja, passt»."
+      ]
+    },
+    {
       "v": "3.17.6.7",
       "datum": "17.11.2026",
       "titel": "Zahler-Chips gleich hoch wie alle Chips",
