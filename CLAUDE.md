@@ -21,6 +21,7 @@ Seite: https://waenu.github.io/TSCHENT-O-MAT-Test/ . Seit 3.4.0.0 (14.11.2026) f
 2. Direkt in der laufenden App (`Waenu/TSCHENT-O-MAT-180264`) nur, was die Testversion nicht prüfen kann (Buchungen, Mails, WhatsApp, Zahlungen, speichern) oder dringende Fehlerkorrekturen. Am Anfang «📍 Laufende App» schreiben und den Grund nennen. Danach die Testversion auf denselben Stand bringen.
 3. Vor jeder Arbeit in beiden Repos den neuesten Stand holen (`git pull`), weil Wänu auch in anderen Chats ändern kann.
 4. Beide Repos im selben Chat angehängt; ein eigener Chat für die Testversion ist nicht nötig.
+5. Seit 17.11.2026 (Wänu): parallel bauen. Jede Änderung gleichzeitig in beiden Repos mit derselben Version (`index.html` und `sw.js` gleich, Versionshistorie in beiden). «push» heisst nur Testversion pushen; die laufende App liegt fertig bereit und wird erst nach «übernehmen» (bzw. ausdrücklichem Push der laufenden App) gepusht.
 
 ## Offen und Hinweise nach dem Kalender-Umbau (Stand 12.11.2026, 3.2.1.5)
 1. Zurück zum Stand vor dem neuen Kalender (3.0.0.1): Commit `0ede210`. Nur `index.html`, `sw.js`, `einstellungen.json`, `versionen.json` und `CLAUDE.md` aus diesem Commit zurückholen, die Daten bleiben. Ein Git-Tag dafür gibt es nicht (Anlegen hatte nicht geklappt). Nur auf Wänus ausdrücklichen Wunsch.
