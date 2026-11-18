@@ -264,7 +264,10 @@ if (TEST_MODUS) {
   .zchip.kk-fr { display: inline-flex; flex-direction: column; align-items: center; justify-content: center; cursor: default; }   /* Kleinkind der Freunde im Kinderbettchen, fest (seit 3.17.10.1) */
   .zchip[style*="--pc"][aria-pressed="true"] { background: var(--pc); border-color: var(--pc); color: #fff; } .zchip[style*="--pc:#C9A227"][aria-pressed="true"] { color: #111; }   /* Farbe der Partei schon beim Antippen (seit 3.17.6.0) */
   .gm-f[style*="--pc"] { box-shadow: inset 6px 0 0 var(--pc); }
-  .zchip.matra { border-style: dashed !important; margin-left: 14px; } .matra-h { color: var(--missing-line); font-weight: 600; }
+  .mat-f { margin: 10px 0 0; }
+.mat-f .mat-q { margin: 0 0 6px; font-weight: 600; }
+.mat-f.missing .zchip { border-color: var(--missing-line); }
+.zchip.matra { border-style: dashed !important; margin-left: 14px; } .matra-h { color: var(--missing-line); font-weight: 600; }
   .field.chipfeld > select { display: none; } .rein-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 6px; } .rein-chips .zchip:disabled { opacity: .45; cursor: default; }
   .rein-wahl { margin: 2px 0 4px; font-weight: 600; }   /* Fragen als Chips (seit 3.9.5.5 Reinigung, seit 3.9.5.6 alle kurzen) */
   .pt-info { list-style: none; margin: 4px 0 8px; padding: 0; } .pt-info li { display: flex; gap: 8px; align-items: baseline; padding: 3px 0; color: var(--muted); }
@@ -1670,7 +1673,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.18.0.0";
+let VERSION = "3.18.1.0";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -6805,7 +6808,15 @@ function stornoKarte(x) {   // stornierter Aufenthalt: bleibt grau stehen, mit d
   const offen = stornoOffen(x) > 0;
   return '<div class="vk vk-storno" data-vk="' + key + '"><div class="vk-top"><span class="vk-name">' + esc(x.name) + '</span><span class="hint">' + esc(fmtTag(x.arr)) + " bis " + esc(fmtTag(x.dep)) + '</span></div><div class="vk-chips"><span class="vk-chip v">❌ storniert' + (x.storniert ? " am " + esc(fmtTag(x.storniert.slice(0, 10))) : "") + '</span></div><div class="zt"><div class="zt-h">' + (offen ? "📌 Zu tun" : "✅ Alles erledigt") + "</div>" + z.join("") + '</div><div class="vk-acts"><button type="button" class="btn quiet" data-bweg="' + key + '|s">🗑️ Endgültig löschen</button></div></div>';
 }
-function anfrageKarte(x) { return vkKarte(x, "offen", '<div class="vk-chips"><span class="vk-chip v">📨 Anfrage, noch nicht bestätigt</span></div>' + vkChips(x, true), "", '<button type="button" class="btn main" data-ja="' + esc(bKey(x)) + '">✅ Bestätigen</button><button type="button" class="btn" data-nein="' + esc(bKey(x)) + '">✖ Ablehnen</button>'); }
+// Luftmatratze in der Anfrage: Papi gibt sie mit Ja/Nein frei, «Bestätigen» erst nach der Wahl; Nein = Anfrage geht zurück, eine Person weniger (seit 3.18.1.0)
+const matraVon = (x) => /Luftmatratze/.test(String((x && (x.rechnung || x.text)) || ""));
+const MATRA_W = {};   // bKey → "ja" | "nein" (nur bis zum Neuladen)
+function anfrageKarte(x) {
+  const k = bKey(x), m = matraVon(x), w = MATRA_W[k] || "", ek = esc(k);
+  const frage = m ? '<div class="mat-f' + (w ? "" : " missing") + '"><p class="mat-q">🛏️ Luftmatratze (' + (P.maxPersonen + 1) + '. Bett) freigeben?</p><div class="zchips"><button type="button" class="zchip" data-matw="' + ek + '|ja" aria-pressed="' + (w === "ja") + '">Ja</button><button type="button" class="zchip" data-matw="' + ek + '|nein" aria-pressed="' + (w === "nein") + '">Nein</button></div>' + (w === "nein" ? '<p class="hint">Die Person mit der Luftmatratze kann nicht mitkommen. Die Anfrage geht zurück, das Kind schickt sie mit einer Person weniger nochmals.</p>' : (!w ? '<p class="hint">Bitte zuerst Ja oder Nein wählen.</p>' : "")) + '</div>' : "";
+  const knopf = (m && w === "nein") ? '<button type="button" class="btn main" data-nein="' + ek + '" data-matnein="1">↩︎ Ohne Luftmatratze zurückschicken</button>' : '<button type="button" class="btn main" data-ja="' + ek + '"' + (m && !w ? " disabled" : "") + '>✅ Bestätigen</button>';
+  return vkKarte(x, "offen", '<div class="vk-chips"><span class="vk-chip v">📨 Anfrage, noch nicht bestätigt</span></div>' + vkChips(x, true) + frage, "", knopf + '<button type="button" class="btn" data-nein="' + ek + '">✖ Ablehnen</button>');
+}
 // Mehrere Karten einer Person: jede einklappbar, offen sind die aktuelle (erste), Anfragen und dringende (rot); Zustand bis zum Neuladen in VK_KL (seit 3.9.6.0, Wänu)
 const VK_KL = new Map();
 function vkKlappen(l) {
@@ -7511,9 +7522,12 @@ function bestNeuZeichnen() { aufentZeigen(); renderKalender(); bestZeigen(); }
 let BM_T = 0;
 function bestMsgZeigen() { const p = document.querySelector("#bestKasten .best-msg"); if (p) p.scrollIntoView({ behavior: "auto", block: "start" }); }   // die Meldung (mit Knopf «Absage schicken» usw.) steht oben, nach dem Klick soll sie sichtbar sein
 function bestWaLink(text, key, label) { return ' <a class="btn" data-bescheid="' + esc(key) + '" href="https://wa.me/?text=' + encodeURIComponent(text) + '" target="_blank" rel="noopener">' + WA_SVG + (label || "Dem Kind Bescheid geben") + "</a>"; }
+function matNeinSatz() { return "Der Termin passt, nur die Luftmatratze (" + (P.maxPersonen + 1) + ". Bett) geht dieses Mal leider nicht. Eine Person kann darum nicht mitkommen. Bitte schick die Anfrage mit einer Person weniger nochmals."; }
 function bestText(x, abgelehnt) {   // Aufbau: Anrede, Satz, Angaben je Zeile, Absätze (seit 3.9.4.0)
+  if (abgelehnt && x.matNein) return waHoi(x.name) + matNeinSatz() + "\n\n" + waZeit(x);
   if (abgelehnt) return waHoi(x.name) + "Deine Anfrage können wir leider nicht bestätigen.\n\n" + waZeit(x) + "\n\nMelde dich bei uns, dann suchen wir zusammen eine Lösung.";
   const st = (x.sb || x.selbst) && istStaffelStart(x.arr, x), z = [waHoi(x.name) + "Danke für deine Buchung! Dein Aufenthalt ist bestätigt. 🎉", "", waZeit(x), "Anreise: ab " + ZEIT_AN, "Abreise: Chalet bis " + ZEIT_AB + " übergeben"];
+  if (matraVon(x)) z.push("", "🛏️ Die Luftmatratze (" + (P.maxPersonen + 1) + ". Bett) ist freigegeben.");
   if (provVon(x)) z.push("", "Achtung: Der Termin steht mit Vorbehalt und ist nicht in Airbnb gesperrt. Kommt ein Airbnb-Gast, hat er Vorrang, dann müsst ihr ausweichen.");
   if (gmAktiv() && freundeVon(x) > 0) z.push("", "Wichtig: Die Liste deiner Freunde ist schon ausgefüllt. Bitte bestätige sie jetzt im TSCHENT-O-MAT mit «Senden», du findest sie unter «👤 Meine Verwaltung». Wir brauchen sie für die Kurtaxe und damit wir die Reservation abschliessen können.");
   if (st) z.push("", "Du beginnst die Staffel: Das Chalet ist gereinigt und bezogen, du bringst keine Wäsche mit. Dafür nimmst du die benutzte Wäsche mit und " + (x.waesche === "senden" ? "sendest sie uns" : "bringst sie uns") + " bis spätestens " + fmtTagV(addDays(x.dep, WAESCHE_TAGE)) + ".");
@@ -8021,18 +8035,22 @@ document.getElementById("bestKasten").addEventListener("click", async (e) => {
     } catch (err) { bestFehler = err && err.message ? err.message : "Das hat nicht geklappt."; }
     bestBusy = false; bestZeigen(); return;
   }
+  const mw = f("data-matw");
+  if (mw) { const i = mw.lastIndexOf("|"), k = mw.slice(0, i), v = mw.slice(i + 1); if (MATRA_W[k] === v) delete MATRA_W[k]; else MATRA_W[k] = v; bestZeigen(); return; }
   const nein = f("data-nein");
   if (nein) {
     const x = find(OFFEN, nein); if (!x) return;
-    if (!(await appFrage("Anfrage von " + x.name + " (" + fmtTag(x.arr) + " bis " + fmtTag(x.dep) + ") wirklich ablehnen?", "Ja, ablehnen"))) return;
+    const matN = !!e.target.closest("[data-matnein]");
+    if (!(await appFrage(matN ? "Anfrage von " + x.name + " (" + fmtTag(x.arr) + " bis " + fmtTag(x.dep) + ") ohne Luftmatratze zurückschicken? Das Kind schickt sie danach mit einer Person weniger nochmals." : "Anfrage von " + x.name + " (" + fmtTag(x.arr) + " bis " + fmtTag(x.dep) + ") wirklich ablehnen?", matN ? "Ja, zurückschicken" : "Ja, ablehnen"))) return;
+    if (matN) x.matNein = true; else delete x.matNein;
     bestBusy = true; bestFehler = "";
     const btn = e.target.closest("button"); btn.disabled = true; btn.textContent = "Speichere …";
     try {
       const j = await ghAendern((l, jj) => { logEintrag(jj, "Abgelehnt: " + keyText(nein)); return l.filter((y) => bKey(y) !== nein).concat([{ name: x.name, arr: x.arr, dep: x.dep, status: "abgelehnt" }]); });
       buchungenAn(j); try { localStorage.setItem("tm2_buchungen", JSON.stringify(j)); } catch (e2) {}
       OFFEN = OFFEN.filter((y) => y !== x); ABGEL.push(x); listeSichern("tm2_offen", OFFEN); listeSichern("tm2_abgelehnt", ABGEL);
-      const text = "Hoi " + x.name + ", deine Anfrage vom " + fmtTagV(x.arr) + " bis " + fmtTagV(x.dep) + " können wir leider nicht bestätigen. Melde dich bei uns, dann suchen wir zusammen eine Lösung.";
-      bestMsg = "Abgelehnt und gespeichert: " + esc(x.name) + ", " + esc(fmtTag(x.arr)) + " bis " + esc(fmtTag(x.dep)) + ". Im Handy des Kindes erscheint die Absage beim nächsten Öffnen." + bestWaLink(text, bKey(x), "Absage schicken");
+      const text = x.matNein ? bestText(x, true) : "Hoi " + x.name + ", deine Anfrage vom " + fmtTagV(x.arr) + " bis " + fmtTagV(x.dep) + " können wir leider nicht bestätigen. Melde dich bei uns, dann suchen wir zusammen eine Lösung.";
+      bestMsg = "Abgelehnt und gespeichert: " + esc(x.name) + ", " + esc(fmtTag(x.arr)) + " bis " + esc(fmtTag(x.dep)) + ". Im Handy des Kindes erscheint die Absage beim nächsten Öffnen." + bestWaLink(text, bKey(x), x.matNein ? "Nachricht schicken" : "Absage schicken");
       bestBusy = false; bestNeuZeichnen(); bestMsgZeigen();
     } catch (err) { bestBusy = false; bestFehler = err && err.message ? err.message : "Das hat nicht geklappt."; bestZeigen(); }
     return;
@@ -8087,6 +8105,7 @@ document.getElementById("bestKasten").addEventListener("click", async (e) => {
     bestBusy = false; bestNeuZeichnen(); bestMsgZeigen(); return;
   }
   const ja = f("data-ja"), del = f("data-bdel");
+  if (ja) { const xm = find(OFFEN, ja); if (xm && matraVon(xm) && MATRA_W[ja] !== "ja") return; }   // Luftmatratze zuerst freigeben
   if (!ja && !del) return;
   bestBusy = true; bestFehler = "";
   const btn = e.target.closest("button"); btn.disabled = true; btn.textContent = "Speichere …";
