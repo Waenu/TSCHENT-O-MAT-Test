@@ -36,14 +36,11 @@
       "betrag": 2060,
       "rechnung": "Gesendet am Mi 18.11.2026, 21:45 Uhr. App-Version 3.20.0.6.\nAnreise\tSamstag 21.11.2026\nAbreise\tFreitag 27.11.2026 (6 Nächte)\n🛏️ Luftmatratze (7. Bett) in der Nacht Mo 23.11.2026 / Di 24.11.2026: bitte freigeben\nFamilie\tIch und Partner/in\nFreunde\t7\nDavon Kleinkinder ohne Bett\t2\nFreund/in 6 (Kleinkind im Kinderbettchen) gehört zu: Familie\nFreund/in 7 (Kleinkind im Kinderbettchen) gehört zu: Freund/in 3\nFreund/in 1\tSo 22.11.2026 bis Do 26.11.2026 (4 Nächte)\nFreund/in 2\tSa 21.11.2026 bis Do 26.11.2026 (5 Nächte)\nFreund/in 3\tMo 23.11.2026 bis Do 26.11.2026 (3 Nächte)\nFreund/in 4\tSo 22.11.2026 bis Fr 27.11.2026 (5 Nächte)\nFreund/in 5\tSa 21.11.2026 bis Di 24.11.2026 (3 Nächte)\nZimmer 1 unberührt\tNein\nReinigung nach Parteien\tjede Partei zahlt gleich viel\nBedingungen akzeptiert\tJa\nTotal\tCHF 2’164.00, davon Kurtaxe Adelboden für die Freunde CHF 104.00\n#Preisberechnung\nFamilie pro Nacht\tCHF 70.–\nFreund/in 1 pro Nacht\tCHF 70.–\nFreund/in 2 pro Nacht\tCHF 70.–\nFreund/in 3 pro Nacht\tCHF 70.–\nFreund/in 4 pro Nacht\tCHF 70.–\nFreund/in 5 pro Nacht\tCHF 70.–\nFreund/in 6 Kleinkind ohne Bett, gratis\tCHF 0.–\nFreund/in 7 Kleinkind ohne Bett, gratis\tCHF 0.–\nÜbernachtung (6 Nächte)\tCHF 2’520.–\nFreunde mit eigener An- und Abreise: 10 Nächte weniger\t− CHF 700.–\nReinigung\tCHF 240.–\nReinigung: Anteil Familie\tCHF 48.00\nReinigung: Partei Freund/in 1, Freund/in 2 je CHF 24.00\tCHF 48.00\nReinigung: Partei Freund/in 3\tCHF 48.00\nReinigung: Partei Freund/in 4\tCHF 48.00\nReinigung: Partei Freund/in 5\tCHF 48.00\nKurtaxe Adelboden (dazu) 5 Freunde ab 16 Jahren zu CHF 5.20 pro Nacht, zusammen 20 Nächte (eigene Nächte)\tCHF 104.00\nTotal mit Kurtaxe\tCHF 2’164.00\n#Aufteilung unter den Freunden\nFamilie zahlt\tCHF 468.00\nFreund/in 1 und Freund/in 2 zahlen davon Kurtaxe CHF 46.80\tCHF 724.80\nFreund/in 3 zahlt davon Kurtaxe CHF 15.60 (ab 16 Jahren)\tCHF 273.60\nFreund/in 4 zahlt davon Kurtaxe CHF 26.00 (ab 16 Jahren)\tCHF 424.00\nFreund/in 5 zahlt davon Kurtaxe CHF 15.60 (ab 16 Jahren)\tCHF 273.60\nFreund/in 6 Kleinkind ohne Bett, gratis\tCHF 0.00\nFreund/in 7 Kleinkind ohne Bett, gratis\tCHF 0.00\nReinigung aufgeteilt: Nach Parteien: jede Partei zahlt gleich viel.",
       "bestaetigt": "2026-11-18T21:45",
-      "gesperrt": "2026-11-18T21:52"
+      "gesperrt": "2026-11-18T21:52",
+      "pimlical": "2026-11-18T21:52"
     }
   ],
   "logbuch": [
-    {
-      "t": "2026-11-09T21:44",
-      "text": "In Pimlical eingetragen: Jerome, Do 6.05.2027 bis So 9.05.2027"
-    },
     {
       "t": "2026-11-10T10:14",
       "text": "Bestätigt: Deborah, Mi 18.11.2026 bis Sa 21.11.2026, CHF 1500"
@@ -839,6 +836,10 @@
     {
       "t": "2026-11-18T21:52",
       "text": "In Airbnb gesperrt: Manuel, Sa 21.11.2026 bis Fr 27.11.2026"
+    },
+    {
+      "t": "2026-11-18T21:52",
+      "text": "In Pimlical eingetragen: Manuel, Sa 21.11.2026 bis Fr 27.11.2026"
     }
   ],
   "reinigung": [],
