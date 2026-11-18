@@ -1308,6 +1308,10 @@ if (TEST_MODUS) {
   .trk-c { display: flex; flex-wrap: wrap; gap: 8px; }
   .trk-a { display: flex; gap: 8px; margin-top: 8px; } .trk-a input { flex: 1 1 auto; min-width: 0; min-height: max(48px, 3rem); }
   .trk-sum { margin: 8px 0 0; }
+  .trk-c .zchip small { display: block; font-weight: 400; font-size: .78em; opacity: .85; }
+  #herzRegen { position: fixed; inset: 0; z-index: 100000; pointer-events: none; overflow: hidden; }
+  #herzRegen .hz { position: absolute; top: 0; line-height: 1; will-change: transform, opacity; }
+  #herzRegen .hz-danke { position: absolute; left: 50%; top: 42%; padding: 14px 22px; border-radius: 999px; background: var(--fg); color: var(--bg); font-weight: 800; font-size: 1.2rem; white-space: nowrap; box-shadow: 0 4px 18px rgba(0,0,0,.35); }
 /* Trinkgeld: eine Münze fällt ins Sparschwein, das Schweinchen schnuppert und wackelt (nur bei «Bewegung: alles», nur transform und opacity) */
   .an-schwein { position: relative; display: inline-block; transform-origin: 40% 85%; animation: anSchwein 5s ease-in-out infinite; }
   .an-schwein::after { content: ""; position: absolute; left: 45%; top: -.1em; width: .3em; height: .3em; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #FFF2A8, #F0B400 70%); box-shadow: 0 0 0 1px #A87400; opacity: 0; animation: anSchweinMuenze 5s ease-in infinite; pointer-events: none; }
@@ -1644,7 +1648,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.17.12.0";
+let VERSION = "3.17.12.1";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -2766,26 +2770,48 @@ function ktVon(b) { const m = /\nKurtaxe Adelboden[^\t\n]*\tCHF ([\d'’.]+)/.ex
 const TRK_BETR = [20, 50, 100];
 let TRK_ANDERS = new Set();
 function trinkB() { try { const o = JSON.parse(localStorage.getItem("tm2_trinkB:" + ABSENDER) || "{}"); return o && typeof o === "object" ? o : {}; } catch (e) { return {}; } }
-function trinkSetzen(k, n) { const o = trinkB(); if (n > 0) o[k] = n; else delete o[k]; try { localStorage.setItem("tm2_trinkB:" + ABSENDER, JSON.stringify(o)); } catch (e) {} }
+function trinkSetzen(k, n) { const o = trinkB(); if (n === "auf" || n > 0) o[k] = n; else delete o[k]; try { localStorage.setItem("tm2_trinkB:" + ABSENDER, JSON.stringify(o)); } catch (e) {} }
+function aufZiel(s) { return Math.floor(s / 10 + 1e-9) * 10 + 10; }   // Aufrunden: auf die nächsten CHF 10.– (ist es schon rund, CHF 10.– mehr) (seit 3.17.12.1)
+function trinkBetrag(b) { const v = trinkB()[bKey(b)]; if (v === "auf") return Math.round((aufZiel(zahlSumme(b)) - zahlSumme(b)) * 100) / 100; return +v || 0; }
 function trinkHtml(b) {
   if (!ABSENDER || MAMI) return "";
-  const k = bKey(b), n = +trinkB()[k] || 0, and = TRK_ANDERS.has(k) || (n > 0 && TRK_BETR.indexOf(n) < 0);
+  const k = bKey(b), v = trinkB()[k], n = trinkBetrag(b), auf = v === "auf", and = TRK_ANDERS.has(k) || (!auf && n > 0 && TRK_BETR.indexOf(n) < 0);
   let vs = false; try { vs = meinVorschau(); } catch (e) {}
+  const dis = vs ? " disabled" : "";
   let h = '<div class="trk" data-trk-k="' + esc(k) + '"><p class="trk-t"><span class="an-schwein" aria-hidden="true">🐖</span> <b>Trinkgeld für Mami</b> <small>freiwillig</small> ' + symBtn("b-trinkgeld", "ℹ️") + '</p><div class="zchips trk-c">' +
-    TRK_BETR.map((x) => '<button type="button" class="zchip" data-trk="' + x + '" aria-pressed="' + (n === x && !TRK_ANDERS.has(k) ? "true" : "false") + '"' + (vs ? " disabled" : "") + ">CHF " + x + ".–</button>").join("") +
-    '<button type="button" class="zchip" data-trk="a" aria-pressed="' + (and ? "true" : "false") + '"' + (vs ? " disabled" : "") + ">" + (and && n > 0 && !TRK_ANDERS.has(k) ? "CHF " + n + ".–" : "Anderer Betrag") + "</button></div>";
-  if (TRK_ANDERS.has(k)) h += '<div class="trk-a"><input type="text" class="betrag" inputmode="numeric" autocomplete="off" maxlength="4" placeholder="Betrag in CHF" data-trk-in="1" value="' + (n > 0 ? n : "") + '"><button type="button" class="wbtn" data-trk-ok="1">✓ Übernehmen</button></div>';
+    '<button type="button" class="zchip" data-trk="r" aria-pressed="' + (auf && !TRK_ANDERS.has(k) ? "true" : "false") + '"' + dis + '>Aufrunden<small>auf ' + esc(chf2(aufZiel(zahlSumme(b)))) + "</small></button>" +
+    TRK_BETR.map((x) => '<button type="button" class="zchip" data-trk="' + x + '" aria-pressed="' + (!auf && n === x && !TRK_ANDERS.has(k) ? "true" : "false") + '"' + dis + ">CHF " + x + ".–</button>").join("") +
+    '<button type="button" class="zchip" data-trk="a" aria-pressed="' + (and ? "true" : "false") + '"' + dis + ">" + (and && n > 0 && !TRK_ANDERS.has(k) ? "CHF " + n + ".–" : "Anderer Betrag") + "</button></div>";
+  if (TRK_ANDERS.has(k)) h += '<div class="trk-a"><input type="text" class="betrag" inputmode="numeric" autocomplete="off" maxlength="4" placeholder="Betrag in CHF" data-trk-in="1" value="' + (!auf && n > 0 ? n : "") + '"><button type="button" class="wbtn" data-trk-ok="1">✓ Übernehmen</button></div>';
   if (n > 0) h += '<p class="trk-sum">Zu überweisen: ' + esc(chf2(zahlSumme(b))) + " + Trinkgeld " + esc(chf2(n)) + " = <b>" + esc(chf2(zahlSumme(b) + n)) + "</b> 🙏</p>";
   return h + "</div>";
 }
 function trinkNeu() { try { aufentZeigen(); } catch (e) {} }
+// Dankeschön: Herzchen fallen vom Himmel (Web Animations, damit «Bewegung: nur Wichtiges» sie nicht anhält; bei «Bewegung aus» und «Bewegung reduzieren» nicht) (seit 3.17.12.1)
+function herzRegen() {
+  try { if (document.documentElement.classList.contains("aus") || matchMedia("(prefers-reduced-motion: reduce)").matches) return; } catch (e) {}
+  const alt = document.getElementById("herzRegen"); if (alt) alt.remove();
+  const w = document.createElement("div"); w.id = "herzRegen"; w.setAttribute("aria-hidden", "true");
+  const H = ["❤️", "💛", "🧡", "💖", "💕", "💗"], hoch = window.innerHeight || 800;
+  for (let i = 0; i < 28; i++) {
+    const h = document.createElement("span"); h.className = "hz"; h.textContent = H[i % H.length];
+    h.style.left = (Math.random() * 94 + 1) + "vw"; h.style.fontSize = (18 + Math.random() * 18) + "px"; w.appendChild(h);
+    const dx = (Math.random() - .5) * 80, dr = (Math.random() - .5) * 120, dauer = 2200 + Math.random() * 1600;
+    h.animate([{ transform: "translate(0, -60px) rotate(0deg)", opacity: 0 }, { opacity: 1, offset: .1 }, { opacity: 1, offset: .8 }, { transform: "translate(" + dx + "px, " + (hoch + 60) + "px) rotate(" + dr + "deg)", opacity: 0 }], { duration: dauer, delay: Math.random() * 900, easing: "cubic-bezier(.3,.1,.7,1)", fill: "both" });
+  }
+  const t = document.createElement("div"); t.className = "hz-danke"; t.textContent = "Danke! Mami freut sich 💛"; w.appendChild(t);
+  t.animate([{ opacity: 0, transform: "translate(-50%, -50%) scale(.8)" }, { opacity: 1, transform: "translate(-50%, -50%) scale(1)", offset: .15 }, { opacity: 1, offset: .8 }, { opacity: 0, transform: "translate(-50%, -50%) scale(1)" }], { duration: 3200, easing: "ease-out", fill: "both" });
+  document.body.appendChild(w); setTimeout(() => { if (w.parentNode) w.remove(); }, 4800);
+}
 document.addEventListener("click", (e) => {
-  const c = e.target.closest(".trk [data-trk], .trk [data-trk-ok]"); if (!c) return;
-  const box = c.closest(".trk"), k = box.getAttribute("data-trk-k");
-  if (c.hasAttribute("data-trk-ok")) { const i = box.querySelector("[data-trk-in]"); trinkSetzen(k, Math.min(9999, parseInt((i && i.value) || "", 10) || 0)); TRK_ANDERS.delete(k); trinkNeu(); return; }
-  const v = c.getAttribute("data-trk"), n = +trinkB()[k] || 0;
+  const c = e.target.closest(".trk [data-trk], .trk [data-trk-ok]"); if (!c || c.disabled) return;
+  const box = c.closest(".trk"), k = box.getAttribute("data-trk-k"), vor = trinkB()[k];
+  const nach = () => { const w = trinkB()[k]; if (w && w !== vor) herzRegen(); };
+  if (c.hasAttribute("data-trk-ok")) { const i = box.querySelector("[data-trk-in]"); trinkSetzen(k, Math.min(9999, parseInt((i && i.value) || "", 10) || 0)); TRK_ANDERS.delete(k); trinkNeu(); nach(); return; }
+  const v = c.getAttribute("data-trk");
   if (v === "a") { if (TRK_ANDERS.has(k)) TRK_ANDERS.delete(k); else if (c.getAttribute("aria-pressed") === "true") trinkSetzen(k, 0); else TRK_ANDERS.add(k); trinkNeu(); if (TRK_ANDERS.has(k)) { const i = document.querySelector('.trk[data-trk-k="' + CSS.escape(k) + '"] [data-trk-in]'); if (i) i.focus(); } return; }
-  TRK_ANDERS.delete(k); trinkSetzen(k, n === +v ? 0 : +v); trinkNeu();
+  const neu = v === "r" ? "auf" : +v;
+  TRK_ANDERS.delete(k); trinkSetzen(k, vor === neu ? 0 : neu); trinkNeu(); nach();
 });
 document.addEventListener("input", (e) => { if (e.target && e.target.matches && e.target.matches("[data-trk-in]")) e.target.value = e.target.value.replace(/\D/g, "").slice(0, 4); });
 document.addEventListener("keydown", (e) => { if (e.key === "Enter" && e.target && e.target.matches && e.target.matches("[data-trk-in]")) { const o = e.target.closest(".trk").querySelector("[data-trk-ok]"); if (o) o.click(); } });
