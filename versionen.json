@@ -2,6 +2,20 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.17.12.8",
+      "datum": "2026-11-18",
+      "titel": "Trinkgeld: Aufrunden als Frage, Feld nur für das Trinkgeld",
+      "arten": [
+        "Layout",
+        "Fehler"
+      ],
+      "punkte": [
+        "«Aufrunden auf CHF …?» mit Knopf «Ja, aufrunden (+ CHF …)» statt grauem Vorschlag im Feld.",
+        "Darunter «Oder eigenes Trinkgeld:» mit Feld «CHF». Schon beim Tippen erscheint, wie viel du insgesamt überweist.",
+        "Ist die Eingabe grösser als der fällige Betrag, fragt die App nach, ob das Total gemeint ist."
+      ]
+    },
+    {
       "v": "3.17.12.7",
       "datum": "2026-11-18",
       "titel": "Meine Verwaltung: Farben und ein Freund allein",
