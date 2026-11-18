@@ -1308,6 +1308,8 @@ if (TEST_MODUS) {
   .trk-c { display: flex; flex-wrap: wrap; gap: 8px; }
   .trk-a { display: flex; gap: 8px; margin-top: 8px; } .trk-a input { flex: 1 1 auto; min-width: 0; min-height: max(48px, 3rem); }
   .trk-sum { margin: 8px 0 0; }
+  .trk-iban { margin-top: 10px; } .trk-iban p { margin: 0 0 8px; }
+  .trk-c { margin-bottom: 8px; } .trk-a { margin-top: 0; } .trk-a .wbtn { white-space: nowrap; flex: 0 0 auto; }
   .trk-c .zchip small { display: block; font-weight: 400; font-size: .78em; opacity: .85; }
   #herzRegen { position: fixed; inset: 0; z-index: 100000; pointer-events: none; overflow: hidden; }
   #herzRegen .hz { position: absolute; top: 0; line-height: 1; will-change: transform, opacity; }
@@ -1648,7 +1650,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.17.12.1";
+let VERSION = "3.17.12.3";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -2767,25 +2769,23 @@ const strecken = (l) => l.map((r) => fmtTag(r[0]) + " bis " + fmtTag(r[1])).join
 function konfBelegt(b) { const n = konfNaechte(b), o = []; n.forEach((k) => { const l = o[o.length - 1]; if (l && l[1] === k) l[1] = addDays(k, 1); else o.push([k, addDays(k, 1)]); }); return o; }
 function ktVon(b) { const m = /\nKurtaxe Adelboden[^\t\n]*\tCHF ([\d'’.]+)/.exec((b && b.rechnung) || ""); const v = m ? Number(m[1].replace(/['’]/g, "")) : 0; return isFinite(v) && v > 0 ? v : 0; }   // Kurtaxe der Freunde aus dem Schnappschuss der Anfrage (seit 3.11.0.0)
 // Trinkgeld für Mami bei «💳 Zu bezahlen» (seit 3.17.12.0): nur auf dem Handy, pro Aufenthalt
-const TRK_BETR = [20, 50, 100];
-let TRK_ANDERS = new Set();
 function trinkB() { try { const o = JSON.parse(localStorage.getItem("tm2_trinkB:" + ABSENDER) || "{}"); return o && typeof o === "object" ? o : {}; } catch (e) { return {}; } }
 function trinkSetzen(k, n) { const o = trinkB(); if (n === "auf" || n > 0) o[k] = n; else delete o[k]; try { localStorage.setItem("tm2_trinkB:" + ABSENDER, JSON.stringify(o)); } catch (e) {} }
-function aufZiel(s) { return Math.floor(s / 10 + 1e-9) * 10 + 10; }   // Aufrunden: auf die nächsten CHF 10.– (ist es schon rund, CHF 10.– mehr) (seit 3.17.12.1)
-function trinkBetrag(b) { const v = trinkB()[bKey(b)]; if (v === "auf") return Math.round((aufZiel(zahlSumme(b)) - zahlSumme(b)) * 100) / 100; return +v || 0; }
+function aufZiel(s) { return Math.ceil(Math.round(s * 100) / 1000 - 1e-9) * 10; }   // Aufrunden auf die nächsten CHF 10.– (ist der Betrag schon rund, gibt es nichts aufzurunden) (seit 3.17.12.3)
+function aufrundbar(s) { return aufZiel(s) - s > 0.004; }
+function trinkBetrag(b) { const v = trinkB()[bKey(b)]; if (v === "auf") return Math.max(0, Math.round((aufZiel(zahlSumme(b)) - zahlSumme(b)) * 100) / 100); return +v || 0; }
 function trinkHtml(b) {
   if (!ABSENDER || MAMI) return "";
-  const k = bKey(b), v = trinkB()[k], n = trinkBetrag(b), auf = v === "auf", and = TRK_ANDERS.has(k) || (!auf && n > 0 && TRK_BETR.indexOf(n) < 0);
+  const k = bKey(b), v = trinkB()[k], n = trinkBetrag(b), auf = v === "auf" && n > 0, s = zahlSumme(b);
   let vs = false; try { vs = meinVorschau(); } catch (e) {}
   const dis = vs ? " disabled" : "";
-  let h = '<div class="trk" data-trk-k="' + esc(k) + '"><p class="trk-t"><span class="an-schwein" aria-hidden="true">🐖</span> <b>Trinkgeld für Mami</b> <small>freiwillig</small> ' + symBtn("b-trinkgeld", "ℹ️") + '</p><div class="zchips trk-c">' +
-    '<button type="button" class="zchip" data-trk="r" aria-pressed="' + (auf && !TRK_ANDERS.has(k) ? "true" : "false") + '"' + dis + '>Aufrunden<small>auf ' + esc(chf2(aufZiel(zahlSumme(b)))) + "</small></button>" +
-    TRK_BETR.map((x) => '<button type="button" class="zchip" data-trk="' + x + '" aria-pressed="' + (!auf && n === x && !TRK_ANDERS.has(k) ? "true" : "false") + '"' + dis + ">CHF " + x + ".–</button>").join("") +
-    '<button type="button" class="zchip" data-trk="a" aria-pressed="' + (and ? "true" : "false") + '"' + dis + ">" + (and && n > 0 && !TRK_ANDERS.has(k) ? "CHF " + n + ".–" : "Anderer Betrag") + "</button></div>";
-  if (TRK_ANDERS.has(k)) h += '<div class="trk-a"><input type="text" class="betrag" inputmode="numeric" autocomplete="off" maxlength="4" placeholder="Betrag in CHF" data-trk-in="1" value="' + (!auf && n > 0 ? n : "") + '"><button type="button" class="wbtn" data-trk-ok="1">✓ Übernehmen</button></div>';
-  if (n > 0) h += '<p class="trk-sum">Zu überweisen: ' + esc(chf2(zahlSumme(b))) + " + Trinkgeld " + esc(chf2(n)) + " = <b>" + esc(chf2(zahlSumme(b) + n)) + "</b> 🙏</p>";
+  let h = '<div class="trk" data-trk-k="' + esc(k) + '"><p class="trk-t"><span class="an-schwein" aria-hidden="true">🐖</span> <b>Trinkgeld für Mami</b> <small>freiwillig</small> ' + symBtn("b-trinkgeld", "ℹ️") + "</p>";
+  if (aufrundbar(s) || auf) h += '<div class="zchips trk-c"><button type="button" class="zchip" data-trk="r" aria-pressed="' + (auf ? "true" : "false") + '"' + dis + ">Aufrunden<small>auf " + esc(chf2(aufZiel(s))) + "</small></button></div>";
+  h += '<div class="trk-a"><input type="text" class="betrag" inputmode="numeric" autocomplete="off" maxlength="4" aria-label="Trinkgeld in CHF" data-trk-in="1" value="' + (!auf && n > 0 ? n : "") + '"' + dis + '><button type="button" class="wbtn" data-trk-ok="1"' + dis + ">✓ Übernehmen</button></div>";
+  if (n > 0) h += '<p class="trk-sum">Zu überweisen: ' + esc(chf2(s)) + " + Trinkgeld " + esc(chf2(n)) + " = <b>" + esc(chf2(s + n)) + "</b> 🙏</p>";
   return h + "</div>";
 }
+function ibanHtml() { return IBAN ? '<div class="trk-iban"><p>IBAN: <b>' + esc(IBAN) + '</b></p><button type="button" class="btn" data-ibankopie="1">📋 IBAN kopieren</button></div>' : ""; }   // seit 3.17.12.3 auch in «💳 Zu bezahlen»
 function trinkNeu() { try { aufentZeigen(); } catch (e) {} }
 // Dankeschön: Herzchen fallen vom Himmel (Web Animations, damit «Bewegung: nur Wichtiges» sie nicht anhält; bei «Bewegung aus» und «Bewegung reduzieren» nicht) (seit 3.17.12.1)
 function herzRegen() {
@@ -2806,12 +2806,8 @@ function herzRegen() {
 document.addEventListener("click", (e) => {
   const c = e.target.closest(".trk [data-trk], .trk [data-trk-ok]"); if (!c || c.disabled) return;
   const box = c.closest(".trk"), k = box.getAttribute("data-trk-k"), vor = trinkB()[k];
-  const nach = () => { const w = trinkB()[k]; if (w && w !== vor) herzRegen(); };
-  if (c.hasAttribute("data-trk-ok")) { const i = box.querySelector("[data-trk-in]"); trinkSetzen(k, Math.min(9999, parseInt((i && i.value) || "", 10) || 0)); TRK_ANDERS.delete(k); trinkNeu(); nach(); return; }
-  const v = c.getAttribute("data-trk");
-  if (v === "a") { if (TRK_ANDERS.has(k)) TRK_ANDERS.delete(k); else if (c.getAttribute("aria-pressed") === "true") trinkSetzen(k, 0); else TRK_ANDERS.add(k); trinkNeu(); if (TRK_ANDERS.has(k)) { const i = document.querySelector('.trk[data-trk-k="' + CSS.escape(k) + '"] [data-trk-in]'); if (i) i.focus(); } return; }
-  const neu = v === "r" ? "auf" : +v;
-  TRK_ANDERS.delete(k); trinkSetzen(k, vor === neu ? 0 : neu); trinkNeu(); nach();
+  if (c.hasAttribute("data-trk-ok")) { const i = box.querySelector("[data-trk-in]"), n = Math.min(9999, parseInt((i && i.value) || "", 10) || 0); trinkSetzen(k, n); trinkNeu(); if (n > 0 && n !== vor) herzRegen(); return; }
+  trinkSetzen(k, vor === "auf" ? 0 : "auf"); trinkNeu(); if (vor !== "auf") herzRegen();
 });
 document.addEventListener("input", (e) => { if (e.target && e.target.matches && e.target.matches("[data-trk-in]")) e.target.value = e.target.value.replace(/\D/g, "").slice(0, 4); });
 document.addEventListener("keydown", (e) => { if (e.key === "Enter" && e.target && e.target.matches && e.target.matches("[data-trk-in]")) { const o = e.target.closest(".trk").querySelector("[data-trk-ok]"); if (o) o.click(); } });
@@ -5177,8 +5173,6 @@ function render() {
     anfrageKasten(r) +
     '<h3 class="split-h">' + symBtn('b-zahlung', '💰') + ' Zahlung</h3>' +
     zahlung +
-    '<details><summary>' + symBtn('b-geld', '<span class="an-hand" ><span class="hd">🤲</span><i class="bn b1"></i><i class="bn b2"></i><i class="bn b3"></i></span>') + ' Geldverwendung</summary><div class="rows">' + GELD_TEXT +
-    '</div></details>' +
     '<div class="marke" id="marke"><span data-z="0">ankommen</span><span class="pt">·</span><span data-z="1">durchatmen</span><span class="pt">·</span><span data-z="2">geniessen</span></div>';
 }
 
@@ -5459,8 +5453,8 @@ function aufentZeigen() {
     zb.hidden = vorab.length === 0 && erRuhig.length === 0;
     const inkL = inkLokal(), freundOffen = (b) => { const e = inkL[bKey(b)]; if (!e) return 0; const ok = e.ok || {}; return e.p.reduce((a, pp, k) => a + (ok[k] ? 0 : pp.t), 0); };
     zb.dataset.gen = String((+zb.dataset.gen || 0) + 1);
-    zb.innerHTML = vorab.map((b) => '<div class="note h brennt" data-bk="' + esc(bKey(b)) + '"><b>💳 Zu bezahlen:</b> Für deinen Aufenthalt vom ' + esc(fmtTag(b.arr)) + " bis " + esc(fmtTag(b.dep)) + " sind <b>" + esc(chfZ(b)) + "</b>" + (ktVon(b) ? " (inkl. Kurtaxe der Freunde " + esc(chf2(ktVon(b))) + ")" : "") + " fällig, spätestens am " + esc(fmtTag(zahlFrist(b))) + ". Du kannst auch schon vorher überweisen, die Bankverbindung steht unter «Zahlung» " + symBtn("b-zahlung", "💰") + "." + trinkHtml(b) + (freundOffen(b) > 0.004 ? "<br><small>Von deinen Freunden noch offen: " + esc(chf2(freundOffen(b))) + " (siehe «💰 Geld einsammeln»).</small>" : "") + "</div>").join("") + erRuhig.map(ERH).join("");
-    ZLH = zl.map((b) => '<div class="note h rot-warn"><b>💳 Zahlung offen:</b> Für deinen Aufenthalt vom ' + esc(fmtTag(b.arr)) + ' bis ' + esc(fmtTag(b.dep)) + ' sind <b>' + esc(chfZ(b)) + '</b>' + (ktVon(b) ? ' (inkl. Kurtaxe der Freunde ' + esc(chf2(ktVon(b))) + ')' : '') + ' fällig. Die Frist war am ' + esc(fmtTag(zahlFrist(b))) + '. Bitte überweise jetzt, die Bankverbindung steht unter «Zahlung» ' + symBtn("b-zahlung", "💰") + '. Sobald Papi die Zahlung verbucht hat, verschwindet diese Meldung.' + trinkHtml(b) + '</div>').join("");
+    zb.innerHTML = vorab.map((b) => '<div class="note h brennt" data-bk="' + esc(bKey(b)) + '"><b>💳 Zu bezahlen:</b> Für deinen Aufenthalt vom ' + esc(fmtTag(b.arr)) + " bis " + esc(fmtTag(b.dep)) + " sind <b>" + esc(chfZ(b)) + "</b>" + (ktVon(b) ? " (inkl. Kurtaxe der Freunde " + esc(chf2(ktVon(b))) + ")" : "") + " fällig, spätestens am " + esc(fmtTag(zahlFrist(b))) + ". Du kannst auch schon vorher überweisen." + ibanHtml() + trinkHtml(b) + (freundOffen(b) > 0.004 ? "<br><small>Von deinen Freunden noch offen: " + esc(chf2(freundOffen(b))) + " (siehe «💰 Geld einsammeln»).</small>" : "") + "</div>").join("") + erRuhig.map(ERH).join("");
+    ZLH = zl.map((b) => '<div class="note h rot-warn"><b>💳 Zahlung offen:</b> Für deinen Aufenthalt vom ' + esc(fmtTag(b.arr)) + ' bis ' + esc(fmtTag(b.dep)) + ' sind <b>' + esc(chfZ(b)) + '</b>' + (ktVon(b) ? ' (inkl. Kurtaxe der Freunde ' + esc(chf2(ktVon(b))) + ')' : '') + ' fällig. Die Frist war am ' + esc(fmtTag(zahlFrist(b))) + '. Bitte überweise jetzt. Sobald Papi die Zahlung verbucht hat, verschwindet diese Meldung.' + ibanHtml() + trinkHtml(b) + '</div>').join("");
     const zr = document.getElementById("zahlRot"); zr.hidden = !zl.length && !erRot.length;
     zr.innerHTML = erRot.map(ERH).join("") + ZLH;
     meinKnopf();
