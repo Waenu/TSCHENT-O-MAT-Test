@@ -1675,7 +1675,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.18.2.2";
+let VERSION = "3.18.2.3";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -2817,7 +2817,7 @@ function trinkHtml(b) {
   let h = '<div class="trk" data-trk-k="' + esc(k) + '" data-trk-s="' + s + '"><p class="trk-t"><span class="an-schwein" aria-hidden="true">🐖</span> <b>Trinkgeld für Mami</b> <small>freiwillig</small> ' + symBtn("b-trinkgeld", "ℹ️") + "</p>";
   const ar = aufrundbar(s) && !auf;   // seit 3.17.12.8 (Wänu): Aufrunden als Frage mit Knopf, darunter das Feld nur für das Trinkgeld mit Vorschau
   if (ar) h += '<p class="trk-q">Aufrunden auf <b>' + esc(chf2(aufZiel(s))) + '</b>?</p><button type="button" class="btn" data-trk="r"' + dis + ">✓ Ja, aufrunden (+ " + esc(chf2(aufZiel(s) - s)) + ")</button>";
-  h += '<p class="trk-q">' + (ar ? "Oder eigenes Trinkgeld:" : n > 0 ? "Anderes Trinkgeld:" : "Eigenes Trinkgeld:") + '</p><div class="trk-a"><div class="trk-in"><span>CHF</span><input type="text" class="betrag" inputmode="numeric" autocomplete="off" maxlength="4" aria-label="Trinkgeld in CHF" data-trk-in="1" value="' + (!auf && n > 0 && n === Math.round(n) ? n : "") + '"' + dis + '></div><p class="trk-vor" hidden></p><div class="trk-frage" hidden></div><button type="button" class="btn" data-trk-ok="1"' + dis + ">✓ Übernehmen</button></div>";
+  h += '<p class="trk-q">' + (ar ? "Oder eigenes Trinkgeld:" : n > 0 ? "Anderes Trinkgeld:" : "Eigenes Trinkgeld:") + '</p><div class="trk-a"><div class="trk-in"><span>CHF</span><input type="text" class="betrag" inputmode="numeric" autocomplete="off" maxlength="4" aria-label="Trinkgeld in CHF" data-trk-in="1" value="' + (!auf && n > 0 && n === Math.round(n) ? n : "") + '"' + dis + '></div><p class="trk-vor" hidden></p><div class="trk-frage" hidden></div><button type="button" class="btn" data-trk-ok="1"' + dis + ">" + (!auf && n > 0 ? "✓ Übernommen" : "✓ Übernehmen") + "</button></div>";
   if (n > 0) h += '<p class="trk-sum">Zu überweisen: ' + esc(chf2(s)) + " + Trinkgeld " + esc(chf2(n)) + (auf ? " (aufgerundet)" : "") + " = <b>" + esc(chf2(s + n)) + '</b> 🙏</p><button type="button" class="trk-weg" data-trk="weg"' + dis + ">Kein Trinkgeld</button>";
   return h + "</div>";
 }
@@ -2858,7 +2858,7 @@ document.addEventListener("click", (e) => {
 });
 document.addEventListener("input", (e) => { if (!(e.target && e.target.matches && e.target.matches("[data-trk-in]"))) return; e.target.value = e.target.value.replace(/\D/g, "").slice(0, 4);
   const box = e.target.closest(".trk"), v = box && box.querySelector(".trk-vor"), f = box && box.querySelector(".trk-frage"), sum = box ? +box.getAttribute("data-trk-s") || 0 : 0, n = parseInt(e.target.value, 10) || 0;   // Vorschau beim Tippen (seit 3.17.12.8)
-  if (f) f.hidden = true; const ok = box && box.querySelector("[data-trk-ok]"); if (ok) ok.hidden = false;
+  if (f) f.hidden = true; const ok = box && box.querySelector("[data-trk-ok]"); if (ok) { ok.hidden = false; ok.textContent = "✓ Übernehmen"; }
   if (v) { v.textContent = n > 0 ? "Trinkgeld " + chf2(n) + " → du überweist " + chf2(sum + n) : ""; v.hidden = !n; } });
 document.addEventListener("keydown", (e) => { if (e.key === "Enter" && e.target && e.target.matches && e.target.matches("[data-trk-in]")) { const o = e.target.closest(".trk").querySelector("[data-trk-ok]"); if (o) o.click(); } });
 function zahlSumme(b) { return (b.betrag > 0 ? b.betrag : 0) + ktVon(b); }   // an die Eltern: Aufenthalt und Kurtaxe der Freunde (Wänu: die Kurtaxe überweisen die Eltern an Adelboden Tourismus)
@@ -5343,8 +5343,10 @@ const wrMit = (a) => (a.waesche === "senden" ? "📮 Wäsche per Post senden, sp
 const WR_NIE = "🚫 Nicht selbst waschen: Die Wäsche kommt ungewaschen zu den Eltern zurück";
 const wrListe = (a) => (a && a.sb && a.start ? WR_SCHRITTE.concat([WR_NIE, wrMit(a)]) : []);   // wer die Staffel beginnt, gibt die Wäsche zurück (seit 2.120.6.0 nach dem Beginn, nicht nach dem gewählten Weg)
 const CHECK_PLUS = ["🧹 Chalet besenrein und aufgeräumt verlassen", "🪑 Kissen der Gartenstühle versorgen", "🏖️ Liegestühle versorgen"];   // für alle Abreisen, vor dem Schlüssel (seit 2.120.3.0)
-const alleListe = () => { const l = CHECK_ALLE.filter((i) => CHECK_PLUS.indexOf(i) < 0), k = l.findIndex((i) => /Schlüssel/.test(i)); return k < 0 ? l.concat(CHECK_PLUS) : l.slice(0, k).concat(CHECK_PLUS, l.slice(k)); };
-const checkListe = (a) => (a && a.sb ? CHECK_SELBST : []).concat(alleListe(), wrListe(a));   // Reihenfolge wie angezeigt: reinigen und gehen, danach Wäsche zurück
+const CHECK_MATRA = "🛏️ Luftmatratze auf Dichtheit prüfen. Alles in Ordnung: entleeren und versorgen. Sonst den Eltern melden.";   // nur wenn die Luftmatratze freigegeben war (seit 3.18.2.3)
+const matraBuch = (a) => !!(a && BUCH.some((b) => b.arr === a.arr && b.dep === a.dep && (!ABSENDER || eigenN(b.name)) && matraVon(b)));
+const alleListe = (a) => { const plus = CHECK_PLUS.concat(matraBuch(a) ? [CHECK_MATRA] : []), l = CHECK_ALLE.filter((i) => CHECK_PLUS.indexOf(i) < 0), k = l.findIndex((i) => /Schlüssel/.test(i)); return k < 0 ? l.concat(plus) : l.slice(0, k).concat(plus, l.slice(k)); };
+const checkListe = (a) => (a && a.sb ? CHECK_SELBST : []).concat(alleListe(a), wrListe(a));   // Reihenfolge wie angezeigt: reinigen und gehen, danach Wäsche zurück
 let AUFENT = null;      // lokal gemerkte Anfrage {arr, dep, sb, pers}
 let HAKEN = {};         // Haken je Aufenthalt: { "arr|dep": { Text: true } }
 let BUCH_STORNO = [];   // von den Eltern gelöschte (stornierte) Aufenthalte, nur für die Meldung an das Kind
@@ -5930,7 +5932,7 @@ function checkZeichnen() {
     '<h2>✅ Reinigungs-Checkliste</h2>' +
     '<p class="chk-stand">' + (a.ok ? "Bestätigt. " : "Noch nicht bestätigt. ") + 'Erledigt am Abreisetag, ' + fmtTagV(a.dep) + '.</p>' +
     (alle ? '<div class="chk-danke">🎉 Danke, du hast all diese Sachen erledigt.</div>' : '<p class="chk-stand">' + done + ' von ' + liste.length + ' erledigt. Tippe jeden Punkt an, wenn er erledigt ist.</p>') +
-    '<div class="chk-liste' + (alle ? ' chk-alle' : '') + '">' + (a.sb ? teil("🧹 Chalet reinigen und abreisen", CHECK_SELBST.concat(alleListe())) : teil("🚪 Vor dem Gehen", alleListe())) + wrTeil + '</div>' + ovWeg(a);
+    '<div class="chk-liste' + (alle ? ' chk-alle' : '') + '">' + (a.sb ? teil("🧹 Chalet reinigen und abreisen", CHECK_SELBST.concat(alleListe(a))) : teil("🚪 Vor dem Gehen", alleListe(a))) + wrTeil + '</div>' + ovWeg(a);
 }
 // Aufgeklapptes Thema der Anleitung: Überschrift an den oberen Rand
 document.addEventListener("toggle", (e) => {
