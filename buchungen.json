@@ -42,13 +42,17 @@
       "betrag": 380,
       "rechnung": "Gesendet am Mi 18.11.2026, 11:06 Uhr. App-Version 3.17.12.7.\nAnreise\tMontag 30.11.2026\nAbreise\tMittwoch 2.12.2026 (2 Nächte)\nFamilie\tNur ich\nFreunde\t1\nFreund im selben Zimmer\tJa\nZimmer 1 unberührt\tJa\nReinigung nach Parteien\tjede Partei zahlt gleich viel\nBedingungen akzeptiert\tJa\nTotal\tCHF 390.40, davon Kurtaxe Adelboden für die Freunde CHF 10.40\n#Preisberechnung\nDu pro Nacht\tCHF 30.–\nFreund/in 1 pro Nacht\tCHF 40.–\nÜbernachtung (2 Nächte)\tCHF 140.–\nReinigung\tCHF 240.–\nReinigung: dein Anteil\tCHF 120.00\nReinigung: Partei Freund/in 1\tCHF 120.00\nKurtaxe Adelboden (dazu) 1 Freund ab 16 Jahren zu CHF 5.20 pro Nacht, 2 Nächte\tCHF 10.40\nTotal mit Kurtaxe\tCHF 390.40\n#Aufteilung unter den Freunden\nDu zahlst\tCHF 180.00\nFreund/in 1 zahlt davon Kurtaxe CHF 10.40 (ab 16 Jahren)\tCHF 210.40\nReinigung aufgeteilt: Nach Parteien: jede Partei zahlt gleich viel.",
       "bestaetigt": "2026-11-18T11:08"
+    },
+    {
+      "name": "Manuel",
+      "arr": "2026-12-16",
+      "dep": "2026-12-19",
+      "status": "abgelehnt",
+      "t": "2026-11-18T13:48:36.706Z",
+      "matra": "nein"
     }
   ],
   "logbuch": [
-    {
-      "t": "2026-11-05T17:18",
-      "text": "Bescheid gegeben: Jerome, Mi 18.11.2026 bis Mo 23.11.2026"
-    },
     {
       "t": "2026-11-05T17:20",
       "text": "Bestätigt: Manuel, Mi 25.11.2026 bis Sa 28.11.2026, CHF 180"
@@ -844,6 +848,10 @@
     {
       "t": "2026-11-18T11:08",
       "text": "Bestätigt: Deborah, Mo 30.11.2026 bis Mi 2.12.2026, CHF 380"
+    },
+    {
+      "t": "2026-11-18T14:48",
+      "text": "Abgelehnt: Manuel, Mi 16.12.2026 bis Sa 19.12.2026"
     }
   ],
   "reinigung": [],
