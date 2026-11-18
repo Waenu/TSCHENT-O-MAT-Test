@@ -26,13 +26,17 @@
       "dep": "2026-12-19",
       "status": "abgelehnt",
       "t": "2026-11-18T14:46:15.124Z"
+    },
+    {
+      "name": "Manuel",
+      "arr": "2026-11-25",
+      "dep": "2026-11-28",
+      "status": "abgelehnt",
+      "t": "2026-11-18T14:48:38.735Z",
+      "matra": "nein"
     }
   ],
   "logbuch": [
-    {
-      "t": "2026-11-07T13:14",
-      "text": "Entfernt: Jerome, So 8.11.2026 bis Di 10.11.2026"
-    },
     {
       "t": "2026-11-07T15:15",
       "text": "Bestätigt: Manuel, Do 1.04.2027 bis Sa 3.04.2027, CHF 120, Wäsche: persönlich bringen bis Di 6.04.2027"
@@ -828,6 +832,10 @@
     {
       "t": "2026-11-18T15:46",
       "text": "Abgelehnt: Manuel, Mi 16.12.2026 bis Sa 19.12.2026"
+    },
+    {
+      "t": "2026-11-18T15:48",
+      "text": "Abgelehnt: Manuel, Mi 25.11.2026 bis Sa 28.11.2026"
     }
   ],
   "reinigung": [],
