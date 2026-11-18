@@ -2,6 +2,18 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.17.12.4",
+      "datum": "2026-11-18",
+      "titel": "Meine Verwaltung ohne blauen Rahmen",
+      "arten": [
+        "Layout"
+      ],
+      "punkte": [
+        "«👤 Meine Verwaltung» ohne blauen Rahmen, wie die Verwaltung der Eltern.",
+        "Aufenthalte ohne offene Aufgabe mit schlichtem grauem Rahmen; rot und orange bleiben, wo etwas ansteht."
+      ]
+    },
+    {
       "v": "3.17.12.3",
       "datum": "2026-11-18",
       "titel": "Trinkgeld als Feld, IBAN beim Bezahlen",

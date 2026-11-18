@@ -194,6 +194,7 @@ Bedienkonzept Wänu (14.11.2026, ersetzt wo abweichend die Punkte oben; erst nac
 - 3.17.12.1 (Wänu): Chip «Aufrunden» (`data-trk="r"`, gespeichert als "auf", `trinkBetrag(b)` = `aufZiel(zahlSumme)` − Summe, nächste CHF 10.–, schon rund = +10). `herzRegen()`: 28 Herzen per Web Animations (`#herzRegen`, `.hz`) und «Danke! Mami freut sich 💛» (`.hz-danke`), nur bei neu gewähltem Trinkgeld; nicht bei `html.aus` oder prefers-reduced-motion.
 - 3.17.12.2 (Wänu): «🤲 Geldverwendung» im Rechner (nach `zahlung`) entfernt; `GELD_TEXT` bleibt im Glossar `bc-geld`.
 - 3.17.12.3 (Wänu: Chips mit Beträgen zu aufdringlich): Trinkgeld nur noch Feld `data-trk-in` (ohne Platzhalter) + `data-trk-ok`; Chips 20/50/100/«anderer Betrag» und `TRK_BETR`/`TRK_ANDERS` entfernt. «Aufrunden» (`data-trk="r"`) nur bei `aufrundbar(s)` (nicht schon auf CHF 10.– rund), `aufZiel` ohne +10. `ibanHtml()` (IBAN + `data-ibankopie`) in «💳 Zu bezahlen» und «Zahlung offen».
+- 3.17.12.4 (Wänu: «blauer Rahmen ist zu viel»): `#meinKasten.note.h` ohne Rahmen (wie `#bestKasten`); `.mein-st` ohne `brennt`/`steht` mit grauem Rahmen statt `--marke`.
 
 ## Offen: Airbnb-Belegung ins App-Repo umziehen (Wänu «ja», 13.11.2026, nächste Woche)
 - Heute: Workflow `belegung.yml` + `belegung.py` im alten Repo `Waenu/Tschentomat` (Secret `AIRBNB_ICAL`) schreibt `belegt.json`; die App liest `/Tschentomat/belegt.json`.
