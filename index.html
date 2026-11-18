@@ -1154,7 +1154,7 @@ if (TEST_MODUS) {
   .ub-b { height: 24px; border-radius: 12px; background: var(--pc); color: #10201c; font-size: .72rem; font-weight: 700; display: flex; align-items: center; justify-content: center; white-space: nowrap; overflow: hidden; }
   .ub-b.kk { height: 12px; opacity: .8; } .ub-b.mat { outline: 2px dashed #E5A100; outline-offset: 2px; }
   .ub-c { text-align: center; font-weight: 700; padding: 3px 0; margin: 0 1px; border-radius: 6px; background: var(--note-bg); } .ub-c.voll { background: #FFE58A; color: #4a3800; }
-  .ub-l { margin: 4px 0 0; } .ub-tt { margin: 0 0 4px; } details.ub-k { margin: 8px 0 0; } details.ub-k > summary { font-weight: 700; }
+  .ub-l { margin: 4px 0 0; } .ub-tt { margin: 0 0 4px; } details.ub-k { margin: 8px 0 0; } .mein-teil.ub-teil { border: 0 !important; padding: 0 !important; background: none !important; } .ub-teil > details.ub-k { margin: 0; } .ub-teil > details.ub-k > summary { border-color: var(--marke) !important; }   /* blauer Rahmen in «Meine Verwaltung» (seit 3.20.0.5) */ details.ub-k > summary { font-weight: 700; }
   #calBlase[data-mon="hoch"] { border: 2px solid var(--hoch-line); }
   #calBlase[data-mon="fest"] { border: 2px solid var(--fest-line); }
   #calBlase[data-mon="spitz"] { border: 2px solid var(--spitz-line); }
@@ -1703,7 +1703,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.20.0.4";
+let VERSION = "3.20.0.5";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -1995,8 +1995,15 @@ function ubBuchung(b) {   // Übersicht einer gespeicherten Buchung: eigenes Han
   const gl = eig ? (gmLokal()[k] || {}).freunde : (GM_LISTEN && GM_LISTEN[k] ? GM_LISTEN[k].freunde : null);
   if (Array.isArray(gl) && gl.length) return ubHtml({ arr: b.arr, dep: b.dep, fp, fam, rows: ubAusListe(gl, b) });
   const n = freundeVon(b); if (!n) return "";
-  const r = String(b.rechnung || ""), kkN = Math.min(n, Number((/Davon Kleinkinder ohne Bett: (\d+)/.exec(r) || [])[1]) || 0), dt = (t) => { const m = /(\d{1,2})\.(\d{1,2})\.(\d{4})/.exec(t); return m ? dkey(Number(m[3]), Number(m[2]) - 1, Number(m[1])) : ""; };
-  const rows = Array.from({ length: n }, (_, i) => { const m = new RegExp("^Freund/in " + (i + 1) + ": (.+?) bis (.+?) \\(", "m").exec(r); return { nm: "Freund/in " + (i + 1), an: m ? dt(m[1]) : b.arr, ab: m ? dt(m[2]) : b.dep, pc: INS_F[i % INS_F.length], kk: i >= n - kkN }; });
+  const r = String(b.rechnung || ""), dt = (t) => { const m = /(\d{1,2})\.(\d{1,2})\.(\d{4})/.exec(t); return m ? dkey(Number(m[3]), Number(m[2]) - 1, Number(m[1])) : ""; };
+  // Kleinkinder und Parteien aus der gespeicherten Anfrage (Zeilen mit Tabulator, seit 3.20.0.5): sonst stimmten Nächte, Betten und Farben bei Papi nicht
+  const kkS = new Set(), nr = (t) => (t.match(/Freund\/in (\d+)/g) || []).map((x) => Number(x.slice(10)) - 1);
+  r.split("\n").forEach((z) => { const m = /^Freund\/in (\d+)\s*\(?Kleinkind/.exec(z); if (m) kkS.add(Number(m[1]) - 1); });
+  if (!kkS.size) { const kkN = Math.min(n, Number((/Davon Kleinkinder ohne Bett[:\t] ?(\d+)/.exec(r) || [])[1]) || 0); for (let i = n - kkN; i < n; i++) kkS.add(i); }
+  const pt = {}; let np = 0; const ab = r.indexOf("#Aufteilung");
+  (ab >= 0 ? r.slice(ab).split("\n") : []).forEach((z) => { if (/Kleinkind/.test(z) || !/^Freund\/in \d+.* zahl(t|en)/.test(z)) return; const g = nr(z.split(/ zahl(t|en)/)[0]).filter((i) => !(i in pt)); if (g.length) { g.forEach((i) => { pt[i] = np; }); np++; } });
+  r.split("\n").forEach((z) => { const m = /^Für Freund\/in (\d+) \(unter 18\) zahl(?:t|en): (.*)/.exec(z); if (m && !(Number(m[1]) - 1 in pt)) { const g = nr(m[2]).filter((i) => i in pt); if (g.length) pt[Number(m[1]) - 1] = pt[g[0]]; else if (/Familie|ich/i.test(m[2])) pt[Number(m[1]) - 1] = -1; } });
+  const rows = Array.from({ length: n }, (_, i) => { const m = new RegExp("^Freund/in " + (i + 1) + "[:\\t] ?(.+?) bis (.+?) \\(", "m").exec(r); if (!(i in pt) && !kkS.has(i)) pt[i] = np++; return { nm: "Freund/in " + (i + 1), an: m ? dt(m[1]) : b.arr, ab: m ? dt(m[2]) : b.dep, pc: kkS.has(i) ? INS_KIND : pt[i] === -1 ? INS_FAM : INS_F[(pt[i] || 0) % INS_F.length], kk: kkS.has(i) }; });
   return ubHtml({ arr: b.arr, dep: b.dep, fp, fam, rows });
 }
 function ubKlapp(b) { const h = ubBuchung(b); return h ? '<details class="ub-k"><summary>👥 Wer ist wann da?</summary>' + h + "</details>" : ""; }
@@ -7328,7 +7335,7 @@ function meinVerteilen() {
   });
   MEIN_TEILE.li = liTeile(); const voN = (MEIN_TEILE.vo || []).filter((x) => x.el.classList.contains("steht")).length; MEIN_N.li = MEIN_TEILE.li.reduce((s, x) => s + x.o, 0) + voN;   // offene Vorlagen zählen orange (seit 3.14.0.0)
   MEIN_TEILE.sf = stornoBuch().map((b) => { const el = document.createElement("p"); el.className = "hint mein-teil sf-h"; el.innerHTML = "📌 Mit Freunden verbindlich: Stornierung spätestens am <b>" + esc(fmtTag(addDays(b.arr, -STORNO_TAGE))) + "</b>. " + symBtn("b-storno", "📅"); return { k: bKey(b), el: el }; });   // Stornofrist beim Aufenthalt (seit 3.14.1.3)
-  MEIN_TEILE.ub = BUCH.filter((b) => eigenN(b.name) && b.dep >= heuteKey()).map((b) => { const h = ubKlapp(b); if (!h) return null; const el = document.createElement("div"); el.className = "mein-teil"; el.innerHTML = h; return { k: bKey(b), el }; }).filter(Boolean);   // Buchungsübersicht pro Aufenthalt (seit 3.20.0.0)
+  MEIN_TEILE.ub = BUCH.filter((b) => eigenN(b.name) && b.dep >= heuteKey()).map((b) => { const h = ubKlapp(b); if (!h) return null; const el = document.createElement("div"); el.className = "mein-teil ub-teil"; el.innerHTML = h; return { k: bKey(b), el }; }).filter(Boolean);   // Buchungsübersicht pro Aufenthalt (seit 3.20.0.0)
   const ORD = ["vo", "ub", "gm", "zb", "ink", "li", "sf", "ab"];
   const keys = [...new Set(ORD.flatMap((t) => (MEIN_TEILE[t] || []).map((x) => x.k)))].sort((p, q) => (p.split("|")[1] < q.split("|")[1] ? -1 : 1));
   const zahl = (k) => (MEIN_TEILE.gm || []).filter((x) => x.k === k && x.el.classList.contains("gm-offen")).length + (MEIN_TEILE.zb || []).filter((x) => x.k === k).length + (MEIN_TEILE.ink || []).filter((x) => x.k === k && x.el.classList.contains("brennt")).length;
