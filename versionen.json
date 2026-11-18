@@ -2,6 +2,20 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.18.0.0",
+      "datum": "2026-11-18",
+      "titel": "Luftmatratze als 7. Bett",
+      "arten": [
+        "Neu"
+      ],
+      "punkte": [
+        "Die Luftmatratze ist das 7. Bett, immer als Ausnahme: für Freunde und auch für die Familie allein, in jeder Zeit (auch Lücke, Staffel und Skirennen).",
+        "Bei «Freunde» ist die letzte Zahl gestrichelt, wenn sie die Luftmatratze braucht. Bei «Meine Familie und Geschwister» lassen sich 7 Personen mit Bett antippen.",
+        "Der Rechner rechnet normal weiter. In der Anfrage steht «Luftmatratze: bitte freigeben», die Eltern sagen zu oder ab.",
+        "In der Verwaltung trägt die Anfrage das Zeichen «🛏️ Luftmatratze». Meldung bei zu vielen Freunden: «Nur noch N Plätze frei»."
+      ]
+    },
+    {
       "v": "3.17.12.9",
       "datum": "2026-11-18",
       "titel": "Glossar: Datenschutz",

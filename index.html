@@ -264,6 +264,7 @@ if (TEST_MODUS) {
   .zchip.kk-fr { display: inline-flex; flex-direction: column; align-items: center; justify-content: center; cursor: default; }   /* Kleinkind der Freunde im Kinderbettchen, fest (seit 3.17.10.1) */
   .zchip[style*="--pc"][aria-pressed="true"] { background: var(--pc); border-color: var(--pc); color: #fff; } .zchip[style*="--pc:#C9A227"][aria-pressed="true"] { color: #111; }   /* Farbe der Partei schon beim Antippen (seit 3.17.6.0) */
   .gm-f[style*="--pc"] { box-shadow: inset 6px 0 0 var(--pc); }
+  .zchip.matra { border-style: dashed !important; margin-left: 14px; } .matra-h { color: var(--missing-line); font-weight: 600; }
   .field.chipfeld > select { display: none; } .rein-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 6px; } .rein-chips .zchip:disabled { opacity: .45; cursor: default; }
   .rein-wahl { margin: 2px 0 4px; font-weight: 600; }   /* Fragen als Chips (seit 3.9.5.5 Reinigung, seit 3.9.5.6 alle kurzen) */
   .pt-info { list-style: none; margin: 4px 0 8px; padding: 0; } .pt-info li { display: flex; gap: 8px; align-items: baseline; padding: 3px 0; color: var(--muted); }
@@ -1669,7 +1670,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.17.12.9";
+let VERSION = "3.18.0.0";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -1764,6 +1765,12 @@ function sondPatch(o, s) {   // Pauschale wie die Reinigung als ein Betrag, aufg
   o.FA = FA; o.GS = o.GE > 0 ? (o.RE - FA) / o.GE : 0;
   return o;
 }
+function MAXP() { return P.maxPersonen + 1; }   // Betten inkl. Luftmatratze (7. Bett, immer Ausnahme: die Eltern sagen zu oder ab, seit 3.18.0.0)
+// Luftmatratze: belegt, sobald Familie und Freunde zusammen mehr als P.maxPersonen Betten brauchen. Bei «Freunde» ist die letzte Zahl gestrichelt.
+let MATRA_V = 0;
+function matraOpts(l) { return l; }
+function frei6(d) { return Math.max(0, d.frei - (d.FP <= P.maxPersonen ? 1 : 0)); }   // freie Betten ohne Luftmatratze
+function matraSync() { S.matra = false; MATRA_V = 0; try { const d = derive(S); S.matra = d.FP + d.GE > P.maxPersonen; if (d.frei > 0 && d.FP <= P.maxPersonen) MATRA_V = d.freiW; } catch (e) { S.matra = false; MATRA_V = 0; } }
 function ktAus() { return !!(SOND && SOND.pa && !SOND.kt); }   // Kurtaxe nur bei geänderten Preisen abwählbar
 function sondBed(v) { if (!v.pa) return "normale Preise wie bei einer gewöhnlichen Buchung, ohne Mindestnächte"; return "geänderte Preise: " + (nz(v.preis) > 0 ? chf(v.preis) + " pro Nacht für das ganze Chalet" : "Übernachtung gratis") + ", " + (v.rein ? "mit Reinigung (" + chf(P.reinigung) + ")" : "ohne Reinigung") + ", " + (v.kt ? "Kurtaxe für Freunde wie üblich" : "ohne Kurtaxe"); }
 function sondStart(v) {   // Vorlage in den Rechner übernehmen: Daten fest, Saisonregeln aus
@@ -1792,7 +1799,7 @@ function derive(s) {
   else if (wer === "Ich und 2 Kinder" || wer === "Ich, Partner/in und 2 Kinder") kkMax = 2;
   else if (wer === MFG) kkMax = (typeof s.fam === "number") ? Math.min(2, s.fam - 1) : 0;
   if (s.luecke === true) kkMax = Math.min(kkMax, P.lueckeMaxKleinkinder);
-  const kkMin = kkMust ? 1 : ((wer === MFG && typeof s.fam === "number") ? Math.min(kkMax, Math.max(0, s.fam - P.maxPersonen)) : 0);
+  const kkMin = kkMust ? 1 : ((wer === MFG && typeof s.fam === "number") ? Math.min(kkMax, Math.max(0, s.fam - MAXP())) : 0);
   const kkFix = kkMax > 0 && kkMin === kkMax;
   const KK = (typeof s.kk === "number" || kkFix) ? Math.max(kkMin, Math.min(nz(s.kk), kkMax)) : 0;
   const FP = Math.max(1, base - KK);
@@ -1800,7 +1807,7 @@ function derive(s) {
   const LUE = s.inLuecke === true;   // ganzer Aufenthalt liegt in einer Lücke (ganz oder teilweise): normaler Termin, Familienpreis, Freunde erlaubt, die Eltern reinigen
   const VERB = s.art === ART_V && s.verbOK === true;
   const STAF = s.art === ART_S && s.selbstOK === true;
-  const frei = (LG || VERB || STAF) ? 0 : Math.max(0, P.maxPersonen - FP);
+  const frei = (LG || VERB || STAF) ? 0 : Math.max(0, MAXP() - FP);
   const freiW = frei > 0 ? Math.min(frei + Math.max(0, nz(s.fkk) - (nz(s.gaeste) > 0 ? nz(s.gkk) : 0)), 7) : 0;   // wählbar bei «Freunde»: Kleinkinder in der Liste brauchen kein Bett (seit 3.17.10.1, Wänu)
   const GE = Math.min(Math.max(0, nz(s.gaeste) + (nz(s.gaeste) > 0 ? nz(s.gkk) : 0) - nz(s.fkk)), frei);   // gkk: Zeilen «Kleinkind ohne Bett» unter den Freunden (seit 3.10.4.0)   // fkk: Kleinkinder der Freunde (unter 2½, ohne Bett, gratis; seit 3.7.0.0)
   const PT = FP + GE;
@@ -1857,14 +1864,14 @@ function check(s, d) {
   if ((s.luecke ? LWERL : WERL).indexOf(s.wer) < 0) return "Bitte wählen: Wer von der Familie kommt";
   if (s.wer === MFG && typeof s.fam !== "number") return "Bitte wählen: Anzahl Personen der Familie";
   if (d.kkMax > 0 && !d.kkFix && typeof s.kk !== "number") return "Bitte wählen: Kleinkinder im Kinderbettchen";
-  if (d.FP > P.maxPersonen) return "Maximal " + P.maxPersonen + " Personen mit Bett. Bitte Personenzahl oder Kinder im Bettchen prüfen.";
+  if (d.FP > MAXP()) return "Maximal " + MAXP() + " Personen mit Bett. Bitte Personenzahl oder Kinder im Bettchen prüfen.";
   if (d.LG && d.FP > P.lueckeMaxPersonen) return "Ganze Lücke: höchstens " + P.lueckeMaxPersonen + " Erwachsene in den Betten (zusätzlich höchstens " + P.lueckeMaxKleinkinder + " Kleinkind im Kinderbettchen). Bitte «Wer von der Familie kommt» anpassen.";
   if (typeof s.gaeste !== "number") return "Bitte wählen: Freunde";
   if (s.staffelOffen === true && s.art === ART_N && d.GE === 0 && !(d.LUE && P.lueckeGastNacht > 0)) return "In einer laufenden Staffel ist «Normal» nur mit Freunden möglich. Bitte Freunde wählen oder die Staffel.";
-  if (s.festMin === true && P.festMinGaeste > 0 && d.GE < P.festMinGaeste) return "Im " + festTxt() + " mindestens " + P.festMinGaeste + " Gäste (höchstens " + P.maxPersonen + " Personen mit Bett)";
+  if (s.festMin === true && P.festMinGaeste > 0 && d.GE < P.festMinGaeste) return "Im " + festTxt() + " mindestens " + P.festMinGaeste + " Gäste (höchstens " + MAXP() + " Personen mit Bett)";
   if (d.LUE && P.lueckeGastNacht > 0 && d.GE > 0 && d.nights < P.lueckeGastMinNaechte) return "Mit Freunden in der Lücke mindestens " + P.lueckeGastMinNaechte + " Nächte. Bitte mehr Nächte wählen oder ohne Freunde buchen.";
   if (s.gaeste > d.freiW && d.frei === 0) return "Kein Platz mehr für Freunde. Bitte Freunde neu wählen.";
-  if (s.gaeste > d.freiW) return "Nur noch " + d.frei + " Freund frei. Bitte Freunde neu wählen.";
+  if (s.gaeste > d.freiW) return "Nur noch " + (d.frei === 1 ? "1 Platz" : d.frei + " Plätze") + " frei. Bitte Freunde neu wählen.";
   if (d.SM && s.selbst === "Ja" && ARR && istStaffelStart(ARR) && W_OPTS.indexOf(s.waesche) < 0) return "Bitte wählen: Wie kommt die benutzte Wäsche zurück";
   if (d.GE > 0 && s.kinderPflicht === true && typeof s.kinder !== "number") return "Bitte wählen: Kinder von 6 bis 15 Jahren unter den Freunden";
   if (d.GE > 0 && !d.lock && !d.voll && !d.SOND && !isYN(s.zimmer)) return "Bitte wählen: Freund oder Freundin im selben Zimmer";
@@ -1872,7 +1879,7 @@ function check(s, d) {
   if (d.GE > 0 && REINIG_AKTIV.indexOf(s.reinig) < 0 && !(d.SOND && d.RE === 0)) return "Bitte wählen: Aufteilung der " + (d.SOND ? "Pauschale" : "Reinigung");
   if (d.nights < minFuer(ARR, DEP) && !d.SOND && !d.SOND0) return "Mindestens " + minFuer(ARR, DEP) + " Nächte" + (minFuer(ARR, DEP) > P.minNaechte ? " (in diesem Zeitraum)" : "");
   if (d.nights > P.maxNaechte) return "Höchstens " + P.maxNaechte + " Nächte";
-  if (d.FP + d.GE > P.maxPersonen) return "Maximal " + P.maxPersonen + " Personen";
+  if (d.FP + d.GE > MAXP()) return "Maximal " + MAXP() + " Personen";
   return "OK";
 }
 
@@ -2399,9 +2406,9 @@ function mfgZeigen() {
   const reihe = (h) => (HF = hf(h), "") + '<div class="zchips mfg-z">' + (h === eig ? chip('data-ich="1"', ichDa(), 'Ich<small>(' + esc(rufname()) + ")</small>", false) : "") + h.m.filter((x) => x !== ABSENDER).map((x) => chip('data-mfg="' + esc(x) + '"', sel.indexOf(x) >= 0, esc(x) + (kk.indexOf(x) >= 0 ? "<small>👶 Kinderbettchen</small>" : ""), voll && sel.indexOf(x) < 0 && (h.e.indexOf(x) < 0 || kk.length >= 2))).join("") + "</div>";
   const betten = (ichDa() ? 1 : 0) + sel.length - kk.length, fehlt = famErwFehlt();
   let h = '<div class="field zrech ' + ((sel.length || ichDa()) && !fehlt ? "done" : "missing") + '"><label>👨‍👩‍👧‍👦 Wer kommt mit?</label>' + reihe(eig) + hs.filter((x) => x !== eig).map(reihe).join("") +
-    '<p class="mfg-bett">🛏️ ' + betten + " von " + P.maxPersonen + " Betten belegt" + (kk.length + kkFreunde().length ? ", dazu " + (kk.length + kkFreunde().length) + " Kinderbettchen" + (kkFreunde().length ? " (davon " + kkFreunde().length + " für Freunde)" : "") : "") + "</p>" +
+    '<p class="mfg-bett">🛏️ ' + (betten > P.maxPersonen ? "Alle " + P.maxPersonen + " Betten und die Luftmatratze belegt (Ausnahme, die Eltern sagen zu oder ab)" : betten + " von " + P.maxPersonen + " Betten belegt") + (kk.length + kkFreunde().length ? ", dazu " + (kk.length + kkFreunde().length) + " Kinderbettchen" + (kkFreunde().length ? " (davon " + kkFreunde().length + " für Freunde)" : "") : "") + "</p>" +
     (erwWarnZeigen() ? '<p class="hint" style="color:var(--error-line);font-weight:600">Mindestens eine erwachsene Person muss mitkommen.</p>' : "") +
-    '<p class="hint">Bitte antippen, höchstens ' + MFG_MAX() + ' Personen mit Bett' + (ichDa() ? " ausser dir" : "") + ' (' + P.maxPersonen + " Betten). Kommst du selbst nicht mit, tippe «Ich» ab. Kleinkinder im Kinderbettchen kommen dazu, bis zwei (es hat zwei Kinderbettchen). Sind alle Betten belegt, kommt ein Enkelkind beim Antippen gleich ins Kinderbettchen. Den Preis pro Nacht zahlt ihr wie immer gemeinsam, die App teilt ihn unter euren Familien auf.</p></div>";
+    '<p class="hint">Bitte antippen, höchstens ' + MFG_MAX() + ' Personen mit Bett' + (ichDa() ? " ausser dir" : "") + ' (' + P.maxPersonen + " Betten und als Ausnahme die Luftmatratze). Kommst du selbst nicht mit, tippe «Ich» ab. Kleinkinder im Kinderbettchen kommen dazu, bis zwei (es hat zwei Kinderbettchen). Sind alle Betten belegt, kommt ein Enkelkind beim Antippen gleich ins Kinderbettchen. Den Preis pro Nacht zahlt ihr wie immer gemeinsam, die App teilt ihn unter euren Familien auf.</p></div>";
   const enk = [].concat(...hs.map((x) => x.e)).filter((x) => sel.indexOf(x) >= 0);
   if (enk.length || kkFrL().length) h += '<div class="field zrech done"><label>👶 Wer schläft im Kinderbettchen?</label><div class="zchips">' + kkFrChips() + enk.map((x) => (HF = hf(hs.find((q) => q.m.indexOf(x) >= 0) || eig), "") + chip('data-mkk="' + esc(x) + '"', kk.indexOf(x) >= 0, esc(x), kk.indexOf(x) < 0 ? kk.length >= kkFrei() : voll)).join("") + '</div>' + kkFrHint() + '<p class="hint">Kinder bis etwa 2½ Jahren, höchstens zwei. Sie belegen kein Bett und zählen bei der Reinigung nicht mit, darum hat dann jemand mehr Platz. Ganz Kleine, die bei euch im Bett schlafen, kommen einfach mit, du musst sie oben nicht antippen.</p></div>';
   const fp = famParteien();
@@ -2467,13 +2474,13 @@ const FIELDS = [
     opts: () => { const fo = famOpts(); return fo ? [EIGEN, MFG] : (S.luecke ? LWERL : WERL); } },
   { id: "fam", label: "👨‍👩‍👧‍👦 Wie viele Personen aus der Familie kommen?", type: "num",
     hint: (d) => "Alle zählen, auch Kleinkinder im Kinderbettchen: du selbst, Geschwister, Partner/in, Enkelkinder. Beispiel: Tochter, Sohn und 2 Enkel sind 4. Kleinkinder im Kinderbettchen gibst du danach an. Ganz Kleine, die bei euch im Bett schlafen, kommen einfach mit und zählen hier nicht." + (d.kkFix ? " Bei " + S.fam + " Personen sind " + d.kkMin + " davon Kleinkinder im Kinderbettchen, das setzt der Rechner automatisch." : ""),
-    visible: (d) => S.wer === MFG && !((famWahl() || {}).fam) && !mfgAktiv(), opts: () => range(2, P.maxPersonen + 2) },
+    visible: (d) => S.wer === MFG && !((famWahl() || {}).fam) && !mfgAktiv(), opts: () => range(2, MAXP() + 2) },
   { id: "kk", label: "👶 Wie viele davon schlafen im {{Kinderbettchen}}?", type: "num",
     hint: () => "Kinder bis etwa 2½ Jahren, höchstens zwei (es hat zwei Kinderbettchen). Sie belegen kein Bett und zählen bei der Reinigung nicht mit.",
     visible: (d) => d.kkMax > 0 && !d.kkFix && !mfgAktiv() && !eigenAktiv(), opts: (d) => range(d.kkMin, d.kkMax) },
   { id: "gaeste", label: "🧑‍🤝‍🧑 Freunde (ausserhalb der Familie)", type: "num",
-    hint: (d) => (d.frei === 0 ? "Es ist kein Platz mehr frei." : (d.frei === 1 ? "Es ist noch 1 Platz frei." : "Noch " + d.frei + " Plätze frei.") + " Maximal " + P.maxPersonen + " Personen mit Bett. Kleinkinder bis 2½ Jahre zählst du mit, sie schlafen im Kinderbettchen.") + ((d.LUE && P.lueckeGastNacht > 0) ? (d.nights >= P.lueckeGastMinNaechte ? " In der Lücke sind Freunde möglich, schon ein Freund genügt." : " In der Lücke gehen Freunde ab " + P.lueckeGastMinNaechte + " Nächten. Bitte mehr Nächte wählen oder ohne Freunde buchen.") : "") + (S.festMin ? " Im " + festTxt() + " sind mindestens " + P.festMinGaeste + " Freunde nötig" + (d.frei < P.festMinGaeste ? ", mit dieser Familiengrösse ist das nicht möglich." : ", damit sich die Woche für alle lohnt (Gesamtpreis mindestens " + chf(P.mindestpreisWoche) + " pro 7 Nächte).") : ""),
-    visible: (d) => d.frei > 0 && !(d.LUE && P.lueckeGastNacht > 0 && d.nights < P.lueckeGastMinNaechte), opts: (d) => (S.staffelOffen && S.art === ART_N && !S.festMin && !(d.LUE && P.lueckeGastNacht > 0)) ? range(1, d.freiW) : (S.festMin && d.frei >= P.festMinGaeste) ? range(P.festMinGaeste, d.freiW) : (d.LUE && P.lueckeGastNacht > 0 ? [0].concat(range(lueckeGaesteMin(d), d.freiW)) : range(0, d.freiW)) },
+    hint: (d) => (S.matra ? "🛏️ Luftmatratze: Das " + (P.maxPersonen + 1) + ". Bett ist eine Ausnahme. Der Rechner rechnet normal, die Eltern sagen danach zu oder ab.\n\n" : "") + (S.matra ? "" : (frei6(d) === 0 ? "Alle Betten sind belegt." : (frei6(d) === 1 ? "Es ist noch 1 Platz frei." : "Noch " + frei6(d) + " Plätze frei.")) + " Maximal " + P.maxPersonen + " Personen mit Bett." + (MATRA_V ? " Die gestrichelte Zahl ist die Luftmatratze, nur als Ausnahme." : "")) + " Kleinkinder bis 2½ Jahre zählst du mit, sie schlafen im Kinderbettchen." + ((d.LUE && P.lueckeGastNacht > 0) ? (d.nights >= P.lueckeGastMinNaechte ? " In der Lücke sind Freunde möglich, schon ein Freund genügt." : " In der Lücke gehen Freunde ab " + P.lueckeGastMinNaechte + " Nächten. Bitte mehr Nächte wählen oder ohne Freunde buchen.") : "") + (S.festMin ? " Im " + festTxt() + " sind mindestens " + P.festMinGaeste + " Freunde nötig" + (d.frei < P.festMinGaeste ? ", mit dieser Familiengrösse ist das nicht möglich." : ", damit sich die Woche für alle lohnt (Gesamtpreis mindestens " + chf(P.mindestpreisWoche) + " pro 7 Nächte).") : ""),
+    visible: (d) => (d.frei > 0 || MATRA_V > 0) && !(d.LUE && P.lueckeGastNacht > 0 && d.nights < P.lueckeGastMinNaechte), opts: (d) => matraOpts((S.staffelOffen && S.art === ART_N && !S.festMin && !(d.LUE && P.lueckeGastNacht > 0)) ? range(1, d.freiW) : (S.festMin && d.frei >= P.festMinGaeste) ? range(P.festMinGaeste, d.freiW) : (d.LUE && P.lueckeGastNacht > 0 ? [0].concat(range(lueckeGaesteMin(d), d.freiW)) : range(0, d.freiW))) },
   { id: "kinder", label: "🎟️ Wie viele deiner Freunde sind Kinder von 6 bis 15 Jahren?", type: "num",
     hint: () => "Für Freunde fällt in Adelboden die Kurtaxe an, die Gästekarte ist inbegriffen: " + chf2(P.kurtaxe + P.kurtaxeBeherb) + " pro Nacht ab 16 Jahren, " + chf2(P.kurtaxeKind) + " für Kinder von 6 bis 15 Jahren, Kinder unter 6 Jahren zahlen nichts. Es zählt das Alter am Anreisetag. Die Kurtaxe kommt am Schluss zum Preis dazu. Für die Familie ist sie mit der Jahrespauschale der Eltern abgegolten." + (nz(S.kinder) > 0 ? " ⚠️ {{Minderjährig}}: Freunde unter 18 sind minderjährig. Kläre mit ihren Eltern, wer für sie zahlt. Bei der Reinigung «nach Personen» zählen sie voll." : ""),
     visible: (d) => d.GE > 0 && !listeModus(), opts: (d) => range(0, d.GE) },
@@ -2516,6 +2523,7 @@ const FIELDS = [
 }
 
 function normalize() {
+  try { matraSync(); } catch (e) {}
   if (S.reinig && REINIG_AKTIV.indexOf(S.reinig) < 0) S.reinig = "";   // alte Wahl «Freunde/Familie zahlt alles» gilt nicht mehr (seit 3.16.1.0)
   NOTICES = {};
   mfgSync();
@@ -2536,7 +2544,7 @@ function normalize() {
   }
   if (S.staffelOffen && S.art === ART_N && S.gaeste === 0 && d.frei > 0 && !(d.LUE && P.lueckeGastNacht > 0)) { S.gaeste = null; meld("gaeste", "In einer laufenden Staffel ist «Normal» nur mit Freunden möglich. Ohne Freunde wählst du die Staffel. Bitte die Freunde neu wählen."); d = derive(S); }
   if (S.festMin && typeof S.gaeste === "number" && S.gaeste < P.festMinGaeste && d.frei >= P.festMinGaeste) { S.gaeste = null; meld("gaeste", "Im " + festTxt() + " sind mindestens " + P.festMinGaeste + " Freunde nötig. Bitte die Freunde neu wählen."); d = derive(S); }
-  if (d.frei === 0 && d.FP <= P.maxPersonen && typeof S.wer === "string" && S.wer && (S.wer !== MFG || typeof S.fam === "number")) { S.gaeste = 0; d = derive(S); }
+  if (d.frei === 0 && d.FP <= MAXP() && typeof S.wer === "string" && S.wer && (S.wer !== MFG || typeof S.fam === "number")) { S.gaeste = 0; d = derive(S); }
   if (d.GE === 0) { if (!(d.LUE && S.gaeste === null)) S.zimmer = ""; S.reinig = ""; }   // in der Lücke bleibt «Ja» stehen, wenn die Freunde neu gewählt werden müssen
   if (d.voll) S.zimmer = "";
   if (d.GE === 0) S.kinder = null;
@@ -4540,7 +4548,7 @@ function famAlle() {   // ganze Familie als Haushalte [{m: [Kind, Partner, Enkel
 }
 function mfgAktiv() { return !!(famOpts() && S.werArt === MFG && ABSENDER && famAlle().some((h) => h.m.indexOf(ABSENDER) >= 0)); }   // seit 3.9.7.2 über S.werArt: bei nur «Ich» gilt intern «Nur ich»   // «Meine Familie und Geschwister» mit Namen zum Antippen
 const ichDa = () => S.ichMit !== false;   // die buchende Person kommt mit (abwählbar seit 3.9.5.0)
-const MFG_MAX = () => P.maxPersonen - (ichDa() ? 1 : 0);   // ausser «Ich» höchstens so viele (Betten); kommt «Ich» nicht mit, ein Bett mehr
+const MFG_MAX = () => MAXP() - (ichDa() ? 1 : 0);   // ausser «Ich» höchstens so viele (Betten); kommt «Ich» nicht mit, ein Bett mehr
 let ERW_WARN = false;   // rote Meldung erst, wenn nur Kinder angetippt sind und weitergemacht wird (Wänu 15.11.2026)
 function erwWarnZeigen() { const sel = eigenAktiv() ? (S.famSel || []) : mfgAktiv() ? (S.mfg || []) : []; return ERW_WARN && famErwFehlt() && sel.length > 0; }
 document.addEventListener("click", (e) => { if (ERW_WARN || !famErwFehlt() || e.target.closest("#mfgRech")) return; const sel = eigenAktiv() ? (S.famSel || []) : mfgAktiv() ? (S.mfg || []) : []; if (sel.length) { ERW_WARN = true; render(); } }, true);
@@ -4646,6 +4654,7 @@ function anfrageText(r) {
   z.push("Anreise: " + fmtTagV(ARR));
   z.push("Abreise: " + fmtTagV(DEP) + " (" + x.nights + (x.nights === 1 ? " Nacht)" : " Nächte)"));
   if (SOND) z.push("Sonderbuchung (eure Vorlage): " + sondBed(SOND));
+  if (S.matra) z.push("🛏️ Luftmatratze (" + (P.maxPersonen + 1) + ". Bett): bitte freigeben");   // Ausnahme, Eltern sagen zu oder ab (seit 3.18.0.0)
   z.push("");
   const kkTxt = x.KK > 0 ? ", davon " + x.KK + " im Kinderbettchen" : "";
   z.push("Familie: " + S.wer + (S.wer === MFG ? " (" + S.fam + " Personen)" : "") + kkTxt);
@@ -4806,7 +4815,7 @@ function zielHinweis(r) {
     };
     const wer = ich ? "du" : "die Familie", zahlt = ich ? "zahlst du" : "zahlt die Familie", frei = ich ? "für dich ohne Kosten" : "für die Familie ohne Kosten";
     const zeilen = [];
-    const bis = Math.min(d.frei + S.gaeste, S.gaeste + (S.gaeste === 0 ? 6 : 2));
+    const bis = Math.min(frei6(d) + S.gaeste, S.gaeste + (S.gaeste === 0 ? 6 : 2));
     for (let g = S.gaeste + 1; g <= bis; g++) {
       const fz = probe({ gaeste: g }); if (fz === null || fz >= base) continue;
       const k = g - S.gaeste, pre = S.gaeste === 0 ? "Mit " + g + (g === 1 ? " Freund" : " Freunden") : "Mit " + k + (k === 1 ? " Freund" : " Freunden") + " mehr";
@@ -4865,6 +4874,7 @@ function render() {
   INK = null;
   gkkVerschieben();
   mfgSync();
+  matraSync();
   if (famOpts() && S.wer && !famWahl()) { S.wer = ""; S.werFam = ""; S.werArt = ""; S.fam = null; }
   S.fkk = fkkZaehlen();   // Kleinkinder der Freunde zählen nicht als zahlende Freunde (seit 3.7.0.0)   // Namen-Auswahl und Rechnung immer gleich (z. B. nach Wechsel zur Lücke und zurück)
   const d = derive(S);
@@ -4919,10 +4929,10 @@ function render() {
       const ch = document.getElementById("chips-" + f.id), wl = document.getElementById("wahl-" + f.id);
       const chipsAn = list.length > 0 && list.length <= 8 && list.every((o) => CHIP_KURZ(f.id, o).length <= 34) && list.reduce((a, o) => a + CHIP_KURZ(f.id, o).length, 0) <= 100;   // lange Listen (z. B. «Wer von der Familie kommt?» ohne Namen) bleiben Auswahllisten
       wrap.classList.toggle("chipfeld", chipsAn); ch.hidden = !chipsAn;
-      const sig2 = chipsAn + "|" + list.join("|") + "|" + cur + "|" + sperr;
+      const sig2 = chipsAn + "|" + list.join("|") + "|" + cur + "|" + sperr + "|" + (f.id === "gaeste" ? MATRA_V : "");
       if (!chipsAn) { ch.innerHTML = ""; ch.dataset.sig = ""; wl.hidden = true; }
       else {
-      if (ch.dataset.sig !== sig2) { ch.dataset.sig = sig2; ch.innerHTML = list.map((o) => '<button type="button" class="zchip" data-cv="' + esc(o) + '" aria-pressed="' + (o === cur ? "true" : "false") + '"' + (sperr ? " disabled" : "") + ">" + esc(CHIP_KURZ(f.id, o)) + "</button>").join(""); }
+      if (ch.dataset.sig !== sig2) { ch.dataset.sig = sig2; ch.innerHTML = list.map((o) => '<button type="button" class="zchip' + (f.id === "gaeste" && MATRA_V && String(o) === String(MATRA_V) ? " matra" : "") + '" data-cv="' + esc(o) + '" aria-pressed="' + (o === cur ? "true" : "false") + '"' + (sperr ? " disabled" : "") + ">" + esc(CHIP_KURZ(f.id, o)) + "</button>").join(""); }
       wl.textContent = sperr ? "" : CHIP_WAHL(f.id, cur); wl.hidden = !wl.textContent;
       }
     }
@@ -6489,6 +6499,7 @@ function vkChips(x, anfrage) {
   if (!anfrage && wRueck(x)) c.push('<span class="vk-chip' + (x.waescheZurueck ? "" : " v") + '">🧺 ' + (x.waescheZurueck ? "Wäsche zurück am " + esc(fmtTag(x.waescheZurueck.slice(0, 10))) : (x.waesche === "senden" ? "sendet" : x.waesche === "bringen" ? "bringt" : "bringt oder sendet") + " die Wäsche bis " + esc(fmtTag(waescheBis(x)))) + "</span>");
   if (!anfrage && x.angepasst) c.push('<span class="vk-chip v">✂️ angepasst, vorher ' + esc(fmtTag(x.angepasst.arr)) + " bis " + esc(fmtTag(x.angepasst.dep)) + (x.angepasst.betrag ? ", " + esc(chf(x.angepasst.betrag)) : "") + "</span>");
   c.push('<span class="vk-chip">' + x.pers + (x.pers === 1 ? " Person" : " Personen") + "</span>");
+  if (/Luftmatratze/.test(String(x.rechnung || x.text || ""))) c.push('<span class="vk-chip v">🛏️ Luftmatratze</span>');
   if (x.betrag > 0) c.push('<span class="vk-chip">💳 ' + (x.bezahlt ? "bezahlt am " + esc(fmtTag(x.bezahlt.slice(0, 10))) : esc(chfZ(x)) + " offen") + "</span>");
   return '<div class="vk-chips">' + c.join("") + "</div>";
 }
