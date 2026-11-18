@@ -2,6 +2,20 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.18.2.1",
+      "datum": "2026-11-18",
+      "titel": "Luftmatratze: Knopf «Wer bleibt zuhause?», Anfrage bleibt bei Papi sichtbar",
+      "arten": [
+        "Fehler",
+        "Layout"
+      ],
+      "punkte": [
+        "Beim Kind steht bei der Meldung der Knopf «🛏️ Wer bleibt zuhause?». Er öffnet «👤 Meine Verwaltung» mit den Namen. Nach der Wahl verschwindet die Meldung.",
+        "Auch Anfragen von vor dieser Version zeigen die Namen der Freunde. Wer von der Familie kommt, wählt das Kind dann nochmals.",
+        "In der Verwaltung der Eltern bleibt die zurückgeschickte Anfrage sichtbar: «↩︎ Zurückgeschickt: Luftmatratze nicht freigegeben», mit Knopf «Nachricht schicken»."
+      ]
+    },
+    {
       "v": "3.18.2.0",
       "datum": "2026-11-18",
       "titel": "Luftmatratze abgelehnt: Wer bleibt zuhause?",
