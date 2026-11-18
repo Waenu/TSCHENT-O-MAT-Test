@@ -2,6 +2,20 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.20.0.7",
+      "datum": "2026-11-18",
+      "titel": "Rahmen einheitlich, roter Rahmen feuerrot",
+      "arten": [
+        "Layout",
+        "Fehler"
+      ],
+      "punkte": [
+        "Alle Rahmen mit gleich runden Ecken (Kästen, Knöpfe, Eingabefelder, Inseln, Kalender).",
+        "Rote Rahmen überall feuerrot.",
+        "«Von deinen Freunden noch offen» stimmt sofort nach dem Abhaken in «Geld einsammeln» (vorher erst nach dem Neuzeichnen)."
+      ]
+    },
+    {
       "v": "3.20.0.6",
       "datum": "2026-11-18",
       "titel": "Rahmen um «Wer ist wann da?»",
