@@ -1148,7 +1148,7 @@ if (TEST_MODUS) {
   #calBlase .gb .btn.quiet { border-style: dashed; font-weight: 500; }
   #calBlase { margin-top: 8px; position: relative; }
   .ub { overflow-x: auto; margin: 6px 0 4px; --ub-nw: 82px; } .ub-g { display: grid; row-gap: 6px; align-items: center; font-size: .82rem; } .ub-w .ub-g { width: max-content; }
-  .ub-n { grid-column: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 6px; } .ub-w .ub-n { position: sticky; left: 0; z-index: 1; background: var(--surface); } .ub-w .ub-b { justify-content: flex-start; padding-left: 10px; } .ub-bt { font-size: .78rem; color: var(--muted); }
+  .ub-n { grid-column: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 6px; } .ub-w .ub-n { position: sticky; left: 0; z-index: 1; background: var(--surface); } .ub-w .ub-b { justify-content: flex-start; padding-left: 10px; } .ub-bt { font-size: .78rem; color: var(--muted); white-space: normal; line-height: 1.2; }
   .ub-t { text-align: center; font-size: .72rem; line-height: 1.2; color: var(--muted); }
   .ub-b { height: 24px; border-radius: 12px; background: var(--pc); color: #10201c; font-size: .72rem; font-weight: 700; display: flex; align-items: center; justify-content: center; white-space: nowrap; overflow: hidden; }
   .ub-b.kk { height: 12px; opacity: .8; } .ub-b.mat { outline: 2px dashed #E5A100; outline-offset: 2px; }
@@ -1702,7 +1702,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.20.0.0";
+let VERSION = "3.20.0.1";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -1953,7 +1953,7 @@ function ubHtml(o) {   // o = {arr, dep, fp (Familie mit Bett), fam: [{nm, pc, k
   h += '<div class="ub-n ub-h" style="grid-row:1"></div>' + tage.map((k, j) => '<div class="ub-t" style="grid-row:1;grid-column:' + (2 + 2 * j) + '/span 2">' + esc(fmtTag(k).split(" ")[0]) + "<br>" + Number(k.slice(8)) + ".</div>").join("");
   z.forEach((p) => { r++; const a = Math.max(0, tage.indexOf(p.an)), b = tage.indexOf(p.ab) < 0 ? D - 1 : tage.indexOf(p.ab), n = b - a;
     h += '<div class="ub-n" style="grid-row:' + r + '">' + (p.kk ? "👶 " : "") + esc(p.nm) + '</div><div class="ub-b' + (p.kk ? " kk" : "") + (p.mat ? " mat" : "") + '" style="grid-row:' + r + ";grid-column:" + (3 + 2 * a) + "/" + (3 + 2 * b) + ";--pc:" + (p.pc || INS_KIND) + '">' + (p.kk ? "" : n >= 3 || !breit ? n + (n === 1 ? " Nacht" : n >= 3 ? " Nächte" : "") : n) + "</div>"; });
-  r++; h += '<div class="ub-n ub-bt" style="grid-row:' + r + '">🛏️ Betten</div>';
+  r++; h += '<div class="ub-n ub-bt" style="grid-row:' + r + '">🛏️ Betten pro Nacht</div>';
   for (let j = 0; j < N; j++) { const c = fp + da(tage[j]).length; h += '<div class="ub-c' + (c > P.maxPersonen ? " voll" : "") + '" style="grid-row:' + r + ";grid-column:" + (3 + 2 * j) + '/span 2">' + c + "</div>"; }
   h += "</div></div>";
   if (voll.length) h += '<p class="hint ub-l">🛏️ Gelb: alle ' + P.maxPersonen + " Betten belegt, " + (voll.length === 1 ? "in dieser Nacht" : "in diesen Nächten") + " braucht es die Luftmatratze (gestrichelt). Die Eltern geben sie frei.</p>";
