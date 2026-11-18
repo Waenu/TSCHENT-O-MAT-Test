@@ -19,13 +19,16 @@
       "dep": "2026-12-13",
       "status": "abgelehnt",
       "t": "2026-11-18T14:46:02.011Z"
+    },
+    {
+      "name": "Manuel",
+      "arr": "2026-12-16",
+      "dep": "2026-12-19",
+      "status": "abgelehnt",
+      "t": "2026-11-18T14:46:15.124Z"
     }
   ],
   "logbuch": [
-    {
-      "t": "2026-11-07T13:12",
-      "text": "Bestätigt: Jerome, So 8.11.2026 bis Di 10.11.2026, CHF 360"
-    },
     {
       "t": "2026-11-07T13:14",
       "text": "Entfernt: Jerome, So 8.11.2026 bis Di 10.11.2026"
@@ -821,6 +824,10 @@
     {
       "t": "2026-11-18T15:46",
       "text": "Abgelehnt: Manuel, Do 10.12.2026 bis So 13.12.2026"
+    },
+    {
+      "t": "2026-11-18T15:46",
+      "text": "Abgelehnt: Manuel, Mi 16.12.2026 bis Sa 19.12.2026"
     }
   ],
   "reinigung": [],
