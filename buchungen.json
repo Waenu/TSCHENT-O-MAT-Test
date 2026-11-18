@@ -18,15 +18,10 @@
       "arr": "2026-12-10",
       "dep": "2026-12-13",
       "status": "abgelehnt",
-      "t": "2026-11-18T14:07:50.154Z",
-      "matra": "nein"
+      "t": "2026-11-18T14:46:02.011Z"
     }
   ],
   "logbuch": [
-    {
-      "t": "2026-11-06T19:37",
-      "text": "Bestätigt: Deborah, Sa 12.12.2026 bis Di 15.12.2026, CHF 180, Wäsche: persönlich bringen bis Fr 18.12.2026"
-    },
     {
       "t": "2026-11-07T13:12",
       "text": "Bestätigt: Jerome, So 8.11.2026 bis Di 10.11.2026, CHF 360"
@@ -822,6 +817,10 @@
     {
       "t": "2026-11-18T15:45",
       "text": "Endgültig gelöscht: Deborah, Mo 30.11.2026 bis Mi 2.12.2026"
+    },
+    {
+      "t": "2026-11-18T15:46",
+      "text": "Abgelehnt: Manuel, Do 10.12.2026 bis So 13.12.2026"
     }
   ],
   "reinigung": [],
