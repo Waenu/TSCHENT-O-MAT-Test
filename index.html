@@ -1302,6 +1302,12 @@ if (TEST_MODUS) {
   @keyframes geldKipp { 0%, 14%, 62%, 100% { transform: rotate(0); } 24%, 46% { transform: rotate(-68deg); } 54% { transform: rotate(-52deg); } }
   @keyframes geldMuenze { 0%, 22% { opacity: 0; transform: translate(0, 0) rotate(0); } 26% { opacity: 1; } 40% { opacity: 1; transform: translate(-.45em, 1.1em) rotate(200deg); } 46%, 100% { opacity: 0; transform: translate(-.55em, 1.5em) rotate(260deg); } }
   @media (prefers-reduced-motion: reduce) { .an-geld .gb, .an-geld .mz { animation: none; } }
+/* Trinkgeld bei «💳 Zu bezahlen» (seit 3.17.12.0) */
+  .trk { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line, #8886); }
+  .trk-t { margin: 0 0 6px; } .trk-t small { opacity: .75; }
+  .trk-c { display: flex; flex-wrap: wrap; gap: 8px; }
+  .trk-a { display: flex; gap: 8px; margin-top: 8px; } .trk-a input { flex: 1 1 auto; min-width: 0; min-height: max(48px, 3rem); }
+  .trk-sum { margin: 8px 0 0; }
 /* Trinkgeld: eine Münze fällt ins Sparschwein, das Schweinchen schnuppert und wackelt (nur bei «Bewegung: alles», nur transform und opacity) */
   .an-schwein { position: relative; display: inline-block; transform-origin: 40% 85%; animation: anSchwein 5s ease-in-out infinite; }
   .an-schwein::after { content: ""; position: absolute; left: 45%; top: -.1em; width: .3em; height: .3em; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #FFF2A8, #F0B400 70%); box-shadow: 0 0 0 1px #A87400; opacity: 0; animation: anSchweinMuenze 5s ease-in infinite; pointer-events: none; }
@@ -1638,7 +1644,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.17.11.2";
+let VERSION = "3.17.12.0";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -2756,6 +2762,33 @@ function konfFrei(b) {   // freie Strecken im Termin als [von, bis) (bis = Abrei
 const strecken = (l) => l.map((r) => fmtTag(r[0]) + " bis " + fmtTag(r[1])).join(" und ");
 function konfBelegt(b) { const n = konfNaechte(b), o = []; n.forEach((k) => { const l = o[o.length - 1]; if (l && l[1] === k) l[1] = addDays(k, 1); else o.push([k, addDays(k, 1)]); }); return o; }
 function ktVon(b) { const m = /\nKurtaxe Adelboden[^\t\n]*\tCHF ([\d'’.]+)/.exec((b && b.rechnung) || ""); const v = m ? Number(m[1].replace(/['’]/g, "")) : 0; return isFinite(v) && v > 0 ? v : 0; }   // Kurtaxe der Freunde aus dem Schnappschuss der Anfrage (seit 3.11.0.0)
+// Trinkgeld für Mami bei «💳 Zu bezahlen» (seit 3.17.12.0): nur auf dem Handy, pro Aufenthalt
+const TRK_BETR = [20, 50, 100];
+let TRK_ANDERS = new Set();
+function trinkB() { try { const o = JSON.parse(localStorage.getItem("tm2_trinkB:" + ABSENDER) || "{}"); return o && typeof o === "object" ? o : {}; } catch (e) { return {}; } }
+function trinkSetzen(k, n) { const o = trinkB(); if (n > 0) o[k] = n; else delete o[k]; try { localStorage.setItem("tm2_trinkB:" + ABSENDER, JSON.stringify(o)); } catch (e) {} }
+function trinkHtml(b) {
+  if (!ABSENDER || MAMI) return "";
+  const k = bKey(b), n = +trinkB()[k] || 0, and = TRK_ANDERS.has(k) || (n > 0 && TRK_BETR.indexOf(n) < 0);
+  let vs = false; try { vs = meinVorschau(); } catch (e) {}
+  let h = '<div class="trk" data-trk-k="' + esc(k) + '"><p class="trk-t"><span class="an-schwein" aria-hidden="true">🐖</span> <b>Trinkgeld für Mami</b> <small>freiwillig</small> ' + symBtn("b-trinkgeld", "ℹ️") + '</p><div class="zchips trk-c">' +
+    TRK_BETR.map((x) => '<button type="button" class="zchip" data-trk="' + x + '" aria-pressed="' + (n === x && !TRK_ANDERS.has(k) ? "true" : "false") + '"' + (vs ? " disabled" : "") + ">CHF " + x + ".–</button>").join("") +
+    '<button type="button" class="zchip" data-trk="a" aria-pressed="' + (and ? "true" : "false") + '"' + (vs ? " disabled" : "") + ">" + (and && n > 0 && !TRK_ANDERS.has(k) ? "CHF " + n + ".–" : "Anderer Betrag") + "</button></div>";
+  if (TRK_ANDERS.has(k)) h += '<div class="trk-a"><input type="text" class="betrag" inputmode="numeric" autocomplete="off" maxlength="4" placeholder="Betrag in CHF" data-trk-in="1" value="' + (n > 0 ? n : "") + '"><button type="button" class="wbtn" data-trk-ok="1">✓ Übernehmen</button></div>';
+  if (n > 0) h += '<p class="trk-sum">Zu überweisen: ' + esc(chf2(zahlSumme(b))) + " + Trinkgeld " + esc(chf2(n)) + " = <b>" + esc(chf2(zahlSumme(b) + n)) + "</b> 🙏</p>";
+  return h + "</div>";
+}
+function trinkNeu() { try { aufentZeigen(); } catch (e) {} }
+document.addEventListener("click", (e) => {
+  const c = e.target.closest(".trk [data-trk], .trk [data-trk-ok]"); if (!c) return;
+  const box = c.closest(".trk"), k = box.getAttribute("data-trk-k");
+  if (c.hasAttribute("data-trk-ok")) { const i = box.querySelector("[data-trk-in]"); trinkSetzen(k, Math.min(9999, parseInt((i && i.value) || "", 10) || 0)); TRK_ANDERS.delete(k); trinkNeu(); return; }
+  const v = c.getAttribute("data-trk"), n = +trinkB()[k] || 0;
+  if (v === "a") { if (TRK_ANDERS.has(k)) TRK_ANDERS.delete(k); else if (c.getAttribute("aria-pressed") === "true") trinkSetzen(k, 0); else TRK_ANDERS.add(k); trinkNeu(); if (TRK_ANDERS.has(k)) { const i = document.querySelector('.trk[data-trk-k="' + CSS.escape(k) + '"] [data-trk-in]'); if (i) i.focus(); } return; }
+  TRK_ANDERS.delete(k); trinkSetzen(k, n === +v ? 0 : +v); trinkNeu();
+});
+document.addEventListener("input", (e) => { if (e.target && e.target.matches && e.target.matches("[data-trk-in]")) e.target.value = e.target.value.replace(/\D/g, "").slice(0, 4); });
+document.addEventListener("keydown", (e) => { if (e.key === "Enter" && e.target && e.target.matches && e.target.matches("[data-trk-in]")) { const o = e.target.closest(".trk").querySelector("[data-trk-ok]"); if (o) o.click(); } });
 function zahlSumme(b) { return (b.betrag > 0 ? b.betrag : 0) + ktVon(b); }   // an die Eltern: Aufenthalt und Kurtaxe der Freunde (Wänu: die Kurtaxe überweisen die Eltern an Adelboden Tourismus)
 function chfZ(b) { const k = ktVon(b); return k ? chf2(zahlSumme(b)) : chf(b.betrag); }
 function chfZk(b) { const k = ktVon(b); return chfZ(b) + (k ? " (inkl. Kurtaxe der Freunde " + chf2(k) + ")" : ""); }
@@ -3178,7 +3211,7 @@ function begriffeFuellen() {
   const offen = Array.from(document.querySelectorAll("details.mehr[open]")).map((d) => d.parentElement && d.parentElement.id);   // aufgeklappte «Mehr erfahren» bleiben beim Neuaufbau offen
   const ruhe = RUHE.length ? ruheTxt() : "";
   const set = (id, html) => { const e = document.getElementById(id); if (e) e.innerHTML = html; };
-  set("bc-trinkgeld", "<p>Es war ein Anliegen von Mami, dass die Kinder günstiger nach Adelboden gehen können. Dafür macht sie viel Arbeit: Fahrt, Reinigung und Wäsche, siehe «Endreinigung» " + symBtn("b-endrein", "🪣") + ".</p><p>Auch Papi packt selbstverständlich mit an: Er reinigt, repariert und hält das Chalet in Schuss.</p><p>Wer möchte, gibt Mami deshalb ein Trinkgeld. Das ist freiwillig, aber ein schönes Zeichen der Wertschätzung. Gebt, was euch passt: Es freut sie, und ihr dürft grosszügig sein 😉</p><p>Wenn ihr unter «Trinkgeld für Mami» einen Betrag eintragt, wird er zum Preis dazugerechnet und extra ausgewiesen.</p>");
+  set("bc-trinkgeld", "<p>Es war ein Anliegen von Mami, dass die Kinder günstiger nach Adelboden gehen können. Dafür macht sie viel Arbeit: Fahrt, Reinigung und Wäsche, siehe «Endreinigung» " + symBtn("b-endrein", "🪣") + ".</p><p>Auch Papi packt selbstverständlich mit an: Er reinigt, repariert und hält das Chalet in Schuss.</p><p>Wer möchte, gibt Mami deshalb ein Trinkgeld. Das ist freiwillig, aber ein schönes Zeichen der Wertschätzung. Gebt, was euch passt: Es freut sie, und ihr dürft grosszügig sein 😉</p><p>Das Trinkgeld wählst du, wenn du bezahlst: In «👤 Meine Verwaltung» steht bei deinem Aufenthalt unter «💳 Zu bezahlen» die Zeile «🐖 Trinkgeld für Mami». Tippst du einen Betrag an, siehst du gleich, wie viel du insgesamt überweist. Das bleibt nur auf deinem Handy.</p>");
   set("bc-zahlung", "<p>Die Familie überweist den ganzen Betrag, auch wenn Freunde dabei sind, samt Kurtaxe der Freunde. Die Eltern zahlen die Kurtaxe an Adelboden Tourismus und schicken euch den QR-Code für die Gästekarte. Spätestens " + ZAHL_TAGE + " Tage nach dem letzten Ferientag, ohne Aufforderung.</p><p>" + esc(BANK) + "</p><p>Bitte mit Name und Datum der Ferien überweisen.</p><p>Ist die Zahlung nach Ablauf der Frist nicht verbucht, erscheint auf deinem Handy eine rote Meldung. Sie lässt sich nicht wegklicken und verschwindet erst, wenn die Eltern die Zahlung verbucht haben. Ab " + ERINNERUNG_AB + " Tagen nach der Abreise schicken dir die Eltern zusätzlich eine WhatsApp als Erinnerung. Bei Aufenthalten, die nichts kosten, gibt es keine Meldung.</p>");
   (function () {
     let h = "<p>Die Möglichkeiten, wie dein Aufenthalt günstiger wird. Die Einzelheiten stehen jeweils beim Symbol.</p><ul>";
@@ -4865,7 +4898,7 @@ function render() {
   mfgZeigen(); gmRechZeigen(d); zahlUiZeigen(d);
   const r = calc(Object.assign({}, S, { kinderPflicht: !listeModus() }));
   mitzZeigen(r, d);
-  const tip = Math.max(0, parseInt(TRINK, 10) || 0);
+  const tip = 0;   // Trinkgeld seit 3.17.12.0 nicht mehr im Rechner, sondern bei «💳 Zu bezahlen» (trinkHtml)
   const res = document.getElementById("result");
   const bar = document.getElementById("bar");
   const lab = document.getElementById("barLab"), val = document.getElementById("barVal");
@@ -5117,9 +5150,6 @@ function render() {
     aufS +
     anfrageKasten(r) +
     '<h3 class="split-h">' + symBtn('b-zahlung', '💰') + ' Zahlung</h3>' +
-    '<div class="acc">' + symBtn('b-trinkgeld', '<span class="an-schwein">🐖</span>') + '<button type="button" class="acc-t" id="trinkTgl" data-body="trinkBody" aria-expanded="' + (TRINK_OFFEN ? 'true' : 'false') + '" aria-controls="trinkBody">Trinkgeld' + (tip > 0 ? ' ' + chf(tip) + ' 🙏' : '') + '</button></div>' +
-    '<div class="field" id="trinkBody"' + (TRINK_OFFEN ? '' : ' hidden') + '><label for="trink">Trinkgeld für Mami</label><input id="trink" class="betrag" type="text" inputmode="numeric" autocomplete="off" placeholder="freiwillig, z. B. 20" value="' + esc(TRINK) + '">' +
-      '<button type="button" class="wbtn" id="trinkOk">✓ Übernehmen</button></div>' +
     zahlung +
     '<details><summary>' + symBtn('b-geld', '<span class="an-hand" ><span class="hd">🤲</span><i class="bn b1"></i><i class="bn b2"></i><i class="bn b3"></i></span>') + ' Geldverwendung</summary><div class="rows">' + GELD_TEXT +
     '</div></details>' +
@@ -5403,8 +5433,8 @@ function aufentZeigen() {
     zb.hidden = vorab.length === 0 && erRuhig.length === 0;
     const inkL = inkLokal(), freundOffen = (b) => { const e = inkL[bKey(b)]; if (!e) return 0; const ok = e.ok || {}; return e.p.reduce((a, pp, k) => a + (ok[k] ? 0 : pp.t), 0); };
     zb.dataset.gen = String((+zb.dataset.gen || 0) + 1);
-    zb.innerHTML = vorab.map((b) => '<div class="note h brennt" data-bk="' + esc(bKey(b)) + '"><b>💳 Zu bezahlen:</b> Für deinen Aufenthalt vom ' + esc(fmtTag(b.arr)) + " bis " + esc(fmtTag(b.dep)) + " sind <b>" + esc(chfZ(b)) + "</b>" + (ktVon(b) ? " (inkl. Kurtaxe der Freunde " + esc(chf2(ktVon(b))) + ")" : "") + " fällig, spätestens am " + esc(fmtTag(zahlFrist(b))) + ". Du kannst auch schon vorher überweisen, die Bankverbindung steht unter «Zahlung» " + symBtn("b-zahlung", "💰") + "." + (freundOffen(b) > 0.004 ? "<br><small>Von deinen Freunden noch offen: " + esc(chf2(freundOffen(b))) + " (siehe «💰 Geld einsammeln»).</small>" : "") + "</div>").join("") + erRuhig.map(ERH).join("");
-    ZLH = zl.map((b) => '<div class="note h rot-warn"><b>💳 Zahlung offen:</b> Für deinen Aufenthalt vom ' + esc(fmtTag(b.arr)) + ' bis ' + esc(fmtTag(b.dep)) + ' sind <b>' + esc(chfZ(b)) + '</b>' + (ktVon(b) ? ' (inkl. Kurtaxe der Freunde ' + esc(chf2(ktVon(b))) + ')' : '') + ' fällig. Die Frist war am ' + esc(fmtTag(zahlFrist(b))) + '. Bitte überweise jetzt, die Bankverbindung steht unter «Zahlung» ' + symBtn("b-zahlung", "💰") + '. Sobald Papi die Zahlung verbucht hat, verschwindet diese Meldung.</div>').join("");
+    zb.innerHTML = vorab.map((b) => '<div class="note h brennt" data-bk="' + esc(bKey(b)) + '"><b>💳 Zu bezahlen:</b> Für deinen Aufenthalt vom ' + esc(fmtTag(b.arr)) + " bis " + esc(fmtTag(b.dep)) + " sind <b>" + esc(chfZ(b)) + "</b>" + (ktVon(b) ? " (inkl. Kurtaxe der Freunde " + esc(chf2(ktVon(b))) + ")" : "") + " fällig, spätestens am " + esc(fmtTag(zahlFrist(b))) + ". Du kannst auch schon vorher überweisen, die Bankverbindung steht unter «Zahlung» " + symBtn("b-zahlung", "💰") + "." + trinkHtml(b) + (freundOffen(b) > 0.004 ? "<br><small>Von deinen Freunden noch offen: " + esc(chf2(freundOffen(b))) + " (siehe «💰 Geld einsammeln»).</small>" : "") + "</div>").join("") + erRuhig.map(ERH).join("");
+    ZLH = zl.map((b) => '<div class="note h rot-warn"><b>💳 Zahlung offen:</b> Für deinen Aufenthalt vom ' + esc(fmtTag(b.arr)) + ' bis ' + esc(fmtTag(b.dep)) + ' sind <b>' + esc(chfZ(b)) + '</b>' + (ktVon(b) ? ' (inkl. Kurtaxe der Freunde ' + esc(chf2(ktVon(b))) + ')' : '') + ' fällig. Die Frist war am ' + esc(fmtTag(zahlFrist(b))) + '. Bitte überweise jetzt, die Bankverbindung steht unter «Zahlung» ' + symBtn("b-zahlung", "💰") + '. Sobald Papi die Zahlung verbucht hat, verschwindet diese Meldung.' + trinkHtml(b) + '</div>').join("");
     const zr = document.getElementById("zahlRot"); zr.hidden = !zl.length && !erRot.length;
     zr.innerHTML = erRot.map(ERH).join("") + ZLH;
     meinKnopf();
@@ -6572,7 +6602,7 @@ document.getElementById("bestKasten").addEventListener("click", async (e) => {
   if (!b || !ZT_TXT[feld]) return;
   if (done) { if (!(await appFrage("«" + ZT_TXT[feld] + "» bei " + b.name + " (" + fmtTag(b.arr) + " bis " + fmtTag(b.dep) + ") wieder als offen markieren?", "Ja, wieder offen"))) return; }
   else if (feld === "endreinBezahlt") { if (!(await appFrage("Endreinigung der Staffel von " + b.name + " (" + chf(P.reinigung) + ") als eingegangen verbuchen?", "Ja, verbuchen"))) return; }
-  else if (feld === "bezahlt") { if (!(await appFrage("Zahlung von " + b.name + " (" + chfZk(b) + ", " + fmtTag(b.arr) + " bis " + fmtTag(b.dep) + ") als eingegangen verbuchen?", "Ja, verbuchen"))) return; }
+  else if (feld === "bezahlt") { if (!(await appFrage("Zahlung von " + b.name + " (" + chfZk(b) + ", " + fmtTag(b.arr) + " bis " + fmtTag(b.dep) + ") als eingegangen verbuchen? Ist mehr eingegangen als verlangt, ist es vermutlich ein Trinkgeld für Mami.", "Ja, verbuchen"))) return; }
   else if (feld === "waescheZurueck") { if (!(await appFrage("Ist die Wäsche von " + b.name + " (" + fmtTag(b.arr) + " bis " + fmtTag(b.dep) + ") zurück bei euch?", "Ja, ist zurück"))) return; }
   ztSetzen(key, feld, !done);
 });
@@ -6950,7 +6980,7 @@ function inkZeigen() {
   l.forEach((b) => {
     const key = bKey(b), e = lok[key], ok = e.ok || {}, of = offenF(b), nBez = e.p.filter((pp, k) => ok[k]).length, alle = nBez === e.p.length, kt = ktVon(b) || e.kt || 0, an = (b.betrag > 0 ? b.betrag : 0) + kt;
     const stand = alle ? "✅ Alle Freunde haben bezahlt" : nBez + " von " + e.p.length + " bezahlt, offen " + esc(chf2(of));
-    h += mm ? '<div class="note h ink-b mein-teil' + (alle ? "" : " brennt") + '" data-ink="' + esc(key) + '"><p class="mein-t"><b>💰 Geld einsammeln</b><br><small>' + stand + "</small></p>" + (alle ? "" : '<p class="hint">Schick jedem seine Rechnung per WhatsApp und hake ab, wer bezahlt hat.</p>' + zahlInfo)
+    h += mm ? '<div class="note h ink-b mein-teil' + (alle ? "" : " brennt") + '" data-ink="' + esc(key) + '"><p class="mein-t"><b>💰 Geld einsammeln</b><br><small>' + stand + "</small></p>" + (alle ? "" : '<p class="hint">Schick jedem seine Rechnung per WhatsApp und hake ab, wer bezahlt hat.</p><label class="ink-sw"><input type="checkbox" data-ink-trink="1"' + (inkTrink() ? " checked" : "") + '> 🍀 In den Rechnungen auf das Trinkgeld hinweisen</label>' + zahlInfo)
       : '<details class="ink-b' + (alle ? "" : " brennt") + '" data-ink="' + esc(key) + '"' + (auf.has(key) ? " open" : "") + '><summary><b>' + esc(fmtTag(b.arr)) + " bis " + esc(fmtTag(b.dep)) + "</b><br><small>" + stand + "</small></summary>";
     if (b.betrag > 0 && e.tot > 0 && Math.abs(b.betrag - e.tot) > 0.5) h += '<p class="note h ink-warn">⚠️ Die Eltern haben den Preis angepasst (beim Anfragen ' + esc(chf2(e.tot)) + ", jetzt " + esc(chf2(b.betrag)) + "). Die Beträge unten stammen noch von deiner Anfrage. Prüf sie, bevor du sie verschickst.</p>";
     if (!alle) h += '<label class="ink-fr">📅 Bis wann sollen deine Freunde dir zahlen?<input type="date" data-ink-frist="' + esc(key) + '" value="' + esc(inkFrist(e)) + '"></label><p class="hint">Dieses Datum steht in den Rechnungen. Vorschlag der Eltern: spätestens ' + freundTage() + (freundTage() === 1 ? " Tag" : " Tage") + " nach der Abreise. Du selbst zahlst den Eltern bis " + esc(fmtTag(zahlFrist(b))) + ".</p>";
@@ -7872,7 +7902,7 @@ document.getElementById("bestKasten").addEventListener("click", async (e) => {
   const wz = e.target.closest("[data-wz]");
   if (wz) { const k1 = wz.getAttribute("data-wz"), b1 = BUCH.find((x) => bKey(x) === k1); if (b1 && (await appFrage("Ist die Wäsche von " + b1.name + " (" + fmtTag(b1.arr) + " bis " + fmtTag(b1.dep) + ") zurück bei euch?", "Ja, ist zurück"))) waescheZurueck(k1); return; }
   const bz = e.target.closest("[data-bez]");
-  if (bz) { const k0 = bz.getAttribute("data-bez"), b0 = BUCH.find((x) => bKey(x) === k0); if (b0 && (await appFrage("Zahlung von " + b0.name + " (CHF " + b0.betrag + ", " + fmtTag(b0.arr) + " bis " + fmtTag(b0.dep) + ") als eingegangen verbuchen?", "Ja, verbuchen"))) zahlungVerbuchen(k0); return; }
+  if (bz) { const k0 = bz.getAttribute("data-bez"), b0 = BUCH.find((x) => bKey(x) === k0); if (b0 && (await appFrage("Zahlung von " + b0.name + " (CHF " + b0.betrag + ", " + fmtTag(b0.arr) + " bis " + fmtTag(b0.dep) + ") als eingegangen verbuchen? Ist mehr eingegangen als verlangt, ist es vermutlich ein Trinkgeld für Mami.", "Ja, verbuchen"))) zahlungVerbuchen(k0); return; }
   const f = (a) => { const el = e.target.closest("[" + a + "]"); return el ? el.getAttribute(a) : null; };
   const find = (l, key) => l.find((x) => bKey(x) === key);
   if (e.target.closest("[data-zu]")) { bestMsg = ""; bestFehler = ""; bestZeigen(); return; }
