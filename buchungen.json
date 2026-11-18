@@ -26,23 +26,9 @@
       "dep": "2026-12-19",
       "status": "abgelehnt",
       "t": "2026-11-18T14:46:15.124Z"
-    },
-    {
-      "name": "Manuel",
-      "arr": "2026-11-25",
-      "dep": "2026-11-28",
-      "selbst": false,
-      "pers": 6,
-      "betrag": 450,
-      "rechnung": "Gesendet am Mi 18.11.2026, 15:49 Uhr. App-Version 3.18.2.2.\nAnreise\tMittwoch 25.11.2026\nAbreise\tSamstag 28.11.2026 (3 Nächte)\nFamilie\tMeine Familie und Geschwister (8 Personen), davon 2 im Kinderbettchen\nFreunde\t0\nZimmer 1 unberührt\tNein\nBedingungen akzeptiert\tJa\nTotal laut Rechner\tCHF 450.–\n#Preisberechnung\nFamilie pro Nacht\tCHF 70.–\nÜbernachtung (3 Nächte)\tCHF 210.–\nReinigung\tCHF 240.–\n#Aufteilung unter den Freunden\nFamilie, Partei 1 zahlt\tCHF 150.00\nFamilie, Partei 2 zahlt\tCHF 75.00\nFamilie, Partei 3 zahlt\tCHF 150.00\nFamilie, Partei 4 zahlt\tCHF 75.00",
-      "bestaetigt": "2026-11-18T15:49"
     }
   ],
   "logbuch": [
-    {
-      "t": "2026-11-07T15:35",
-      "text": "Entfernt: Deborah, Sa 12.12.2026 bis Di 15.12.2026"
-    },
     {
       "t": "2026-11-07T15:36",
       "text": "Entfernt: Manuel, Do 1.04.2027 bis Sa 3.04.2027"
@@ -838,6 +824,10 @@
     {
       "t": "2026-11-18T15:49",
       "text": "Bestätigt: Manuel, Mi 25.11.2026 bis Sa 28.11.2026, CHF 450"
+    },
+    {
+      "t": "2026-11-18T15:51",
+      "text": "Endgültig gelöscht: Manuel, Mi 25.11.2026 bis Sa 28.11.2026"
     }
   ],
   "reinigung": [],
