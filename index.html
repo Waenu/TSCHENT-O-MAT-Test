@@ -784,7 +784,14 @@ if (TEST_MODUS) {
   .bigbtn.blau.on { background: var(--marke); color: var(--accent-fg); }
   #bestKasten.note.h { border: 0; border-radius: 6px; padding: 14px 16px; }
   #meinKasten.note.h { border: 0; border-radius: 6px; }   /* seit 3.17.12.4 wie die Verwaltung von Papi: kein blauer Rahmen */
-  #meinAuf > .mein-st.note.h:not(.brennt):not(.steht) { border-color: rgba(127,127,127,.35); }   /* Rahmen nur in Farbe, wenn etwas ansteht (rot/orange) */   /* seit 2.112.1.0 ohne blauen Rahmen wie die anderen Bereiche */
+  #meinAuf > .mein-st.note.h:not(.brennt):not(.steht) { border-color: rgba(127,127,127,.35); }
+  /* seit 3.17.12.6 wie die Verwaltung von Papi: kein äusserer Rahmen, Kopfzeile pro Aufenthalt als Balken, innere Kästen feuerrot */
+  #meinAuf > details.mein-st.note.h { border: 0 !important; background: none !important; padding: 0 !important; margin: 0 0 14px !important; }
+  #meinAuf > details.mein-st > summary, #meinAuf > details.mein-st[open] > summary { border: 2px solid var(--accent); border-radius: 6px; background: var(--surface); padding: 6px 12px; min-height: 54px; }
+  #meinAuf > details.mein-st[open] > summary { background: var(--accent); color: var(--accent-fg); margin-bottom: 10px; }
+  #meinAuf > details.mein-st.brennt:not([open]) > summary { border-color: #C62828; } #meinAuf > details.mein-st.steht:not([open]) > summary { border-color: #E5A100; }
+  #meinAuf > details.mein-st[open] > summary::after { color: inherit; }
+  #meinKasten .brennt, #meinKasten .ink-b.brennt { border-color: #C62828 !important; }   /* Rahmen nur in Farbe, wenn etwas ansteht (rot/orange) */   /* seit 2.112.1.0 ohne blauen Rahmen wie die anderen Bereiche */
   #ver { user-select: none; -webkit-user-select: none; touch-action: manipulation; }
   .bigbtn.on { background: var(--accent); color: var(--accent-fg); }
   #hilfe { display: flex; flex-direction: column; gap: 12px; }
@@ -1308,10 +1315,11 @@ if (TEST_MODUS) {
   .trk { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line, #8886); }
   .trk-t { margin: 0 0 6px; } .trk-t small { opacity: .75; }
   .trk-c { display: flex; flex-wrap: wrap; gap: 8px; }
-  .trk-a { display: flex; gap: 8px; margin-top: 8px; } .trk-a input { flex: 1 1 auto; min-width: 0; min-height: max(48px, 3rem); }
+  .trk-a { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; } .trk-a input { width: 100%; box-sizing: border-box; min-height: max(48px, 3rem); } .trk-a input::placeholder { font-size: .85em; }
+  .trk-weg { background: none; border: 0; color: inherit; opacity: .75; text-decoration: underline; padding: 6px 0; min-height: 0; font-size: .9em; }
   .trk-sum { margin: 8px 0 0; }
   .trk-iban { margin-top: 10px; } .trk-iban p { margin: 0 0 8px; }
-  .trk-c { margin-bottom: 8px; } .trk-a { margin-top: 0; } .trk-a .wbtn { white-space: nowrap; flex: 0 0 auto; }
+  .trk-c { margin-bottom: 8px; } .trk-a { margin-top: 0; }
   .trk-c .zchip small { display: block; font-weight: 400; font-size: .78em; opacity: .85; }
   #herzRegen { position: fixed; inset: 0; z-index: 100000; pointer-events: none; overflow: hidden; }
   #herzRegen .hz { position: absolute; top: 0; line-height: 1; will-change: transform, opacity; }
@@ -1652,7 +1660,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.17.12.4";
+let VERSION = "3.17.12.6";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -2782,9 +2790,9 @@ function trinkHtml(b) {
   let vs = false; try { vs = meinVorschau(); } catch (e) {}
   const dis = vs ? " disabled" : "";
   let h = '<div class="trk" data-trk-k="' + esc(k) + '"><p class="trk-t"><span class="an-schwein" aria-hidden="true">🐖</span> <b>Trinkgeld für Mami</b> <small>freiwillig</small> ' + symBtn("b-trinkgeld", "ℹ️") + "</p>";
-  if (aufrundbar(s) || auf) h += '<div class="zchips trk-c"><button type="button" class="zchip" data-trk="r" aria-pressed="' + (auf ? "true" : "false") + '"' + dis + ">Aufrunden<small>auf " + esc(chf2(aufZiel(s))) + "</small></button></div>";
-  h += '<div class="trk-a"><input type="text" class="betrag" inputmode="numeric" autocomplete="off" maxlength="4" aria-label="Trinkgeld in CHF" data-trk-in="1" value="' + (!auf && n > 0 ? n : "") + '"' + dis + '><button type="button" class="wbtn" data-trk-ok="1"' + dis + ">✓ Übernehmen</button></div>";
-  if (n > 0) h += '<p class="trk-sum">Zu überweisen: ' + esc(chf2(s)) + " + Trinkgeld " + esc(chf2(n)) + " = <b>" + esc(chf2(s + n)) + "</b> 🙏</p>";
+  const ph = aufrundbar(s) ? "Aufrunden auf " + chf2(aufZiel(s)) + " oder anderer Betrag" : "";   // seit 3.17.12.5: Aufrunden im Feld statt als Chip (leer übernehmen = aufrunden)
+  h += '<div class="trk-a"><input type="text" class="betrag" inputmode="numeric" autocomplete="off" maxlength="4" aria-label="Trinkgeld in CHF" placeholder="' + esc(ph) + '" data-trk-in="1" value="' + (!auf && n > 0 ? n : "") + '"' + dis + '><button type="button" class="btn" data-trk-ok="1"' + dis + ">✓ Übernehmen</button></div>";
+  if (n > 0) h += '<p class="trk-sum">Zu überweisen: ' + esc(chf2(s)) + " + Trinkgeld " + esc(chf2(n)) + (auf ? " (aufgerundet)" : "") + " = <b>" + esc(chf2(s + n)) + '</b> 🙏</p><button type="button" class="trk-weg" data-trk="weg"' + dis + ">Kein Trinkgeld</button>";
   return h + "</div>";
 }
 function ibanHtml() { return IBAN ? '<div class="trk-iban"><p>IBAN: <b>' + esc(IBAN) + '</b></p><button type="button" class="btn" data-ibankopie="1">📋 IBAN kopieren</button></div>' : ""; }   // seit 3.17.12.3 auch in «💳 Zu bezahlen»
@@ -2808,8 +2816,10 @@ function herzRegen() {
 document.addEventListener("click", (e) => {
   const c = e.target.closest(".trk [data-trk], .trk [data-trk-ok]"); if (!c || c.disabled) return;
   const box = c.closest(".trk"), k = box.getAttribute("data-trk-k"), vor = trinkB()[k];
-  if (c.hasAttribute("data-trk-ok")) { const i = box.querySelector("[data-trk-in]"), n = Math.min(9999, parseInt((i && i.value) || "", 10) || 0); trinkSetzen(k, n); trinkNeu(); if (n > 0 && n !== vor) herzRegen(); return; }
-  trinkSetzen(k, vor === "auf" ? 0 : "auf"); trinkNeu(); if (vor !== "auf") herzRegen();
+  if (c.getAttribute("data-trk") === "weg") { trinkSetzen(k, 0); trinkNeu(); return; }
+  if (c.hasAttribute("data-trk-ok")) { const i = box.querySelector("[data-trk-in]"), roh = ((i && i.value) || "").trim();
+    let neu = roh === "" ? (i && i.placeholder ? "auf" : null) : Math.min(9999, parseInt(roh, 10) || 0);   // leer = aufrunden (nur wenn möglich), 0 = kein Trinkgeld
+    if (neu === null) return; trinkSetzen(k, neu); trinkNeu(); if ((neu === "auf" || neu > 0) && neu !== vor) herzRegen(); return; }
 });
 document.addEventListener("input", (e) => { if (e.target && e.target.matches && e.target.matches("[data-trk-in]")) e.target.value = e.target.value.replace(/\D/g, "").slice(0, 4); });
 document.addEventListener("keydown", (e) => { if (e.key === "Enter" && e.target && e.target.matches && e.target.matches("[data-trk-in]")) { const o = e.target.closest(".trk").querySelector("[data-trk-ok]"); if (o) o.click(); } });

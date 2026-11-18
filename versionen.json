@@ -2,6 +2,32 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.17.12.6",
+      "datum": "2026-11-18",
+      "titel": "Meine Verwaltung wie bei Papi",
+      "arten": [
+        "Layout"
+      ],
+      "punkte": [
+        "Kein äusserer Rahmen mehr um die Aufenthalte.",
+        "Jeder Aufenthalt hat eine Kopfzeile wie bei Papi: zu mit Rahmen (rot, wenn etwas offen ist), offen grün gefüllt.",
+        "Rote Rahmen der Aufgaben in Feuerrot wie in der Verwaltung von Papi."
+      ]
+    },
+    {
+      "v": "3.17.12.5",
+      "datum": "2026-11-18",
+      "titel": "Trinkgeld: Aufrunden im Feld",
+      "arten": [
+        "Layout"
+      ],
+      "punkte": [
+        "Aufrunden steht als Vorschlag im Feld: «Aufrunden auf CHF … oder anderer Betrag». Leer lassen und «Übernehmen» rundet auf.",
+        "Feld in voller Breite, «✓ Übernehmen» darunter.",
+        "Ist schon ein Trinkgeld gewählt, lässt es sich mit «Kein Trinkgeld» wieder entfernen."
+      ]
+    },
+    {
       "v": "3.17.12.4",
       "datum": "2026-11-18",
       "titel": "Meine Verwaltung ohne blauen Rahmen",
