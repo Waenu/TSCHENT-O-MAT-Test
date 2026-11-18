@@ -2,6 +2,18 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.19.0.2",
+      "datum": "2026-11-18",
+      "titel": "Eigene Daten der Freunde im kleinen Kalender",
+      "arten": [
+        "Layout"
+      ],
+      "punkte": [
+        "Eigene An- und Abreise eines Freundes wählst du in einem kleinen Kalender: nur die Tage eures Aufenthalts sind antippbar, alles andere ist ausgegraut. Erster Tipp = Anreise, zweiter Tipp = Abreise.",
+        "Bei «Freunde» steht die gestrichelte Zahl (Luftmatratze) wieder in derselben Zeile."
+      ]
+    },
+    {
       "v": "3.19.0.1",
       "datum": "2026-11-18",
       "titel": "Anleitung: Freunde mit eigenen Daten und Luftmatratze",
