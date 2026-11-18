@@ -197,6 +197,7 @@ Bedienkonzept Wänu (14.11.2026, ersetzt wo abweichend die Punkte oben; erst nac
 - 3.17.12.4 (Wänu: «blauer Rahmen ist zu viel»): `#meinKasten.note.h` ohne Rahmen (wie `#bestKasten`); `.mein-st` ohne `brennt`/`steht` mit grauem Rahmen statt `--marke`.
 - 3.17.12.5 (Wänu): Aufrunden kein Chip mehr, sondern Platzhalter im Feld `data-trk-in` («Aufrunden auf CHF … oder anderer Betrag», nur bei `aufrundbar`); leeres Feld + «✓ Übernehmen» = "auf". Feld volle Breite, Knopf darunter (`.trk-a` column). Link `data-trk="weg"` «Kein Trinkgeld» bei gewähltem Trinkgeld.
 - 3.17.12.6 (Wänu: wie seine Verwaltung): `#meinAuf > details.mein-st` ohne Rahmen/Hintergrund/Innenabstand; summary als Balken wie `details.pers` (zu: Rahmen `--accent`, bei `brennt` #C62828, bei `steht` #E5A100; offen: grün gefüllt). `#meinKasten .brennt` Rahmen #C62828 (Feuerrot wie `#bestKasten .vk.rot`).
+- 3.17.12.7 (Wänu): `ptVorschlag` löscht `zv` bei Erwachsenen ohne `ptZiele` (z. B. ein einziger erwachsener Freund, Kopf mit Mitgliedern); vorher blieb `ptBestOffen` wahr, `.gm-ptbox` aber versteckt (keine sichtbare Zeile), Leiste «Bitte bestätigen: Wer gehört zusammen» ohne Knopf. `#btnMein`: `.rot-rand` #C62828, neu `.ok-rand` (`--marke` blau) ohne offene Punkte.
 
 ## Offen: Airbnb-Belegung ins App-Repo umziehen (Wänu «ja», 13.11.2026, nächste Woche)
 - Heute: Workflow `belegung.yml` + `belegung.py` im alten Repo `Waenu/Tschentomat` (Secret `AIRBNB_ICAL`) schreibt `belegt.json`; die App liest `/Tschentomat/belegt.json`.
