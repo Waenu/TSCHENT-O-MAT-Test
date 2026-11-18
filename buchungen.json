@@ -50,13 +50,17 @@
       "status": "abgelehnt",
       "t": "2026-11-18T13:48:36.706Z",
       "matra": "nein"
+    },
+    {
+      "name": "Manuel",
+      "arr": "2026-12-10",
+      "dep": "2026-12-13",
+      "status": "abgelehnt",
+      "t": "2026-11-18T14:07:50.154Z",
+      "matra": "nein"
     }
   ],
   "logbuch": [
-    {
-      "t": "2026-11-05T17:20",
-      "text": "Bestätigt: Manuel, Mi 25.11.2026 bis Sa 28.11.2026, CHF 180"
-    },
     {
       "t": "2026-11-05T17:20",
       "text": "Bescheid gegeben: Manuel, Mi 25.11.2026 bis Sa 28.11.2026"
@@ -852,6 +856,10 @@
     {
       "t": "2026-11-18T14:48",
       "text": "Abgelehnt: Manuel, Mi 16.12.2026 bis Sa 19.12.2026"
+    },
+    {
+      "t": "2026-11-18T15:07",
+      "text": "Abgelehnt: Manuel, Do 10.12.2026 bis So 13.12.2026"
     }
   ],
   "reinigung": [],
