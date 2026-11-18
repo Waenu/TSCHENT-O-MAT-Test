@@ -2,6 +2,21 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.19.0.4",
+      "datum": "2026-11-18",
+      "titel": "Kurtaxe mit eigenen Nächten, Aufenthalt wie das Geburtsdatum",
+      "arten": [
+        "Fehler",
+        "Layout"
+      ],
+      "punkte": [
+        "Fehler: Total und Leiste rechneten die Kurtaxe der Freunde mit eigenen Daten noch für alle Nächte. Jetzt für die eigenen Nächte, gleich wie die Aufteilung.",
+        "Preisberechnung mit Zeile «Freunde mit eigener An- und Abreise: N Nächte weniger».",
+        "Aufenthalt in der Liste der Freunde als Feld mit 📅 hinten, gleich wie das Geburtsdatum, mit kurzer Erklärung.",
+        "Anfrage per WhatsApp: Leerzeile zwischen den Freunden mit eigenen Daten."
+      ]
+    },
+    {
       "v": "3.19.0.3",
       "datum": "2026-11-18",
       "titel": "Eigene Nächte der Freunde überall",
