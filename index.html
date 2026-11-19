@@ -1477,7 +1477,7 @@ if (TEST_MODUS) {
   :root { --rp: 12px; --rg: 10px; }
   .note.h, .notice, .card, .pay, .gm-k .gm-f, .gm-ptbox, .zielbox, .todo-box, .afr-box, #bestKasten .vk, #bestKasten .ps-offen, .vh, .fs-karte, .fv-cap, .exsel, .rt-z, .kf-form, .ink-b.mein-teil, .vtag { padding: var(--rp) !important; margin-left: 0 !important; margin-right: 0 !important; box-sizing: border-box; }
   .card { gap: var(--rg); }
-  .mein-teil, .ub-teil, .trk, #calBox, #angebote, .rechin, .zt, .ins-o, .ins-i, .ins-neu, .gm-k input[type=text], .gm-k input.gm-kal, .gm-dat-v, input.betrag, .trk input { border-radius: 6px !important; }   /* alle Rahmen gleich rund wie .note/.btn (seit 3.20.0.7) */
+  .mein-teil, .ub-teil, .trk, #calBox, #angebote, .rechin, .zt, .ins-o, .ins-i, .ins-neu, .gm-k input[type=text], .gm-k input.gm-kal, .gm-dat-v, input.betrag, .trk input { border-radius: 6px !important; } .gm-k input[type=text], .gm-k input.gm-kal, .gm-dat-v, input.betrag, .trk input, [data-gm-mail] { border: 2px solid var(--line) !important; background: var(--surface) !important; color: var(--fg) !important; box-shadow: none !important; -webkit-appearance: none; appearance: none; } .gm-k input[type=text]:focus, .gm-dat-v:focus, .trk input:focus, [data-gm-mail]:focus { border-color: var(--accent) !important; outline: none; }   /* flach wie ein Chip (seit 3.20.1.1) */   /* alle Rahmen gleich rund wie .note/.btn (seit 3.20.0.7) */
   .mein-st-b > * { margin-top: var(--rg) !important; } .mein-st-b > *:first-child { margin-top: 0 !important; }
   .mein-st-b > .absage, #absageBox { margin-top: var(--rg); } #absageBox > p, #absageBox > .hinweis, .mein-st .absage p { margin-left: 0; margin-right: 0; padding-left: 0; }
   :is(.note.h, .notice, .pay) + :is(.note.h, .notice, .pay, .btn) { margin-top: var(--rg); }
@@ -1707,7 +1707,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.20.1.0";
+let VERSION = "3.20.1.1";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
