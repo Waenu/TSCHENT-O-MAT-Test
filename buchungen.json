@@ -26,13 +26,21 @@
       "dep": "2026-12-19",
       "status": "abgelehnt",
       "t": "2026-11-18T14:46:15.124Z"
+    },
+    {
+      "name": "David",
+      "arr": "2026-11-23",
+      "dep": "2026-11-29",
+      "selbst": true,
+      "pers": 4,
+      "waesche": "bringen",
+      "rolle": "start",
+      "betrag": 360,
+      "rechnung": "Gesendet am Do 19.11.2026, 15:27 Uhr. App-Version 3.20.1.1.\nAnreise\tMontag 23.11.2026\nAbreise\tSonntag 29.11.2026 (6 Nächte)\nFamilie\tIch, Partner/in und 2 Kinder\nFreunde\t0\nZimmer 1 unberührt\tJa\nSelbstreinigung\tJa\nBedingungen akzeptiert\tJa\nTotal laut Rechner\tCHF 360.–\nReinigungskosten sind erst nach Ablauf der Familienstaffel bekannt und werden nachbelastet.\n#Preisberechnung\nFamilie pro Nacht\tCHF 60.–\nÜbernachtung (6 Nächte)\tCHF 360.–\nReinigung\tCHF 0.–\n#Teile\n~\t360\t0\t0\t0\t6\nZimmer 1 und rotes Bad bleiben unberührt: CHF 10.– weniger pro Nacht, die Familie zahlt CHF 60.– statt CHF 70.–.",
+      "bestaetigt": "2026-11-19T15:28"
     }
   ],
   "logbuch": [
-    {
-      "t": "2026-11-10T13:49",
-      "text": "Bescheid gegeben: Jerome, Do 6.05.2027 bis So 9.05.2027"
-    },
     {
       "t": "2026-11-10T13:50",
       "text": "Wieder offen: Bescheid gegeben: Jerome, Do 6.05.2027 bis So 9.05.2027"
@@ -828,6 +836,10 @@
     {
       "t": "2026-11-19T11:03",
       "text": "Endgültig gelöscht: Manuel, Mo 23.11.2026 bis Sa 28.11.2026"
+    },
+    {
+      "t": "2026-11-19T15:28",
+      "text": "Bestätigt: David, Mo 23.11.2026 bis So 29.11.2026, CHF 360, Wäsche: persönlich bringen bis Mi 2.12.2026"
     }
   ],
   "reinigung": [],
