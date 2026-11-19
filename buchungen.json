@@ -26,13 +26,19 @@
       "dep": "2026-12-19",
       "status": "abgelehnt",
       "t": "2026-11-18T14:46:15.124Z"
+    },
+    {
+      "name": "Manuel",
+      "arr": "2026-11-23",
+      "dep": "2026-11-28",
+      "selbst": false,
+      "pers": 1,
+      "betrag": 680,
+      "rechnung": "Gesendet am Do 19.11.2026, 10:33 Uhr. App-Version 3.20.1.1.\nAnreise\tMontag 23.11.2026\nAbreise\tSamstag 28.11.2026 (5 Nächte)\nFamilie\tNur ich\nFreunde\t2\nFreund im selben Zimmer\tJa (Freund/in 2)\nFreund/in 1\tMi 25.11.2026 bis Sa 28.11.2026 (3 Nächte)\nFreund/in 2\tDi 24.11.2026 bis Do 26.11.2026 (2 Nächte)\nZimmer 1 unberührt\tJa\nReinigung nach Parteien\tjede Partei zahlt gleich viel\nBedingungen akzeptiert\tJa\nTotal\tCHF 706.00, davon Kurtaxe Adelboden für die Freunde CHF 26.00\n#Preisberechnung\nDu pro Nacht\tCHF 30.–\nFreund/in 2 pro Nacht\tCHF 40.–\nFreund/in 1 pro Nacht\tCHF 70.–\nÜbernachtung (5 Nächte)\tCHF 700.–\nFreunde mit eigener An- und Abreise: 5 Nächte weniger\t− CHF 260.–\nReinigung\tCHF 240.–\nReinigung: dein Anteil\tCHF 120.00\nReinigung: Partei Freund/in 1, Freund/in 2 je CHF 60.00\tCHF 120.00\nKurtaxe Adelboden (dazu) 2 Freunde ab 16 Jahren zu CHF 5.20 pro Nacht, zusammen 5 Nächte (eigene Nächte)\tCHF 26.00\nTotal mit Kurtaxe\tCHF 706.00\n#Aufteilung unter den Freunden\nDu zahlst\tCHF 270.00\nFreund/in 1 und Freund/in 2 zahlen davon Kurtaxe CHF 26.00\tCHF 436.00\n#Teile\n~\t270\t120\t0\t0\t5\n~\t436\t120\t26\t0\t0\nReinigung aufgeteilt: Nach Parteien: jede Partei zahlt gleich viel.",
+      "bestaetigt": "2026-11-19T10:34"
     }
   ],
   "logbuch": [
-    {
-      "t": "2026-11-10T13:48",
-      "text": "In Pimlical eingetragen: Deborah, Mi 18.11.2026 bis Sa 21.11.2026"
-    },
     {
       "t": "2026-11-10T13:48",
       "text": "Freunde für die Kurtaxe angemeldet: Deborah, Mi 18.11.2026 bis Sa 21.11.2026"
@@ -828,6 +834,10 @@
     {
       "t": "2026-11-19T10:32",
       "text": "Endgültig gelöscht: Manuel, Mo 23.11.2026 bis Mo 30.11.2026"
+    },
+    {
+      "t": "2026-11-19T10:34",
+      "text": "Bestätigt: Manuel, Mo 23.11.2026 bis Sa 28.11.2026, CHF 680"
     }
   ],
   "reinigung": [],
