@@ -39,14 +39,11 @@
       "bescheid": "2026-11-20T16:13",
       "gesperrt": "2026-11-20T16:14",
       "pimlical": "2026-11-20T16:14",
-      "kurtaxeAm": "2026-11-20T16:14"
+      "kurtaxeAm": "2026-11-20T16:14",
+      "bezahlt": "2026-11-20T16:17"
     }
   ],
   "logbuch": [
-    {
-      "t": "2026-11-10T14:57",
-      "text": "Bescheid gegeben: Jerome, Do 6.05.2027 bis So 9.05.2027"
-    },
     {
       "t": "2026-11-10T15:33",
       "text": "Entfernt: Manuel, Do 10.12.2026 bis Sa 12.12.2026"
@@ -842,6 +839,10 @@
     {
       "t": "2026-11-20T16:14",
       "text": "Freunde für die Kurtaxe angemeldet: Deborah, Mi 25.11.2026 bis So 29.11.2026"
+    },
+    {
+      "t": "2026-11-20T16:17",
+      "text": "Zahlung eingegangen: Deborah, Mi 25.11.2026 bis So 29.11.2026, CHF 830"
     }
   ],
   "reinigung": [],
