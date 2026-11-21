@@ -26,13 +26,16 @@
       "dep": "2026-12-19",
       "status": "abgelehnt",
       "t": "2026-11-18T14:46:15.124Z"
+    },
+    {
+      "name": "Deborah",
+      "arr": "2027-05-11",
+      "dep": "2027-05-15",
+      "status": "abgelehnt",
+      "t": "2026-11-21T15:22:09.662Z"
     }
   ],
   "logbuch": [
-    {
-      "t": "2026-11-10T15:57",
-      "text": "Bestätigt: Miriam, Mi 25.11.2026 bis Fr 27.11.2026, CHF 120, Wäsche: per Post senden bis Mo 30.11.2026"
-    },
     {
       "t": "2026-11-10T15:59",
       "text": "Bescheid gegeben: Miriam, Mi 25.11.2026 bis Fr 27.11.2026"
@@ -828,6 +831,10 @@
     {
       "t": "2026-11-21T16:14",
       "text": "Endgültig gelöscht: Jerome, Di 24.11.2026 bis Fr 27.11.2026"
+    },
+    {
+      "t": "2026-11-21T16:22",
+      "text": "Abgelehnt: Deborah, Di 11.05.2027 bis Sa 15.05.2027"
     }
   ],
   "reinigung": [],
