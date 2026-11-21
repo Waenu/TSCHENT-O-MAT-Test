@@ -26,25 +26,9 @@
       "dep": "2026-12-19",
       "status": "abgelehnt",
       "t": "2026-11-18T14:46:15.124Z"
-    },
-    {
-      "name": "Jerome",
-      "arr": "2026-11-24",
-      "dep": "2026-11-27",
-      "selbst": true,
-      "pers": 2,
-      "waesche": "bringen",
-      "rolle": "start",
-      "betrag": 180,
-      "rechnung": "Gesendet am Sa 21.11.2026, 16:09 Uhr. App-Version 3.20.1.4.\nAnreise\tDienstag 24.11.2026\nAbreise\tFreitag 27.11.2026 (3 Nächte)\nFamilie\tIch und Partner/in\nFreunde\t0\nZimmer 1 unberührt\tJa\nSelbstreinigung\tJa\nBedingungen akzeptiert\tJa\nTotal laut Rechner\tCHF 180.–\nReinigungskosten sind erst nach Ablauf der Familienstaffel bekannt und werden nachbelastet.\n#Preisberechnung\nFamilie pro Nacht\tCHF 60.–\nÜbernachtung (3 Nächte)\tCHF 180.–\nReinigung\tCHF 0.–\n#Teile\n~\t180\t0\t0\t0\t3\nZimmer 1 und rotes Bad bleiben unberührt: CHF 10.– weniger pro Nacht, die Familie zahlt CHF 60.– statt CHF 70.–.",
-      "bestaetigt": "2026-11-21T16:09"
     }
   ],
   "logbuch": [
-    {
-      "t": "2026-11-10T15:52",
-      "text": "Freunde für die Kurtaxe angemeldet: Deborah, Mi 18.11.2026 bis Sa 21.11.2026"
-    },
     {
       "t": "2026-11-10T15:57",
       "text": "Bestätigt: Miriam, Mi 25.11.2026 bis Fr 27.11.2026, CHF 120, Wäsche: per Post senden bis Mo 30.11.2026"
@@ -840,6 +824,10 @@
     {
       "t": "2026-11-21T16:14",
       "text": "Endgültig gelöscht: Miriam, Fr 27.11.2026 bis Mo 30.11.2026"
+    },
+    {
+      "t": "2026-11-21T16:14",
+      "text": "Endgültig gelöscht: Jerome, Di 24.11.2026 bis Fr 27.11.2026"
     }
   ],
   "reinigung": [],
