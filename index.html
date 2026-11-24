@@ -479,6 +479,7 @@ if (TEST_MODUS) {
   .eltern-zone span { padding: 8px 14px; }
   .pay { border: 2px solid var(--accent); border-radius: 6px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
   .pay strong { font-size: var(--t-title); }
+  .pay-z { display: flex; gap: 8px; align-items: baseline; margin: 12px 0 0; }   /* Zahlung als Zeile unter der Aufteilung (seit 3.22.1.2) */
   .pay .rot-txt { color: var(--spitz-line); }
   .ink-opt label { display: flex; flex-direction: column; gap: 4px; font-weight: 700; margin-top: 8px; } .ink-opt input { min-height: 48px; font: inherit; color: var(--fg); padding: 8px 12px; border: 2px solid var(--line); border-radius: 6px; background: var(--surface); }
   .bigbtn.rot-rand { border-color: #C62828; box-shadow: 0 0 0 1px #C62828; } #btnMein.ok-rand { border-color: var(--marke); }   /* feuerrot wie bei Papi, alles erledigt blau (seit 3.17.12.7) */ #btnMein .alarm-n { margin-left: auto; font-size: 1rem; padding: 2px 10px; } .alarm-n.rot { background: #E5534B; color: #fff; }
@@ -1718,7 +1719,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.22.1.1";
+let VERSION = "3.22.1.2";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -5304,7 +5305,7 @@ function render() {
       }
       if (zpl.kk.indexOf(i) >= 0) { zRows.push({ typ: "leer" }); who += '<tr><td>' + nm(i) + ' <small class="ktk">Kleinkind ohne Bett, gratis</small></td><td>' + chf2(0) + '</td></tr>'; whoN += '<tr><td>' + nn(i) + ' <small class="ktk">Kleinkind ohne Bett, gratis</small></td><td>' + chf2(0) + '</td></tr>'; return; }
       const zk = zpl.zahler[i], cov = zpl.covered.indexOf(i) >= 0, zim = i === zpl.zr && zpl.zi.length > 1 ? ' <small class="ktk">im selben Zimmer</small>' : "";
-      const wer = (k, name) => k === "ich" ? (S.wer === "Nur ich" ? "dir" : "der Familie") : k === "self" ? "selbst" : k === "partner" ? (name === nm ? esc(partnerDa()) : "Partner/in") : name(Number(k.slice(1)));
+      const wer = (k, name) => k === "ich" ? (S.wer === "Nur ich" ? "dir" : famGeschw().length ? (name === nm ? esc(insFamNamen().split(/, | und /).join(" & ")) : "Familie, Partei 1") : "der Familie") : famGP(k) ? (name === nm ? esc((famGP(k).erw.length ? famGP(k).erw : [famGP(k).kopf]).join(" & ")) : "Familie, Partei " + ((famParteien() || []).findIndex((q) => famZK(q) === k) + 1)) : k === "self" ? "selbst" : k === "partner" ? (name === nm ? esc(partnerDa()) : "Partner/in") : name(Number(k.slice(1)));
       if (cov) { zRows.push({ typ: "leer", i }); const t = (name) => '<tr><td>' + name(i) + ' <small class="ktk">übernommen von ' + (() => { const gp = []; [...new Set(zk)].forEach((k) => { const g = /^f\d+$/.test(k) ? parteiKopf(Number(k.slice(1)), zpl.l, zpl.zi) : k, e = gp.find((q) => q.g === g); if (e) e.w.push(wer(k, name)); else gp.push({ g, w: [wer(k, name)] }); }); const t = gp.map((q) => q.w.join(" & ")); return t.length > 1 ? t.slice(0, -1).join(", ") + " und " + t[t.length - 1] : t[0]; })() + '</small></td><td>' + chf2(0) + '</td></tr>'; who += t(nm); whoN += t(nn); return; }
       const t = (name) => '<tr><td>' + name(i) + ' zahlt' + zim + ' ' + kl(i) + ex("f" + i, name) + (zk && zk.length > 1 ? ' <small class="ktk">eigener Anteil geteilt mit ' + zk.filter((k) => k !== "self").map((k) => wer(k, name)).join(" und ") + '</small>' : "") + '</td><td>' + chf2(zpl.zahlt["f" + i]) + '</td></tr>';
       who += t(nm); whoN += t(nn); zRows.push({ typ: "eins", i });
@@ -5458,16 +5459,12 @@ function render() {
   if (r.MITZ) notes += '<p class="note"><b>Mindestpreis:</b> Der Gesamtpreis sinkt nie unter ' + chf(r.BODEN) + '. Ihr zahlt mit: Das Total von ' + chf(r.TOT) + ' ist ' + (r.MITZ === "part" ? "pro Partei" : "pro Person") + ' auf alle verteilt. ' + (S.wer === "Nur ich" ? "Du zahlst " : "Die Familie zahlt ") + chf(r.FZ) + ', die Freunde entsprechend weniger.</p>';
   else if (r.GRATIS) notes += '<p class="note"><b>Mindestpreis:</b> ' + (r.FZ === 0 ? (S.wer === "Nur ich" ? "Du zahlst deinen" : "Die Familie zahlt ihren") + ' eigenen Anteil (' + chf(r.FZ0) + ') nicht. ' : (S.wer === "Nur ich" ? "Du zahlst" : "Die Familie zahlt") + ' noch ' + chf(r.FZ) + ' statt ' + chf(r.FZ0) + '. ') + 'Der Gesamtpreis sinkt nie unter ' + chf(r.BODEN) + ' (' + (r.HOCH ? chf(P.hochNachtMin) + ' pro Nacht plus Endreinigung' : (r.LUEB ? chf(P.lueckeGastNacht) + ' pro Nacht für die Übernachtungen plus Endreinigung' : chf(r.FEST ? P.festBodenWoche : (x.LUE && P.lueckeMindestpreisWoche > 0 ? P.lueckeMindestpreisWoche : P.mindestpreisWoche)) + ' pro 7 Nächte')) + '). Die Freunde zahlen ihre Anteile wie berechnet.</p>';
   if (r.AUF) notes += '<p class="note"><b>Mindestpreis ' + (r.HOCH ? "in der Hochsaison" : (r.LUEB ? "in der Lücke" : "im " + esc(festTxt()))) + ':</b> Das Total beträgt mindestens ' + chf(r.BODEN) + ' (' + (r.HOCH ? chf(P.hochNachtMin) + ' pro Nacht plus Endreinigung' : (r.LUEB ? chf(P.lueckeGastNacht) + ' pro Nacht für die Übernachtungen plus Endreinigung' : chf(P.festBodenWoche) + ' pro 7 Nächte, inklusive Endreinigung')) + '). ' + (x.GE >= 1 ? 'Der fehlende Betrag von ' + chf(r.AUF) + ' wird gleichmässig auf alle Personen verteilt, dich und die Freunde. Mit mehr Freunden sinkt dein Anteil.' : 'Du zahlst den Mindestpreis. Mit Freunden sinkt dein Anteil.') + '</p>';
-  const zahlung = '<div class="pay"><strong>Die Familie überweist den ganzen Betrag: ' + (kt.summe > 0 ? chf2(r.TOT + tip + kt.summe) : chf(r.TOT + tip)) + '</strong>' +
-      (kt.summe > 0 ? '<span>davon Kurtaxe für Adelboden: ' + ktS + '</span>' : '') +
-      (tip > 0 ? '<span>davon Trinkgeld für Mami: ' + chf(tip) + ' (freiwillig)</span>' : '') +
-      '<span class="rot-txt">Spätestens ' + ZAHL_TAGE + ' Tage nach dem letzten Ferientag, ohne Aufforderung.</span>' +
-      '<span>Die IBAN bekommst du nach der Bestätigung in «👤 Meine Verwaltung» bei «💳 Zu bezahlen».</span></div>';   // IBAN erst nach der Bestätigung (seit 3.20.1.3, Wänu)
+  const zahlung = '<p class="pay-z">' + symBtn('b-zahlung', '💰') + ' <span>' + (S.wer === "Nur ich" ? "Du überweist" : "Die Familie überweist") + ' alles an ' + esc(TOKEN && !ABSENDER ? "die Eltern" : inkEltern()) + ', <b>spätestens ' + ZAHL_TAGE + ' Tage nach der Abreise</b>.</span></p>';   // kurze Zeile unter der Aufteilung statt Kasten «Zahlung» nach den Knöpfen (seit 3.22.1.2, Wänu 1a «c»); Betrag steht in der Leiste, IBAN nach der Bestätigung
   const teilt = x.GE >= 1 || famAuf;   // seit 3.10.0.0 immer sichtbar: die Zeilen klappen die ganze Rechnung auf (vorher in der Buchungsübersicht)
   const totZ = (tip > 0 ? '<tr><td>Trinkgeld für Mami <small class="ktk">freiwillig</small></td><td>' + chf2(tip) + "</td></tr>" : "") + '<tr class="auf-tot"><td>Total' + (kt.summe > 0 ? " mit Kurtaxe" : "") + "</td><td>" + chf2(r.TOT + tip + (kt.summe > 0 ? kt.summe : 0)) + "</td></tr>";
   const aufteilung = '<h3 class="split-h auf-h">' + (teilt ? "💸 Aufteilung unter euch" : "🧮 So setzt sich der Preis zusammen") + "</h3>" +
     '<p class="hint">' + (teilt ? "Das Geld der Freunde sammelt ihr selbst ein. Die Tabelle zeigt, wie viel jeder schuldet." + (kt.summe > 0 ? " Die Kurtaxe ist bei jedem Freund schon im Betrag enthalten." : "") + " " : "") + "Tippe eine Zeile an, dann siehst du die Rechnung und zuunterst einen Balken: Übernachtung, Reinigung und Kurtaxe in eigenen Farben.</p>" +
-    '<table class="auf-tab"><tbody>' + who + totZ + "</tbody></table>" + notes + (x.SB ? endreinigungInfo(r) : "");
+    '<table class="auf-tab"><tbody>' + who + totZ + "</tbody></table>" + zahlung + notes + (x.SB ? endreinigungInfo(r) : "");
   const aufS = !x.SOND ? aufteilung : aufteilung.replace(/<i class="dot su"><\/i>Übernachtung CHF 0\.00( \(im selben Zimmer\))?(, )?/g, "").replace(/Reinigungsanteil/g, "Anteil Pauschale").replace(/Reinigung/g, "Pauschale");   // Sonderbuchung: keine Übernachtung, die Pauschale wird wie die Reinigung aufgeteilt
   const detN = det.replace(/\u0001(\d+)\u0002/g, (m, i) => "Freund/in " + (Number(i) + 1));
   det = det.replace(/\u0001(\d+)\u0002/g, (m, i) => zpl ? esc(rn(zpl.l[Number(i)])) : "Freund");
@@ -5481,8 +5478,6 @@ function render() {
     (x.LR > 0 ? '<p class="note"><b>Lückenpreis:</b> ' + x.LR + ' % günstiger auf die Übernachtungen, die Reinigung bleibt gleich.</p>' : '') +
     aufS +
     anfrageKasten(r) +
-    '<h3 class="split-h">' + symBtn('b-zahlung', '💰') + ' Zahlung</h3>' +
-    zahlung +
     '<div class="marke" id="marke"><span data-z="0">ankommen</span><span class="pt">·</span><span data-z="1">durchatmen</span><span class="pt">·</span><span data-z="2">geniessen</span></div>';
 }
 
