@@ -2,6 +2,24 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.22.0.0",
+      "datum": "2026-11-24",
+      "titel": "Familie mit eigenen Daten pro Haushalt",
+      "arten": [
+        "Neu",
+        "Text"
+      ],
+      "punkte": [
+        "Bei «Meine Familie und Geschwister» kann jeder Haushalt eigene An- und Abreise haben, auch der eigene (📅 unter der Namenszeile, mindestens 2 Nächte).",
+        "Der Familienpreis bleibt gleich; den Preis jeder Nacht teilen sich die Haushalte, die da sind. Die Reinigung wird wie bisher aufgeteilt.",
+        "In jeder Nacht muss jemand von der Familie da sein.",
+        "Betten und Luftmatratze zählen pro Nacht.",
+        "«👥 Wer ist wann da?» zeigt jeden Haushalt mit eigenen Daten als eigene Zeile.",
+        "Anfrage und Rechnung an die Geschwister nennen den Aufenthalt und die Nächte.",
+        "Glossar «Familie mit eigenen Daten»."
+      ]
+    },
+    {
       "v": "3.21.2.2",
       "datum": "2026-11-24",
       "titel": "Eigene Familie braun, Kinderbettchen ruhiger",
