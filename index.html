@@ -1719,7 +1719,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.22.1.2";
+let VERSION = "3.22.1.3";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -1995,7 +1995,7 @@ function ubRechDaten(d) {   // Daten der Übersicht aus dem Rechner (Liste der F
 }
 function ubRechZeigen(d) {   // im Rechner unter der Liste der Freunde
   const g = document.getElementById("gmRech"); if (!g) return; let u = document.getElementById("ubRech");
-  if (!u) { u = document.createElement("div"); u.id = "ubRech"; u.className = "note h ub-box"; g.after(u); }
+  if (!u) { u = document.createElement("div"); u.id = "ubRech"; u.className = "note h ub-box"; } { const v = document.getElementById("ptSum") || document.getElementById("zahlRech") || g; if (v.nextElementSibling !== u) v.after(u); }   /* nach Zahlern und Parteien (seit 3.22.1.3) */
   const o = !g.hidden || hDatAktiv() ? ubRechDaten(d) : null, sig = o ? JSON.stringify(o) : "";
   u.hidden = !o; if (u.dataset.sig === sig) return; u.dataset.sig = sig;
   u.innerHTML = o ? '<p class="ub-tt"><b>👥 Wer ist wann da?</b></p>' + ubHtml(o) : "";
@@ -2370,7 +2370,8 @@ function insZeichnen() {
   const pers = (j, f) => { const a = teil[GI + "|" + j]; return '<button type="button" class="ins-p' + (INS_SEL === j ? " sel" : "") + (a ? " geteilt" : "") + '" data-insp="' + j + '"' + (f ? ' style="--ic:' + f + '"' : "") + ">" + esc(vnK(l[j]) || "Freund/in " + (j + 1)) + (al(j) < 18 ? "<small>" + al(j) + " Jahre" + (a ? " · " + a : "") + "</small>" : "") + "</button>"; };
   const sort = (a) => a.sort((x, y) => (al(x) < 18) - (al(y) < 18) || x - y);
   const insel = (key, f, t, gl, vor, vs) => (GI = String(key), "") + '<div class="ins-i' + (vs ? " vs" : "") + '" data-insi="' + key + '" style="--ic:' + f + '"><p class="ins-t">' + t + (vs ? ' <span style="font-weight:400">· Vorschlag</span>' : "") + '</p><div class="ins-ps">' + (vor || "") + sort(gl).map((j) => pers(j, f)).join("") + (KKI[key] || "").split("§IC§").join(f) + "</div></div>";
-  let h = (INS_MSG ? '<p class="notice">' + esc(INS_MSG) + "</p>" : "") + '<p class="hint">' + (INS_SEL !== null ? "Tippe jetzt auf die Partei, zu der " + esc(rn(l[INS_SEL]) || "diese Person") + " gehört, oder auf «Eigene Partei». Nochmals auf " + esc(rn(l[INS_SEL]) || "die Person") + " tippen bricht ab." : "Tippe eine Person an und danach ihre Partei, oder zieh sie mit dem Finger hinüber. Erwachsene brauchen eine Partei. Kinder zahlen nie selbst, für sie gilt, wer für sie zahlt: Ziehst du ein Kind in eine Partei, zahlen deren Erwachsene, sonst wählst du es weiter unten. Nimmst du ein Kind in die Familie, zahlst du für es. Kleinkinder im Kinderbettchen sind gratis, sie gehören einfach zu jemandem.") + "</p>";
+  const neuZeigen = (gr.o || []).some((j) => al(j) >= 18) || ptKoepfe(l, zi).some((k) => (gr[k] || []).filter((j) => al(j) >= 18).length > 1);   // «Eigene Partei» nur, wenn eine erwachsene Person offen ist oder eine Partei mehrere Erwachsene hat (seit 3.22.1.3, Wänu)
+  let h = (INS_MSG ? '<p class="notice">' + esc(INS_MSG) + "</p>" : "") + '<p class="hint">' + (INS_SEL !== null ? "Tippe jetzt auf die Partei, zu der " + esc(rn(l[INS_SEL]) || "diese Person") + " gehört" + (neuZeigen ? ", oder auf «Eigene Partei»" : "") + ". Nochmals auf " + esc(rn(l[INS_SEL]) || "die Person") + " tippen bricht ab." : "Tippe eine Person an und danach ihre Partei, oder zieh sie mit dem Finger hinüber. Erwachsene brauchen eine Partei. Kinder zahlen nie selbst, für sie gilt, wer für sie zahlt: Ziehst du ein Kind in eine Partei, zahlen deren Erwachsene, sonst wählst du es weiter unten. Nimmst du ein Kind in die Familie, zahlst du für es. Kleinkinder im Kinderbettchen sind gratis, sie gehören einfach zu jemandem.") + "</p>";
   if (gr.o || KKI.o) h += '<div class="ins-o"><p class="ins-t">🟠 Noch zuordnen</p><div class="ins-ps">' + sort(gr.o || []).map((j) => pers(j)).join("") + (KKI.o || "") + "</div></div>";
   const geschw = famGeschw().map((pp) => '<div class="ins-i" style="--ic:' + famFarbe(pp) + '"><p class="ins-t">' + famParteiText(pp, 1, false) + ' <span style="font-weight:400">(Partei ' + ((famParteien() || []).findIndex((q) => q.h.m[0] === pp.h.m[0]) + 1) + ')</span></p><div class="ins-ps">' + pp.namen.map((x) => '<span class="ins-p ins-fix" style="--ic:' + famFarbe(pp) + '">' + esc(x) + "</span>").join("") + ((GI = famZK(pp)), sort(gr[famZK(pp)] || []).map((j) => pers(j, famFarbe(pp))).join("")) + "</div></div>").join("");   // Haushalte der Geschwister: eigene Insel, nicht zum Hineinziehen (seit 3.17.6.0)
   h += insel("fam", INS_FAM, "Familie (Partei 1)" + (gr.fam ? ' <span style="font-weight:400">· zahlt für ' + (gr.fam.length > 1 ? "die Kinder" : "das Kind") + "</span>" : ""), gr.fam || [], insFam());
@@ -2379,7 +2380,7 @@ function insZeichnen() {
     h += insel(k, f, "Partei von " + esc(rn(l[k]) || vnK(l[k])) + (gl.some((j) => al(j) < 18) ? ' <span style="font-weight:400">· zahlt für ' + (gl.filter((j) => al(j) < 18).length > 1 ? "die Kinder" : "das Kind") + "</span>" : ""), gl, "", gl.some((j) => l[j].zv)); });
   Object.keys(gr).filter((g) => g !== "o" && g !== "fam" && !/^g\d+$/.test(g) && ptKoepfe(l, zi).indexOf(Number(g)) < 0).forEach((g) => {   // Kind ohne Partei: Zahler wählst du unten
     h += insel(g, INS_KIND, esc(rn(l[g])) + ' <span style="font-weight:400">· wer für ' + esc(rn(l[g])) + ' zahlt, wählst du weiter unten</span>', gr[g]); });
-  h += '<div class="ins-neu" data-insi="neu">＋ Eigene Partei</div>';
+  if (neuZeigen) h += '<div class="ins-neu" data-insi="neu">＋ Eigene Partei</div>';
   c.innerHTML = h; INS_MSG = "";
 }
 function insFamNamen() {   // Namen der zahlenden Familie (eigener Haushalt) für den Chip «Familie»
@@ -2577,7 +2578,7 @@ function gmRechZeigen(d) {
   const st = box.querySelector(".gm-r-st");
   st.className = "gm-r-st " + (offen.length ? "notice" : "note h");
   st.textContent = (GM_WEG ? "🗑️ " + GM_WEG + " ist aus der Liste entfernt und bleibt in deinem Adressbuch 📇. " : "") + (offen.length ? "Noch offen: Freund/in " + offen.join(", ") + ". Erst wenn die Liste vollständig ist, kannst du die Anfrage senden." : "✅ Liste vollständig."); GM_WEG = "";
-  let ps = box.querySelector(".gm-pt-sum"); if (!ps) { ps = document.createElement("div"); ps.className = "gm-pt-sum"; box.appendChild(ps); }
+  let ps = document.getElementById("ptSum"); if (!ps) { ps = document.createElement("div"); ps.id = "ptSum"; ps.className = "field gm-pt-sum"; } { const zr = document.getElementById("zahlRech"); if (zr && zr.nextElementSibling !== ps) zr.after(ps); }   /* «🤝 Parteien» nach «Wer bezahlt …» (seit 3.22.1.3, Wänu) */
   if (offen.length || !zi || !zi.length || ptBestOffen(n)) { ps.innerHTML = ""; return; }
   const zA = (S.zahler || {}), kG = (j, g) => { if (alterAm(l[j].geb, ARR) >= 18) return null; const x = insGruppen(j, l, zi).find((q) => q.g === g); return x ? vnK(l[j]) + (x.a ? " (" + x.a + ")" : "") : null; },   /* Kinder bei ihren Zahlern, geteilt mit Anteil (seit 3.17.8.0) */
     famK = zi.map((i) => kG(i, "fam")).filter(Boolean);
@@ -5210,7 +5211,7 @@ function render() {
   nb.hidden = !uebrig; nb.textContent = uebrig;
 
   if (listeModus()) { const al = zahlendeAlter(listeN(d)); S.kinder = al ? al.filter((a) => a >= 6 && a < 16).length : null; }
-  mfgZeigen(); gmRechZeigen(d); zahlUiZeigen(d); ubRechZeigen(d);
+  mfgZeigen(); gmRechZeigen(d); zahlUiZeigen(d); { const ps = document.getElementById("ptSum"), gb = document.getElementById("gmRech"); if (ps) ps.hidden = !gb || gb.hidden || !ps.innerHTML; } ubRechZeigen(d);
   const r = calc(Object.assign({}, S, { kinderPflicht: !listeModus() }));
   mitzZeigen(r, d);
   const tip = 0;   // Trinkgeld seit 3.17.12.0 nicht mehr im Rechner, sondern bei «💳 Zu bezahlen» (trinkHtml)
