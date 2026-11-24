@@ -2,6 +2,22 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.22.1.0",
+      "datum": "2026-11-24",
+      "titel": "Freunde unter 18: jeder Familienhaushalt als Zahler",
+      "arten": [
+        "Regel",
+        "Fehler"
+      ],
+      "punkte": [
+        "Bei «Meine Familie und Geschwister» ist bei «Wer bezahlt die Übernachtungen von …?» jeder Haushalt ein eigener Chip, auch die Geschwister. Vorher landete «Familie» immer beim Haushalt, der bucht.",
+        "Der Anteil steht in der Zeile und in der Rechnung des gewählten Haushalts. Mehrere gewählt: jede Partei zahlt gleich viel, das Total bleibt gleich.",
+        "Bei «Wer gehört zusammen?» steht das Kind in der Insel dieses Haushalts.",
+        "Eltern: «Wer ist wann da?» zeigt Haushalte mit eigenen Daten als eigene Zeile (vorher die ganze Familie über die ganze Zeit).",
+        "Glossar «Freunde unter 18» nachgeführt."
+      ]
+    },
+    {
       "v": "3.22.0.0",
       "datum": "2026-11-24",
       "titel": "Familie mit eigenen Daten pro Haushalt",
