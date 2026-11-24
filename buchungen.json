@@ -33,13 +33,16 @@
       "dep": "2027-05-15",
       "status": "abgelehnt",
       "t": "2026-11-21T15:22:09.662Z"
+    },
+    {
+      "name": "Andreas",
+      "arr": "2027-06-17",
+      "dep": "2027-06-21",
+      "status": "abgelehnt",
+      "t": "2026-11-24T16:07:51.659Z"
     }
   ],
   "logbuch": [
-    {
-      "t": "2026-11-10T16:47",
-      "text": "In Airbnb gesperrt: Miriam, Do 10.12.2026 bis So 13.12.2026"
-    },
     {
       "t": "2026-11-10T16:47",
       "text": "In Pimlical eingetragen: Miriam, Do 10.12.2026 bis So 13.12.2026"
@@ -835,6 +838,10 @@
     {
       "t": "2026-11-24T17:07",
       "text": "Endgültig gelöscht: Deborah, Di 8.12.2026 bis So 13.12.2026"
+    },
+    {
+      "t": "2026-11-24T17:07",
+      "text": "Abgelehnt: Andreas, Do 17.06.2027 bis Mo 21.06.2027"
     }
   ],
   "reinigung": [],
