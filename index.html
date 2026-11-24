@@ -1718,7 +1718,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.22.1.0";
+let VERSION = "3.22.1.1";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -4794,7 +4794,7 @@ function famErwFehlt() {   // «Ich» abgewählt und kein anderer Erwachsener da
   if (mfgAktiv()) return !eigeneErw().some((x) => (S.mfg || []).indexOf(x) >= 0);   // seit 3.21.2.0: aus dem eigenen Haushalt muss «Ich» oder eine erwachsene Person mitkommen (Wänu 24.11.2026)
   return false;
 }
-function famLabel() {   // Text für WhatsApp und Übersicht: «Ich, Rahel & Malik» oder «Rahel, Malik & Jon (ich komme nicht mit)»
+function famLabel() {   // Text für WhatsApp und Übersicht: «Ich, Partner & Kind» oder «Partner, Kind 1 & Kind 2 (ich komme nicht mit)»
   const und = (l) => l.length > 1 ? l.slice(0, -1).join(", ") + " & " + l[l.length - 1] : l[0] || "";
   const roh = eigenAktiv() ? (S.famSel || []) : mfgAktiv() ? (S.mfg || []) : null;
   if (!roh) { const fw = famWahl(); return fw ? fw.l : ""; }
@@ -4811,7 +4811,7 @@ function famParteien() {   // Parteien der Familie aus den Haushalten (seit 3.9.
   out.forEach((pp) => { pp.n = pp.namen.filter((x) => kk.indexOf(x) < 0).length; pp.erw = pp.namen.filter((x) => pp.h.e.indexOf(x) < 0); pp.kinder = pp.namen.filter((x) => pp.h.e.indexOf(x) >= 0); pp.kopf = pp.h.m[0]; });
   return out;
 }
-function famParteiText(pp, k, zahlt) {   // «Du und David zahlen inkl. Mael», «Jerome zahlt für Malik» (Kinder zahlen nie selbst, seit 3.9.0.1)
+function famParteiText(pp, k, zahlt) {   // «Du und Partner zahlen inkl. Kind», «Geschwister zahlt für Kind» (Kinder zahlen nie selbst, seit 3.9.0.1)
   const und = (l) => l.length > 1 ? l.slice(0, -1).join(", ") + " und " + l[l.length - 1] : l[0] || "";
   const erw = pp.eigen && ichDa() ? ["Du"].concat(pp.erw.filter((x) => x !== ABSENDER)) : pp.erw;
   if (!erw.length) return zahlt ? esc(pp.kopf) + " zahlt für " + esc(und(pp.kinder)) : esc(und(pp.kinder)) + " (zahlt " + esc(pp.kopf) + ")";
@@ -4932,7 +4932,7 @@ function anfrageText(r) {
     const w = (k, nm) => k === "ich" ? (nm ? "ich" : "Familie") : famGP(k) ? (nm ? (famGP(k).erw.length ? famGP(k).erw : [famGP(k).kopf]).join(" & ") : "Familie, Partei " + ((famParteien() || []).findIndex((q) => famZK(q) === k) + 1)) : k === "partner" ? (nm ? partnerDa() : "Partner/in") : k === "self" ? (nm ? rn(zpA.l[i]) + " selbst" : "selbst") : nm ? rn(zpA.l[Number(k.slice(1))]) : "Freund/in " + (Number(k.slice(1)) + 1);
     const und = (a) => a.length > 1 ? a.slice(0, -1).join(", ") + " und " + a[a.length - 1] : a[0], verb = (a) => a.length > 1 ? "zahlen" : "zahlt";   // «Für Gabi (8) zahlen: Therese und Rolf» (seit 3.9.3.6)
     const grp = (nm) => { const gp = []; zk.forEach((k) => { const g = /^f\d+$/.test(k) ? parteiKopf(Number(k.slice(1)), zpA.l, zpA.zi) : k, e = gp.find((q) => q.g === g); if (e) e.w.push(w(k, nm)); else gp.push({ g, w: [w(k, nm)] }); }); return gp.map((q) => q.w.join(" & ")); };   // nach Parteien gruppiert (seit 3.17.6.0)
-    const zN = grp(false), zV = grp(true);
+    const zN = grp(false), zV0 = grp(true), zV = zV0.length > 1 ? zV0.map((t) => (t === "ich" ? "wir" : t)) : zV0;   // geteilt mit anderen: «wir und Jerome & Rahel» (seit 3.22.1.1, Wänu)
     z.push("Für Freund/in " + (i + 1) + " (unter 18) " + verb(zN) + ": " + und(zN));
     ersetz.push([z.length - 1, "Für " + rn(zpA.l[i]) + " (" + zpA.alt[i] + ") " + (zV.length === 1 && zV[0] === "ich" ? "zahle ich" : verb(zV) + ": " + und(zV))]);
     if (BLK) { weg.add(z.length - 1); (frZ[i] = frZ[i] || []).push("Kosten übernehmen: " + und(zV)); }
