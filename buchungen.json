@@ -44,10 +44,6 @@
   ],
   "logbuch": [
     {
-      "t": "2026-11-10T20:24",
-      "text": "Bestätigt: David, Mi 17.03.2027 bis Fr 19.03.2027, CHF 120, Wäsche: persönlich bringen bis Mo 22.03.2027"
-    },
-    {
       "t": "2026-11-10T20:28",
       "text": "Entfernt: David, Mi 17.03.2027 bis Fr 19.03.2027"
     },
@@ -842,6 +838,10 @@
     {
       "t": "2026-11-25T22:53",
       "text": "Vorlage für Manuel: 2027-01-04 bis 2027-01-07, normale Preise wie bei einer gewöhnlichen Buchung, ohne Mindestnächte, Reinigung CHF 120.– pro Aufenthalt"
+    },
+    {
+      "t": "2026-11-25T22:54",
+      "text": "Vorlage für Manuel: 2027-01-07 bis 2027-01-10, geänderte Preise: CHF 600.– pro Nacht für die ganze Wohnung, mit Reinigung (CHF 120.– pro Aufenthalt), Kurtaxe für Freunde wie üblich"
     }
   ],
   "reinigung": [],
@@ -854,6 +854,17 @@
       "pa": false,
       "reinB": 120,
       "t": "2026-11-25T22:53"
+    },
+    {
+      "id": "mwwnv1n2",
+      "name": "Manuel",
+      "arr": "2027-01-07",
+      "dep": "2027-01-10",
+      "pa": true,
+      "preis": 600,
+      "reinB": 120,
+      "kt": true,
+      "t": "2026-11-25T22:54"
     }
   ]
 }
