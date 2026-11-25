@@ -44,10 +44,6 @@
   ],
   "logbuch": [
     {
-      "t": "2026-11-10T16:47",
-      "text": "In Pimlical eingetragen: Miriam, Do 10.12.2026 bis So 13.12.2026"
-    },
-    {
       "t": "2026-11-10T17:09",
       "text": "Wieder offen: In Airbnb gesperrt: Miriam, Do 10.12.2026 bis So 13.12.2026"
     },
@@ -842,8 +838,24 @@
     {
       "t": "2026-11-24T18:50",
       "text": "Endgültig gelöscht: Rahel, Mo 14.12.2026 bis Sa 19.12.2026"
+    },
+    {
+      "t": "2026-11-25T21:23",
+      "text": "Vorlage für Manuel: 2027-01-07 bis 2027-01-10, geänderte Preise: CHF 600.– pro Nacht für die ganze Wohnung, ohne Reinigung, ohne Kurtaxe"
     }
   ],
   "reinigung": [],
-  "vorlagen": []
+  "vorlagen": [
+    {
+      "id": "mwwkm5hl",
+      "name": "Manuel",
+      "arr": "2027-01-07",
+      "dep": "2027-01-10",
+      "pa": true,
+      "preis": 600,
+      "rein": false,
+      "kt": false,
+      "t": "2026-11-25T21:23"
+    }
+  ]
 }
