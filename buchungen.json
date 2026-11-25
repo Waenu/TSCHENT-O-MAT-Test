@@ -56,13 +56,22 @@
       "betrag": 1800,
       "rechnung": "Gesendet am Mi 25.11.2026, 21:31 Uhr. App-Version 3.28.2.0.\nAnreise\tDonnerstag 7.01.2027\nAbreise\tSonntag 10.01.2027 (3 Nächte)\nSonderbuchung (eure Vorlage)\tgeänderte Preise: CHF 600.– pro Nacht für die ganze Wohnung, ohne Reinigung, ohne Kurtaxe\n🛏️ Luftmatratze (7. Bett) in den Nächten Fr 8.01.2027 / Sa 9.01.2027, Sa 9.01.2027 / So 10.01.2027: bitte freigeben\nFamilie\tIch und Partner/in\nFreunde\t5\nFreund/in 4\tFr 8.01.2027 bis So 10.01.2027 (2 Nächte)\nFreund/in 5\tFr 8.01.2027 bis So 10.01.2027 (2 Nächte)\nPauschale nach Personen\tjede Person zählt gleich (ohne Kleinkinder)\nBedingungen akzeptiert\tJa\nTotal laut Rechner\tCHF 1’800.–\n#Preisberechnung\nSonderbuchung: Pauschale pro Nacht\tCHF 600.–\nPauschale (3 Nächte)\tCHF 1’800.–\nReinigung\tkeine\nKurtaxe\tkeine\nPauschale: Anteil Familie\tCHF 514.29\nPauschale: Anteil pro Freund\tCHF 257.14\n#Aufteilung unter den Freunden\nFamilie zahlt\tCHF 514.25\nFreund/in 1 zahlt davon Kurtaxe CHF 0.00 (ab 16 Jahren)\tCHF 257.15\nFreund/in 2 zahlt davon Kurtaxe CHF 0.00 (ab 16 Jahren)\tCHF 257.15\nFreund/in 3 zahlt davon Kurtaxe CHF 0.00 (ab 16 Jahren)\tCHF 257.15\nFreund/in 4 zahlt davon Kurtaxe CHF 0.00 (ab 16 Jahren)\tCHF 257.15\nFreund/in 5 zahlt davon Kurtaxe CHF 0.00 (ab 16 Jahren)\tCHF 257.15\n#Teile\n~\t514.25\t514.29\t0\t0\t3\n~\t257.15\t257.14\t0\t0\t3\n~\t257.15\t257.14\t0\t0\t3\n~\t257.15\t257.14\t0\t0\t3\n~\t257.15\t257.14\t0\t0\t2\n~\t257.15\t257.14\t0\t0\t2\n~\tN\tManuel, Sarah|\nPauschale aufgeteilt: Nach Personen: jede Person zählt gleich (ohne Kleinkinder).",
       "bestaetigt": "2026-11-25T21:32"
+    },
+    {
+      "name": "Manuel",
+      "arr": "2027-01-04",
+      "dep": "2027-01-07",
+      "selbst": false,
+      "pers": 2,
+      "sond": {
+        "pa": false
+      },
+      "betrag": 1010,
+      "rechnung": "Gesendet am Mi 25.11.2026, 21:37 Uhr. App-Version 3.28.2.0.\nAnreise\tMontag 4.01.2027\nAbreise\tDonnerstag 7.01.2027 (3 Nächte)\nSonderbuchung (eure Vorlage)\tnormale Preise wie bei einer gewöhnlichen Buchung, ohne Mindestnächte\nFamilie\tIch und Partner/in\nFreunde\t3\nFreund/in 3\tMo 4.01.2027 bis Mi 6.01.2027 (2 Nächte)\nZimmer 1 unberührt\tNein\nReinigung nach Personen\tjede Person zählt gleich (ohne Kleinkinder)\nBedingungen akzeptiert\tJa\nTotal\tCHF 1’051.60, davon Kurtaxe Adelboden für die Freunde CHF 41.60\n#Preisberechnung\nFamilie pro Nacht\tCHF 70.–\nFreund/in 1 pro Nacht\tCHF 70.–\nFreund/in 2 pro Nacht\tCHF 70.–\nFreund/in 3 pro Nacht\tCHF 70.–\nÜbernachtung (3 Nächte)\tCHF 840.–\nFreunde mit eigener An- und Abreise: 1 Nacht weniger\t− CHF 70.–\nReinigung\tCHF 240.–\nReinigung: Anteil Familie\tCHF 96.00\nReinigung: Anteil pro Freund\tCHF 48.00\nKurtaxe Adelboden (dazu) 3 Freunde ab 16 Jahren zu CHF 5.20 pro Nacht, zusammen 8 Nächte (eigene Nächte)\tCHF 41.60\nTotal mit Kurtaxe\tCHF 1’051.60\n#Aufteilung unter den Freunden\nFamilie zahlt\tCHF 306.00\nFreund/in 1 zahlt davon Kurtaxe CHF 15.60 (ab 16 Jahren)\tCHF 273.60\nFreund/in 2 zahlt davon Kurtaxe CHF 15.60 (ab 16 Jahren)\tCHF 273.60\nFreund/in 3 zahlt davon Kurtaxe CHF 10.40 (ab 16 Jahren)\tCHF 198.40\n#Teile\n~\t306\t96\t0\t0\t3\n~\t273.6\t48\t15.6\t0\t3\n~\t273.6\t48\t15.6\t0\t3\n~\t198.4\t48\t10.4\t0\t2\n~\tN\tManuel, Sarah|\nReinigung aufgeteilt: Nach Personen: jede Person zählt gleich (ohne Kleinkinder).",
+      "bestaetigt": "2026-11-25T21:37"
     }
   ],
   "logbuch": [
-    {
-      "t": "2026-11-10T18:03",
-      "text": "Bestätigt: Manuel, Mo 1.03.2027 bis Do 4.03.2027, CHF 1032"
-    },
     {
       "t": "2026-11-10T20:16",
       "text": "Bestätigt: David, Di 15.12.2026 bis Do 17.12.2026, CHF 120"
@@ -858,17 +867,12 @@
     {
       "t": "2026-11-25T21:34",
       "text": "Vorlage für Manuel: 2027-01-04 bis 2027-01-07, normale Preise wie bei einer gewöhnlichen Buchung, ohne Mindestnächte"
+    },
+    {
+      "t": "2026-11-25T21:37",
+      "text": "Bestätigt: ⭐ Sonderbuchung, Manuel, Mo 4.01.2027 bis Do 7.01.2027, CHF 1010"
     }
   ],
   "reinigung": [],
-  "vorlagen": [
-    {
-      "id": "mwwl0ln9",
-      "name": "Manuel",
-      "arr": "2027-01-04",
-      "dep": "2027-01-07",
-      "pa": false,
-      "t": "2026-11-25T21:34"
-    }
-  ]
+  "vorlagen": []
 }
