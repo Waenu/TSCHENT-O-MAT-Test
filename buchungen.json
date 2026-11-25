@@ -40,13 +40,25 @@
       "dep": "2027-06-21",
       "status": "abgelehnt",
       "t": "2026-11-24T16:07:51.659Z"
+    },
+    {
+      "name": "Manuel",
+      "arr": "2027-01-07",
+      "dep": "2027-01-10",
+      "selbst": false,
+      "pers": 2,
+      "sond": {
+        "pa": true,
+        "preis": 600,
+        "rein": false,
+        "kt": false
+      },
+      "betrag": 1800,
+      "rechnung": "Gesendet am Mi 25.11.2026, 21:31 Uhr. App-Version 3.28.2.0.\nAnreise\tDonnerstag 7.01.2027\nAbreise\tSonntag 10.01.2027 (3 Nächte)\nSonderbuchung (eure Vorlage)\tgeänderte Preise: CHF 600.– pro Nacht für die ganze Wohnung, ohne Reinigung, ohne Kurtaxe\n🛏️ Luftmatratze (7. Bett) in den Nächten Fr 8.01.2027 / Sa 9.01.2027, Sa 9.01.2027 / So 10.01.2027: bitte freigeben\nFamilie\tIch und Partner/in\nFreunde\t5\nFreund/in 4\tFr 8.01.2027 bis So 10.01.2027 (2 Nächte)\nFreund/in 5\tFr 8.01.2027 bis So 10.01.2027 (2 Nächte)\nPauschale nach Personen\tjede Person zählt gleich (ohne Kleinkinder)\nBedingungen akzeptiert\tJa\nTotal laut Rechner\tCHF 1’800.–\n#Preisberechnung\nSonderbuchung: Pauschale pro Nacht\tCHF 600.–\nPauschale (3 Nächte)\tCHF 1’800.–\nReinigung\tkeine\nKurtaxe\tkeine\nPauschale: Anteil Familie\tCHF 514.29\nPauschale: Anteil pro Freund\tCHF 257.14\n#Aufteilung unter den Freunden\nFamilie zahlt\tCHF 514.25\nFreund/in 1 zahlt davon Kurtaxe CHF 0.00 (ab 16 Jahren)\tCHF 257.15\nFreund/in 2 zahlt davon Kurtaxe CHF 0.00 (ab 16 Jahren)\tCHF 257.15\nFreund/in 3 zahlt davon Kurtaxe CHF 0.00 (ab 16 Jahren)\tCHF 257.15\nFreund/in 4 zahlt davon Kurtaxe CHF 0.00 (ab 16 Jahren)\tCHF 257.15\nFreund/in 5 zahlt davon Kurtaxe CHF 0.00 (ab 16 Jahren)\tCHF 257.15\n#Teile\n~\t514.25\t514.29\t0\t0\t3\n~\t257.15\t257.14\t0\t0\t3\n~\t257.15\t257.14\t0\t0\t3\n~\t257.15\t257.14\t0\t0\t3\n~\t257.15\t257.14\t0\t0\t2\n~\t257.15\t257.14\t0\t0\t2\n~\tN\tManuel, Sarah|\nPauschale aufgeteilt: Nach Personen: jede Person zählt gleich (ohne Kleinkinder).",
+      "bestaetigt": "2026-11-25T21:32"
     }
   ],
   "logbuch": [
-    {
-      "t": "2026-11-10T17:09",
-      "text": "Wieder offen: In Airbnb gesperrt: Miriam, Do 10.12.2026 bis So 13.12.2026"
-    },
     {
       "t": "2026-11-10T17:20",
       "text": "In Airbnb gesperrt: Miriam, Do 10.12.2026 bis So 13.12.2026"
@@ -842,20 +854,12 @@
     {
       "t": "2026-11-25T21:23",
       "text": "Vorlage für Manuel: 2027-01-07 bis 2027-01-10, geänderte Preise: CHF 600.– pro Nacht für die ganze Wohnung, ohne Reinigung, ohne Kurtaxe"
+    },
+    {
+      "t": "2026-11-25T21:32",
+      "text": "Bestätigt: ⭐ Sonderbuchung, Manuel, Do 7.01.2027 bis So 10.01.2027, CHF 1800"
     }
   ],
   "reinigung": [],
-  "vorlagen": [
-    {
-      "id": "mwwkm5hl",
-      "name": "Manuel",
-      "arr": "2027-01-07",
-      "dep": "2027-01-10",
-      "pa": true,
-      "preis": 600,
-      "rein": false,
-      "kt": false,
-      "t": "2026-11-25T21:23"
-    }
-  ]
+  "vorlagen": []
 }
