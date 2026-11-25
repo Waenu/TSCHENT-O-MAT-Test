@@ -60,10 +60,6 @@
   ],
   "logbuch": [
     {
-      "t": "2026-11-10T17:20",
-      "text": "In Airbnb gesperrt: Miriam, Do 10.12.2026 bis So 13.12.2026"
-    },
-    {
       "t": "2026-11-10T18:03",
       "text": "Bestätigt: Manuel, Mo 1.03.2027 bis Do 4.03.2027, CHF 1032"
     },
@@ -858,8 +854,21 @@
     {
       "t": "2026-11-25T21:32",
       "text": "Bestätigt: ⭐ Sonderbuchung, Manuel, Do 7.01.2027 bis So 10.01.2027, CHF 1800"
+    },
+    {
+      "t": "2026-11-25T21:34",
+      "text": "Vorlage für Manuel: 2027-01-04 bis 2027-01-07, normale Preise wie bei einer gewöhnlichen Buchung, ohne Mindestnächte"
     }
   ],
   "reinigung": [],
-  "vorlagen": []
+  "vorlagen": [
+    {
+      "id": "mwwl0ln9",
+      "name": "Manuel",
+      "arr": "2027-01-04",
+      "dep": "2027-01-07",
+      "pa": false,
+      "t": "2026-11-25T21:34"
+    }
+  ]
 }
