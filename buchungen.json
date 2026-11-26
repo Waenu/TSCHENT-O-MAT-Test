@@ -50,13 +50,19 @@
       "betrag": 500,
       "rechnung": "Gesendet am Do 26.11.2026, 17:00 Uhr. App-Version 3.32.0.0.\nAnreise\tFreitag 11.12.2026\nAbreise\tSonntag 13.12.2026 (2 Nächte)\nFamilie\tIch und Partner/in\nFreunde\t1\nZimmer 1 unberührt\tJa\nReinigung nach Parteien\tjede Partei zahlt gleich viel\nBedingungen akzeptiert\tJa\nTotal\tCHF 510.40, davon Kurtaxe Adelboden für die Freunde CHF 10.40\n#Preisberechnung\nFamilie pro Nacht\tCHF 60.–\nFreund/in 1 pro Nacht\tCHF 70.–\nÜbernachtung (2 Nächte)\tCHF 260.–\nReinigung\tCHF 240.–\nReinigung: Anteil Familie\tCHF 120.00\nReinigung: Partei Freund/in 1\tCHF 120.00\nKurtaxe Adelboden (dazu) 1 Freund ab 16 Jahren zu CHF 5.20 pro Nacht, 2 Nächte\tCHF 10.40\nTotal mit Kurtaxe\tCHF 510.40\n#Aufteilung unter den Freunden\nFamilie zahlt\tCHF 240.00\nFreund/in 1 zahlt davon Kurtaxe CHF 10.40 (ab 16 Jahren)\tCHF 270.40\n#Teile\n~\t240\t120\t0\t0\t2\n~\t270.4\t120\t10.4\t0\t2\n~\tN\tMiriam, Andreas|\n~\tG\tK. Gruber\nZimmer 1 und rotes Bad bleiben unberührt: CHF 10.– weniger pro Nacht, die Familie zahlt CHF 60.– statt CHF 70.–.\nReinigung aufgeteilt: Nach Parteien: jede Partei zahlt gleich viel.",
       "bestaetigt": "2026-11-26T17:01"
+    },
+    {
+      "name": "Miriam",
+      "arr": "2026-12-16",
+      "dep": "2026-12-19",
+      "selbst": false,
+      "pers": 2,
+      "betrag": 630,
+      "rechnung": "Gesendet am Do 26.11.2026, 17:12 Uhr. App-Version 3.32.0.1.\nAnreise\tMittwoch 16.12.2026\nAbreise\tSamstag 19.12.2026 (3 Nächte)\nFamilie\tIch und Partner/in\nFreunde\t1\nZimmer 1 unberührt\tJa\nReinigung nach Parteien\tjede Partei zahlt gleich viel\nBedingungen akzeptiert\tJa\nTotal\tCHF 645.60, davon Kurtaxe Adelboden für die Freunde CHF 15.60\n#Preisberechnung\nFamilie pro Nacht\tCHF 60.–\nFreund/in 1 pro Nacht\tCHF 70.–\nÜbernachtung (3 Nächte)\tCHF 390.–\nReinigung\tCHF 240.–\nReinigung: Anteil Familie\tCHF 120.00\nReinigung: Partei Freund/in 1\tCHF 120.00\nKurtaxe Adelboden (dazu) 1 Freund ab 16 Jahren zu CHF 5.20 pro Nacht, 3 Nächte\tCHF 15.60\nTotal mit Kurtaxe\tCHF 645.60\n#Aufteilung unter den Freunden\nFamilie zahlt\tCHF 300.00\nFreund/in 1 zahlt davon Kurtaxe CHF 15.60 (ab 16 Jahren)\tCHF 345.60\n#Teile\n~\t300\t120\t0\t0\t3\n~\t345.6\t120\t15.6\t0\t3\n~\tN\tMiriam, Andreas|\n~\tG\tK. Gruber\nZimmer 1 und rotes Bad bleiben unberührt: CHF 10.– weniger pro Nacht, die Familie zahlt CHF 60.– statt CHF 70.–.\nReinigung aufgeteilt: Nach Parteien: jede Partei zahlt gleich viel.",
+      "bestaetigt": "2026-11-26T17:13"
     }
   ],
   "logbuch": [
-    {
-      "t": "2026-11-10T22:22",
-      "text": "Entfernt: Deborah, Mi 18.11.2026 bis Sa 21.11.2026"
-    },
     {
       "t": "2026-11-10T22:38",
       "text": "Bestätigt: Deborah, Do 18.03.2027 bis Sa 20.03.2027, CHF 120, Wäsche: persönlich bringen bis Di 23.03.2027"
@@ -852,6 +858,10 @@
     {
       "t": "2026-11-26T17:01",
       "text": "Bestätigt: Miriam, Fr 11.12.2026 bis So 13.12.2026, CHF 500"
+    },
+    {
+      "t": "2026-11-26T17:13",
+      "text": "Bestätigt: Miriam, Mi 16.12.2026 bis Sa 19.12.2026, CHF 630"
     }
   ],
   "reinigung": [],
