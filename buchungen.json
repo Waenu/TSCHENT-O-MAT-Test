@@ -44,10 +44,6 @@
   ],
   "logbuch": [
     {
-      "t": "2026-11-10T20:28",
-      "text": "Entfernt: David, Mi 17.03.2027 bis Fr 19.03.2027"
-    },
-    {
       "t": "2026-11-10T20:29",
       "text": "Bestätigt: David, Mi 24.03.2027 bis Sa 27.03.2027, CHF 180, Wäsche: persönlich bringen bis Di 30.03.2027"
     },
@@ -842,6 +838,10 @@
     {
       "t": "2026-11-25T22:54",
       "text": "Vorlage für Manuel: 2027-01-07 bis 2027-01-10, geänderte Preise: CHF 600.– pro Nacht für die ganze Wohnung, mit Reinigung (CHF 120.– pro Aufenthalt), Kurtaxe für Freunde wie üblich"
+    },
+    {
+      "t": "2026-11-26T15:44",
+      "text": "Schalter: zahlTage 7 → 8"
     }
   ],
   "reinigung": [],
