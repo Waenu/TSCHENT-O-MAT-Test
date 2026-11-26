@@ -1725,7 +1725,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.30.0.0";
+let VERSION = "3.30.1.0";
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
 let BANK = "Spar- und Leihkasse Frutigen (SLF)";
@@ -7872,17 +7872,22 @@ function gmKindZeigen() {
   const lok = gmLokal(), weg = gmWeg();
   const l = gmAktiv() && ABSENDER ? BUCH.filter((b) => eigenN(b.name) && b.dep >= heuteKey() && freundeVon(b) > 0 && !((lok[bKey(b)] || {}).gesendet && !GM_AUF.has(bKey(b)) && (weg.indexOf(bKey(b)) >= 0 || heuteKey() >= addDays(b.dep, -2)))) : [];   // gesendete Liste: weg, wenn ausgeblendet oder ab dem zweitletzten Tag vor der Abreise
   { const off = l.filter((b) => !(lok[bKey(b)] || {}).gesendet);   // Zähler am Knopf «Meine Verwaltung» und Erinnerung auf der Startseite ab 2 Tagen vor der Anreise (seit 3.12.0.0)
-    MEIN_N.gm = off.length;
-    const er = document.getElementById("listeErinn"), knapp = meinModus() ? off.filter((b) => heuteKey() >= addDays(b.arr, -2)) : [];
+    MEIN_N.gm = meinVorschau() ? 0 : off.length;   // «Ansicht als»: Eingaben des Kindes stehen nur auf dessen Handy (seit 3.30.1.0)
+    const er = document.getElementById("listeErinn"), knapp = meinModus() && !meinVorschau() ? off.filter((b) => heuteKey() >= addDays(b.arr, -2)) : [];
     er.hidden = !knapp.length; er.innerHTML = knapp.map((b) => '<div class="note h rot-warn"><b>👥 Liste deiner Freunde fehlt noch</b> für deinen Aufenthalt ab ' + esc(fmtTag(b.arr)) + '. <button type="button" class="btn" data-meinauf="1">Zu «Meine Verwaltung»</button></div>').join("");
     meinKnopf(); }
-  const sig = JSON.stringify([l.map(bKey), l.map((b) => (lok[bKey(b)] || {}).gesendet || ""), [...GM_AUF], GM_MSG]);
+  const sig = JSON.stringify([l.map(bKey), l.map((b) => (lok[bKey(b)] || {}).gesendet || ""), [...GM_AUF], GM_MSG, meinVorschau() ? 1 : 0, GM_LISTEN ? l.map((b) => ((GM_LISTEN[bKey(b)] || {}).gesendet || "")) : null]);
   if (sig === GM_SIG) return;   // nicht neu zeichnen, sonst gehen Eingaben verloren
   GM_SIG = sig;
   box.hidden = !l.length;
   box.dataset.gen = String((+box.dataset.gen || 0) + 1);
   box.innerHTML = l.map((b) => {
     const key = bKey(b), n = freundeVon(b), alt = lok[key] || {}, fr = Array.isArray(alt.freunde) ? alt.freunde : [], auf = !alt.gesendet || GM_AUF.has(key), msg = GM_MSG[key] || "";
+    if (meinVorschau()) {   // «Ansicht als»: die Liste des Kindes steht nur auf dessen Handy, hier der Stand aus dem Briefkasten (seit 3.30.1.0, Wänu)
+      const e = GM_LISTEN && GM_LISTEN[key], ok = e && Array.isArray(e.freunde) && e.freunde.length && e.gesendet;
+      const st = ok ? "✅ " + esc(b.name) + " hat die Liste der Freunde am " + esc(fmtTag(String(e.gesendet).slice(0, 10))) + ", " + esc(String(e.gesendet).slice(11, 16)) + " Uhr gesendet." : GM_LISTEN ? "⏳ " + esc(b.name) + " hat die Liste der Freunde noch nicht gesendet." : "Ob " + esc(b.name) + " die Liste gesendet hat, siehst du in der Verwaltung bei der Buchung unter «👥 Freunde für die Kurtaxe».";
+      return '<div class="note h gm-vor" data-gmk="' + esc(key) + '" style="border-color: var(--marke)"><b>👥 Liste der Freunde</b><p class="hint">Aufenthalt vom ' + esc(fmtTag(b.arr)) + " bis " + esc(fmtTag(b.dep)) + ", " + n + " " + gastWort(n) + ". " + st + " Die Eingaben stehen nur auf dem Handy von " + esc(b.name) + ", darum siehst du sie hier nicht.</p></div>";
+    }
     const bereit = !alt.gesendet && fr.length >= n && fr.slice(0, n).every((f) => f && f.name && f.vorname && f.geb && f.geschlecht);   // schon im Rechner ausgefüllt (seit 3.6.0.1)
     const kopf = alt.gesendet
       ? '<span class="gm-ico">✅</span><b>Liste deiner Freunde gesendet</b> am ' + esc(fmtTag(alt.gesendet.slice(0, 10))) + ", " + esc(alt.gesendet.slice(11, 16)) + " Uhr. Danke!"
