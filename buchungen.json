@@ -44,10 +44,6 @@
   ],
   "logbuch": [
     {
-      "t": "2026-11-10T20:29",
-      "text": "Bestätigt: David, Mi 24.03.2027 bis Sa 27.03.2027, CHF 180, Wäsche: persönlich bringen bis Di 30.03.2027"
-    },
-    {
       "t": "2026-11-10T20:46",
       "text": "In Airbnb gesperrt: Miriam, Do 10.12.2026 bis So 13.12.2026"
     },
@@ -842,6 +838,10 @@
     {
       "t": "2026-11-26T15:44",
       "text": "Schalter: zahlTage 7 → 8"
+    },
+    {
+      "t": "2026-11-26T15:44",
+      "text": "Schalter: zahlTage 8 → 7"
     }
   ],
   "reinigung": [],
