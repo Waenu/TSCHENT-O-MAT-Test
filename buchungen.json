@@ -40,13 +40,19 @@
       "dep": "2027-06-21",
       "status": "abgelehnt",
       "t": "2026-11-24T16:07:51.659Z"
+    },
+    {
+      "name": "Miriam",
+      "arr": "2026-12-11",
+      "dep": "2026-12-13",
+      "selbst": false,
+      "pers": 2,
+      "betrag": 500,
+      "rechnung": "Gesendet am Do 26.11.2026, 17:00 Uhr. App-Version 3.32.0.0.\nAnreise\tFreitag 11.12.2026\nAbreise\tSonntag 13.12.2026 (2 Nächte)\nFamilie\tIch und Partner/in\nFreunde\t1\nZimmer 1 unberührt\tJa\nReinigung nach Parteien\tjede Partei zahlt gleich viel\nBedingungen akzeptiert\tJa\nTotal\tCHF 510.40, davon Kurtaxe Adelboden für die Freunde CHF 10.40\n#Preisberechnung\nFamilie pro Nacht\tCHF 60.–\nFreund/in 1 pro Nacht\tCHF 70.–\nÜbernachtung (2 Nächte)\tCHF 260.–\nReinigung\tCHF 240.–\nReinigung: Anteil Familie\tCHF 120.00\nReinigung: Partei Freund/in 1\tCHF 120.00\nKurtaxe Adelboden (dazu) 1 Freund ab 16 Jahren zu CHF 5.20 pro Nacht, 2 Nächte\tCHF 10.40\nTotal mit Kurtaxe\tCHF 510.40\n#Aufteilung unter den Freunden\nFamilie zahlt\tCHF 240.00\nFreund/in 1 zahlt davon Kurtaxe CHF 10.40 (ab 16 Jahren)\tCHF 270.40\n#Teile\n~\t240\t120\t0\t0\t2\n~\t270.4\t120\t10.4\t0\t2\n~\tN\tMiriam, Andreas|\n~\tG\tK. Gruber\nZimmer 1 und rotes Bad bleiben unberührt: CHF 10.– weniger pro Nacht, die Familie zahlt CHF 60.– statt CHF 70.–.\nReinigung aufgeteilt: Nach Parteien: jede Partei zahlt gleich viel.",
+      "bestaetigt": "2026-11-26T17:01"
     }
   ],
   "logbuch": [
-    {
-      "t": "2026-11-10T20:47",
-      "text": "Entfernt: David, Mi 24.03.2027 bis Sa 27.03.2027"
-    },
     {
       "t": "2026-11-10T22:22",
       "text": "Entfernt: Deborah, Mi 18.11.2026 bis Sa 21.11.2026"
@@ -842,6 +848,10 @@
     {
       "t": "2026-11-26T15:54",
       "text": "Schalter: gastZimmer 35 → 40, famAnteil → 30"
+    },
+    {
+      "t": "2026-11-26T17:01",
+      "text": "Bestätigt: Miriam, Fr 11.12.2026 bis So 13.12.2026, CHF 500"
     }
   ],
   "reinigung": [],
