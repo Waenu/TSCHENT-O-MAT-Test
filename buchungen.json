@@ -44,10 +44,6 @@
   ],
   "logbuch": [
     {
-      "t": "2026-11-10T20:46",
-      "text": "In Airbnb gesperrt: Miriam, Do 10.12.2026 bis So 13.12.2026"
-    },
-    {
       "t": "2026-11-10T20:47",
       "text": "Entfernt: Manuel, Mo 1.03.2027 bis Do 4.03.2027"
     },
@@ -842,6 +838,10 @@
     {
       "t": "2026-11-26T15:44",
       "text": "Schalter: zahlTage 8 → 7"
+    },
+    {
+      "t": "2026-11-26T15:52",
+      "text": "Schalter: gastZimmer 40 → 35, famAnteil → 35"
     }
   ],
   "reinigung": [],
