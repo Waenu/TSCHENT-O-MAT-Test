@@ -468,3 +468,4 @@ Anschliessend prüfen, dass `origin/main:einstellungen.json` die neue Version tr
 
 Erledigt 10.11.2026 abends: Kurzfilm Saisons (2.120.0.x), Beherbergungsabgabe im Glossar, Backup eingerichtet, Gästemeldung getestet, Test-Stornos entfernt.
 Erledigt: Haftung, Bedingungen, Stornierung als Kapitel, gelber Hilfeknopf (2.118.x). Liste «Zu tun» pro Buchung (2.117.0.0). Gästemeldung (2.116.x). Verwaltung neu, Schritte A bis C (2.114.0.0 bis 2.115.1.0). Kurtaxe für Freunde (2.113.0.0 und 2.113.0.1). Beträge fix im Code (P.kurtaxe, kurtaxeBeherb, kurtaxeKind), nicht aus der aktuellen Verordnung.
+- 3.37.0.13 (Wänu 27.11.2026, Bild: «Es sind nur 10 Nächte, 7 + 3»): `famL` nahm `pDat(nm).n` (existiert nicht, fDat liefert kein `n`) und fiel auf die Gesamtnächte zurück; jetzt `diffDays(an, ab)`. Neuer Test `tFamEigen`. Geprüft: `tests/lauf.js` (82). Nicht geprüft: Handy.
