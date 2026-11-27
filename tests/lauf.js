@@ -187,7 +187,7 @@ async function tSondAufteilung(b) {
     const d = document.createElement("div"); d.innerHTML = h || ""; o.gesp = [...d.querySelectorAll("tr.auf-d")].map((t) => t.innerText.replace(/\s+/g, " "));
     return o;
   });
-  const gut = (t) => /Übernachtung \(3 × CHF 200\.00, Anteil an CHF 600\.– pro Nacht\) CHF 600\.00/.test(t) && /Reinigung CHF 40\.00/.test(t) && !/Pauschale/.test(t) && !/CHF 0\.0\d/.test(t);
+  const gut = (t) => /Übernachtung 3 Nächte \(à CHF 200\.00, Anteil an CHF 600\.– pro Nacht\) CHF 600\.00/.test(t) && /Reinigung CHF 40\.00/.test(t) && !/Pauschale/.test(t) && !/CHF 0\.0\d/.test(t);
   ok("Sonderbuchung mit Pauschale: Aufteilung live = Übernachtung (3 × Anteil von CHF 600) + Reinigungsanteil, ohne Rundungsreste", r.live.length === 3 && r.live.every(gut), JSON.stringify(r.live[0]));
   ok("Sonderbuchung mit Pauschale: Balken grün (Übernachtung) und violett (Reinigung), Legende «Reinigung»", r.bal.every((t) => t === "su:600,sr:40") && r.legende.every((t) => /Übernachtung/.test(t) && /Reinigung/.test(t)), JSON.stringify([r.bal, r.legende]));
   ok("Sonderbuchung mit Pauschale: gespeicherte Berechnung zeigt dasselbe", r.gesp.length === 3 && r.gesp.every(gut), JSON.stringify(r.gesp[0]));
@@ -229,7 +229,7 @@ async function tSondNaechte(b, sm) {
     return o;
   });
   if (sm) {
-    ok("Pauschale nach Personennächten: Anna 3 Nächte CHF 675, Bea 2 Nächte CHF 450 (1800 / 8 Personennächte = 225, Schalter auf 2)", r.rows.length === 3 && /\(3 × CHF 225\.00, Anteil an CHF 600\.– pro Nacht\) CHF 675\.00/.test(r.rows[0] + r.rows[1] + r.rows[2]) && r.rows.some((t) => /\(2 × CHF 225\.00, Anteil an CHF 600\.– pro Nacht\) CHF 450\.00/.test(t)), JSON.stringify(r.rows) + " " + r.leiste);
+    ok("Pauschale nach Personennächten: Anna 3 Nächte CHF 675, Bea 2 Nächte CHF 450 (1800 / 8 Personennächte = 225, Schalter auf 2)", r.rows.length === 3 && /3 Nächte \(à CHF 225\.00, Anteil an CHF 600\.– pro Nacht\) CHF 675\.00/.test(r.rows[0] + r.rows[1] + r.rows[2]) && r.rows.some((t) => /2 Nächte \(à CHF 225\.00, Anteil an CHF 600\.– pro Nacht\) CHF 450\.00/.test(t)), JSON.stringify(r.rows) + " " + r.leiste);
     ok("Pauschale nach Personennächten: Summe der Zeilen = Total CHF 1’920", Math.abs(r.sum - 1920) < 0.3 && /1.920/.test(r.tot), r.sum + " " + r.tot + " " + JSON.stringify(r.zr));
     ok("Schalter Weltcup auf 2 Nächte: kein Hinweis «ganze Zeit», Wert 2", !r.hint && r.pm === 2, JSON.stringify([r.hint, r.pm]));
   } else {
@@ -257,10 +257,10 @@ async function tPaar(b) {
     return o;
   });
   const alle = (a) => a.join(" | ");
-  ok("Paar in der gespeicherten Berechnung: «2 × 3 Nächte × CHF 70.00» wie bei Einzelnen", /Übernachtung \(2 × 3 Nächte × CHF 70\.00\) CHF 420\.00/.test(alle(r.papi)) && /3 × CHF 70\.00/.test(alle(r.papi)), alle(r.papi));
+  ok("Paar in der gespeicherten Berechnung: «2 × 3 Nächte × CHF 70.00» wie bei Einzelnen", /Übernachtung 6 Nächte \(à CHF 70\.00\) CHF 420\.00/.test(alle(r.papi)) && /3 Nächte \(à CHF 70\.00\)/.test(alle(r.papi)) || /3 Nächte für CHF/.test(alle(r.papi)), alle(r.papi));
   ok("Unten: Total Reinigung, Total Kurtaxe, Einnahmen, dann Total", /Total ReinigungCHF [\d’']+\.\d\d \| Total KurtaxeCHF [\d’']+\.\d\d \| Einnahmen ÜbernachtungCHF [\d’']+\.\d\d \| Total/.test(alle(r.papi)), alle(r.papi).slice(-200));
   ok("Buchen: erste Zeile «Ich (Manuel) & Sarah zahlen», gespeichert neutral ohne Namen", /Ich \(Manuel\) & Sarah zahlen/.test(r.rechner) && !/Sarah/.test(r.snapFam), r.rechner + " || " + r.snapFam);
-  ok("Buchen: pro Person Nächte × Preis, Legende nur einmal", /Ich \(Manuel\) & Sarah[^|]*Übernachtung \(3 × CHF 70\.00\) CHF 210\.00/.test(r.aufD) && /Alex[^|]*Übernachtung \(3 × CHF 70\.00\)/.test(r.aufD) && r.leg === 1, r.leg + " || " + r.aufD.slice(0, 400));
+  ok("Buchen: pro Person Nächte × Preis, Legende nur einmal", /Ich \(Manuel\) & Sarah[^|]*Übernachtung 6 Nächte \(3 \+ 3\) für CHF 210\.00/.test(r.aufD) && /Alex[^|]*Übernachtung 3 Nächte \(à CHF 70\.00\) CHF 210\.00/.test(r.aufD) && r.leg === 1, r.leg + " || " + r.aufD.slice(0, 400));
   ok("Familie mit Namen: Papi «Manuel & Sarah zahlen», Kind «Ich (Manuel) & Sarah zahlen»", /Manuel & Sarah zahlen/.test(alle(r.papi)) && /Ich \(Manuel\) & Sarah zahlen/.test(alle(r.kind)), alle(r.papi).slice(0, 80) + " || " + alle(r.kind).slice(0, 80));
   ok("Paar und Familie: keine Fehler", p.fehler.length === 0, p.fehler.join("|"));
   await p.ctx.close();
