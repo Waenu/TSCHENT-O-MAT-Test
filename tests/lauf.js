@@ -204,7 +204,7 @@ async function tSondListe(b) {
     const f = (v, n, g) => ({ vorname: v, name: n, geschlecht: "w", geb: g || "1990-01-01", nat: "Schweiz" });
     localStorage.setItem("tm2t_gmEntwurf", JSON.stringify({ k: gmEntwurfKeyJetzt(), l: [f("Anna", "Meier"), f("Bea", "Zeller")] })); normalize(); render(); await w(400);
     for (let i = 0; i < 4; i++) { const ok1 = document.querySelector(".gm-pt-ok"); if (ok1) { ok1.click(); await w(300); } }
-    o.leiste = (document.querySelector("#bar") || { innerText: "" }).innerText.replace(/\s+/g, " ").slice(0, 160);
+    o.det = text.split("\n").filter((l) => /^Freund|^#|^~|Nächte/.test(l)).join(" ¦ "); o.leiste = (document.querySelector("#bar") || { innerText: "" }).innerText.replace(/\s+/g, " ").slice(0, 160);
     o.rows = [...document.querySelectorAll("#result .auf-tab tr.auf-d")].map((t) => t.innerText.replace(/\s+/g, " "));
     return o;
   });
@@ -222,7 +222,7 @@ async function tSondNaechte(b, sm) {
     localStorage.setItem("tm2t_gmEntwurf", JSON.stringify({ k: gmEntwurfKeyJetzt(), l: [f("Anna", "Meier"), f("Bea", "Zeller", "2027-01-08", "2027-01-10")] })); normalize(); render(); await w(400);
     for (let i = 0; i < 4; i++) { const ok1 = document.querySelector(".gm-pt-ok"); if (ok1) { ok1.click(); await w(300); } }
     o.hint = !!document.querySelector(".sond-ganz"); o.pm = P.sondMin;
-    o.leiste = (document.querySelector("#bar") || { innerText: "" }).innerText.replace(/\s+/g, " ").slice(0, 120);
+    o.det = text.split("\n").filter((l) => /^Freund|^#|^~|Nächte/.test(l)).join(" ¦ "); o.leiste = (document.querySelector("#bar") || { innerText: "" }).innerText.replace(/\s+/g, " ").slice(0, 120);
     o.rows = [...document.querySelectorAll("#result .auf-tab tr.auf-d")].map((t) => t.innerText.replace(/\s+/g, " "));
     o.sum = [...document.querySelectorAll("#result .auf-tab tr.auf-z")].map((t) => { const m = [...t.innerText.matchAll(/CHF\s([\d’]+\.\d\d)/g)]; return m.length ? parseFloat(m[m.length - 1][1].replace(/’/g, "")) : 0; }).reduce((a, v) => a + v, 0);
     o.zr = [...document.querySelectorAll("#result .auf-tab tr.auf-z")].map((t) => t.innerText.replace(/\s+/g, " ")); o.tot = (document.querySelector("#result .big") || { innerText: "" }).innerText;
@@ -237,6 +237,28 @@ async function tSondNaechte(b, sm) {
     ok("Schalter Weltcup (Standard 3): Hinweis «ganze Zeit» statt Aufenthalts-Feld, Wert 3", r.hint && r.pm === 3, JSON.stringify([r.hint, r.pm]));
   }
   ok("Pauschale nach Personennächten: keine Fehler", p.fehler.length === 0, p.fehler.join("|"));
+  await p.ctx.close();
+}
+
+async function tPaar(b) {
+  const p = await seite(b, { ls: kind("Manuel"), heute: "2026-11-27", familie: { liste: { Manuel: { p: "Sarah", k: [] } } } });
+  const r = await p.evaluate(async () => {
+    const w = (ms) => new Promise((z) => setTimeout(z, ms)); const o = {};
+    kalenderKlick("2026-12-12"); kalenderKlick("2026-12-15"); await w(400);
+    const c = [...document.querySelectorAll("#f-art .zchip")].find((x) => /Normal/.test(x.textContent)); if (c) { c.click(); await w(400); }
+    S.werArt = EIGEN; S.famSel = ["Sarah"]; S.ichMit = true; S.gaeste = 3; S.reinig = REINIG[0]; S.zimmer = "Nein"; S.spar = "Nein"; S.waesche = S.waesche || "Persönlich bringen";
+    const f = (v, n, g) => ({ vorname: v, name: n, geschlecht: "w", geb: g || "1990-01-01", nat: "Schweiz" });
+    localStorage.setItem("tm2t_gmEntwurf", JSON.stringify({ k: gmEntwurfKeyJetzt(), l: [f("Alex", "Meier"), f("Julia", "Meier"), f("Alexandra", "Huber")] })); normalize(); render(); await w(400);
+    for (let i = 0; i < 4; i++) { const ok1 = document.querySelector(".gm-pt-ok"); if (ok1) { ok1.click(); await w(300); } }
+    const text = "Gesendet am Fr 27.11.2026, 10:00 Uhr. App-Version x.\n#Preisberechnung\n" + SNAP_BER.join("\n"), bu = { name: "Manuel", arr: "2026-12-12", dep: "2026-12-15", betrag: 1000, rechnung: text, bestaetigt: "2026-11-27T10:00" };
+    const txt = (h) => { const d = document.createElement("div"); d.innerHTML = h || ""; return [...d.querySelectorAll("tr")].map((t) => t.innerText.replace(/\s+/g, " ")); };
+    o.kind = txt(rechAufHtml(text, bu)); TOKEN = "test"; const bk = ABSENDER; ABSENDER = ""; o.papi = txt(rechAufHtml(text, bu)); ABSENDER = bk; o.det = text.split("\n").filter((l) => /^Freund|^#|^~|Nächte/.test(l)).join(" ¦ "); o.leiste = (document.querySelector("#bar") || { innerText: "" }).innerText.replace(/\s+/g, " ").slice(0, 120);
+    return o;
+  });
+  const alle = (a) => a.join(" | ");
+  ok("Paar in der gespeicherten Berechnung: «2 × 3 Nächte × CHF 70.00» wie bei Einzelnen", /Übernachtung \(3 Nächte\) 2 × 3 Nächte × CHF 70\.00CHF 420\.00/.test(alle(r.papi)) && /3 × CHF 70\.00/.test(alle(r.papi)), alle(r.papi));
+  ok("Familie mit Namen: Papi «Manuel & Sarah zahlen», Kind «Ich (Manuel) & Sarah zahlen»", /Manuel & Sarah zahlen/.test(alle(r.papi)) && /Ich \(Manuel\) & Sarah zahlen/.test(alle(r.kind)), alle(r.papi).slice(0, 80) + " || " + alle(r.kind).slice(0, 80));
+  ok("Paar und Familie: keine Fehler", p.fehler.length === 0, p.fehler.join("|"));
   await p.ctx.close();
 }
 
@@ -380,7 +402,7 @@ async function tNamenAufraeumen(b) {
 
 (async () => {
   const s = await server(); const b = await chromium.launch();
-  const lauf = [["Dateien", tDateien], ["Start", tStart], ["Control Panel", tControlPanel], ["Gültig ab", tGueltigAb], ["Gültig bis", tGueltigBis], ["Trinkgeld", tTrinkgeld], ["Rechnung an Freunde", tRechnungSchalter], ["Ansicht als", tAnsichtAls], ["Anfrage und Namen", tSchnappschuss], ["Sonderbuchungen", tSonder], ["SondAuf", tSondAufteilung], ["SondListe", tSondListe], ["SondNaechte", tSondNaechte], ["SondNaechte2", (b) => tSondNaechte(b, true)], ["Preise", tPreise], ["Alte Namen aufräumen", tNamenAufraeumen]];
+  const lauf = [["Dateien", tDateien], ["Start", tStart], ["Control Panel", tControlPanel], ["Gültig ab", tGueltigAb], ["Gültig bis", tGueltigBis], ["Trinkgeld", tTrinkgeld], ["Rechnung an Freunde", tRechnungSchalter], ["Ansicht als", tAnsichtAls], ["Anfrage und Namen", tSchnappschuss], ["Sonderbuchungen", tSonder], ["SondAuf", tSondAufteilung], ["SondListe", tSondListe], ["SondNaechte", tSondNaechte], ["Paar", tPaar], ["SondNaechte2", (b) => tSondNaechte(b, true)], ["Preise", tPreise], ["Alte Namen aufräumen", tNamenAufraeumen]];
   const nur = process.argv[2];
   for (const [n, f] of lauf) { if (nur && !n.toLowerCase().includes(nur.toLowerCase())) continue; try { await f(b); } catch (e) { ok(n + ": Lauf abgebrochen", false, e.message); } }
   await b.close(); s.close();
