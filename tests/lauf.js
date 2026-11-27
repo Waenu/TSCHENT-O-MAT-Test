@@ -204,7 +204,7 @@ async function tSondListe(b) {
     const f = (v, n, g) => ({ vorname: v, name: n, geschlecht: "w", geb: g || "1990-01-01", nat: "Schweiz" });
     localStorage.setItem("tm2t_gmEntwurf", JSON.stringify({ k: gmEntwurfKeyJetzt(), l: [f("Anna", "Meier"), f("Bea", "Zeller")] })); normalize(); render(); await w(400);
     for (let i = 0; i < 4; i++) { const ok1 = document.querySelector(".gm-pt-ok"); if (ok1) { ok1.click(); await w(300); } }
-    o.det = text.split("\n").filter((l) => /^Freund|^#|^~|Nächte/.test(l)).join(" ¦ "); o.leiste = (document.querySelector("#bar") || { innerText: "" }).innerText.replace(/\s+/g, " ").slice(0, 160);
+    o.leiste = (document.querySelector("#bar") || { innerText: "" }).innerText.replace(/\s+/g, " ").slice(0, 160);
     o.rows = [...document.querySelectorAll("#result .auf-tab tr.auf-d")].map((t) => t.innerText.replace(/\s+/g, " "));
     return o;
   });
@@ -222,7 +222,7 @@ async function tSondNaechte(b, sm) {
     localStorage.setItem("tm2t_gmEntwurf", JSON.stringify({ k: gmEntwurfKeyJetzt(), l: [f("Anna", "Meier"), f("Bea", "Zeller", "2027-01-08", "2027-01-10")] })); normalize(); render(); await w(400);
     for (let i = 0; i < 4; i++) { const ok1 = document.querySelector(".gm-pt-ok"); if (ok1) { ok1.click(); await w(300); } }
     o.hint = !!document.querySelector(".sond-ganz"); o.pm = P.sondMin;
-    o.det = text.split("\n").filter((l) => /^Freund|^#|^~|Nächte/.test(l)).join(" ¦ "); o.leiste = (document.querySelector("#bar") || { innerText: "" }).innerText.replace(/\s+/g, " ").slice(0, 120);
+    o.leiste = (document.querySelector("#bar") || { innerText: "" }).innerText.replace(/\s+/g, " ").slice(0, 120);
     o.rows = [...document.querySelectorAll("#result .auf-tab tr.auf-d")].map((t) => t.innerText.replace(/\s+/g, " "));
     o.sum = [...document.querySelectorAll("#result .auf-tab tr.auf-z")].map((t) => { const m = [...t.innerText.matchAll(/CHF\s([\d’]+\.\d\d)/g)]; return m.length ? parseFloat(m[m.length - 1][1].replace(/’/g, "")) : 0; }).reduce((a, v) => a + v, 0);
     o.zr = [...document.querySelectorAll("#result .auf-tab tr.auf-z")].map((t) => t.innerText.replace(/\s+/g, " ")); o.tot = (document.querySelector("#result .big") || { innerText: "" }).innerText;
@@ -252,7 +252,7 @@ async function tPaar(b) {
     for (let i = 0; i < 4; i++) { const ok1 = document.querySelector(".gm-pt-ok"); if (ok1) { ok1.click(); await w(300); } }
     const text = "Gesendet am Fr 27.11.2026, 10:00 Uhr. App-Version x.\n#Preisberechnung\n" + SNAP_BER.join("\n"), bu = { name: "Manuel", arr: "2026-12-12", dep: "2026-12-15", betrag: 1000, rechnung: text, bestaetigt: "2026-11-27T10:00" };
     const txt = (h) => { const d = document.createElement("div"); d.innerHTML = h || ""; return [...d.querySelectorAll("tr")].map((t) => t.innerText.replace(/\s+/g, " ")); };
-    o.kind = txt(rechAufHtml(text, bu)); TOKEN = "test"; const bk = ABSENDER; ABSENDER = ""; o.papi = txt(rechAufHtml(text, bu)); ABSENDER = bk; o.det = text.split("\n").filter((l) => /^Freund|^#|^~|Nächte/.test(l)).join(" ¦ "); o.leiste = (document.querySelector("#bar") || { innerText: "" }).innerText.replace(/\s+/g, " ").slice(0, 120);
+    o.kind = txt(rechAufHtml(text, bu)); TOKEN = "test"; const bk = ABSENDER; ABSENDER = ""; o.papi = txt(rechAufHtml(text, bu)); ABSENDER = bk; o.leiste = (document.querySelector("#bar") || { innerText: "" }).innerText.replace(/\s+/g, " ").slice(0, 120);
     return o;
   });
   const alle = (a) => a.join(" | ");
