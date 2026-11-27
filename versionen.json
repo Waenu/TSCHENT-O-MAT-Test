@@ -2,6 +2,31 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.37.0.12",
+      "datum": "2026-11-27",
+      "titel": "Bonus bei vielen Freunden, Vorteil in Gold",
+      "arten": [
+        "Text",
+        "Layout"
+      ],
+      "punkte": [
+        "Zahlt die Familie dank vieler Freunde (Mindestpreis) nichts oder weniger, steht «Bonus: Mindestpreis erlassen» mit dem Betrag.",
+        "Familienrabatt und Bonus stehen in goldener Schrift."
+      ]
+    },
+    {
+      "v": "3.37.0.11",
+      "datum": "2026-11-27",
+      "titel": "Familienrabatt statt «ihr spart», Kinder im Namen",
+      "arten": [
+        "Text"
+      ],
+      "punkte": [
+        "Die Zeile unter der Familie heisst «Ohne Familienpreis: … , Familienrabatt CHF …».",
+        "Kinder der Familie stehen in der Zeile («Ich (Manuel) & Sarah mit Mael & Yara») und zählen bei den Nächten mit; gilt auch für Geschwister-Haushalte."
+      ]
+    },
+    {
       "v": "3.37.0.10",
       "datum": "2026-11-27",
       "titel": "Aufteilung: Familienvorteil sichtbar",

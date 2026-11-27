@@ -240,6 +240,33 @@ async function tSondNaechte(b, sm) {
   await p.ctx.close();
 }
 
+async function tFamRabatt(b) {
+  const p = await seite(b, { ls: kind("Manuel"), heute: "2026-11-27", familie: { liste: { Manuel: { p: "Sarah", k: ["Mael"] } } } });
+  const r = await p.evaluate(async () => {
+    const w = (ms) => new Promise((z) => setTimeout(z, ms)); const o = {};
+    kalenderKlick("2026-12-12"); kalenderKlick("2026-12-15"); await w(400);
+    const c = [...document.querySelectorAll("#f-art .zchip")].find((x) => /Normal/.test(x.textContent)); if (c) { c.click(); await w(400); }
+    S.werArt = EIGEN; S.famSel = ["Sarah", "Mael"]; S.ichMit = true; S.gaeste = 0; S.reinig = REINIG[0]; S.zimmer = "Nein"; S.spar = "Nein"; S.waesche = S.waesche || "Persönlich bringen"; normalize(); render(); await w(400);
+    o.aufD = [...document.querySelectorAll("#result .auf-d")].map((t) => t.innerText.replace(/\s+/g, " ")).join(" || "); o.kopf = (document.querySelector("#result .auf-z") || { innerText: "" }).innerText.replace(/\s+/g, " ");
+    return o;
+  });
+  ok("Familie mit Kind: Name «mit Mael», Nächte 9 (3 + 3 + 3) für den Familienpreis, Familienrabatt", /Ich \(Manuel\) & Sarah mit Mael/.test(r.aufD) && /9 Nächte \(3 \+ 3 \+ 3\) für CHF 210\.00/.test(r.aufD) && /Ohne Familienpreis: 9 × CHF 70\.00 = CHF 630\.00, Familienrabatt CHF 420\.00/.test(r.aufD), r.aufD.slice(0, 300));
+}
+async function tBonus(b) {
+  const p = await seite(b, { ls: kind("Manuel"), heute: "2026-11-27", familie: { liste: { Manuel: { p: "Sarah", k: [] } } } });
+  const r = await p.evaluate(async () => {
+    const w = (ms) => new Promise((z) => setTimeout(z, ms)); const o = {};
+    kalenderKlick("2026-12-12"); kalenderKlick("2026-12-19"); await w(400);
+    const c = [...document.querySelectorAll("#f-art .zchip")].find((x) => /Normal/.test(x.textContent)); if (c) { c.click(); await w(400); }
+    S.werArt = EIGEN; S.famSel = []; S.ichMit = true; S.gaeste = 5; S.reinig = REINIG[0]; S.zimmer = "Nein"; S.spar = "Nein"; S.waesche = S.waesche || "Persönlich bringen";
+    const f = (v, n) => ({ vorname: v, name: n, geschlecht: "w", geb: "1990-01-01", nat: "Schweiz" });
+    localStorage.setItem("tm2t_gmEntwurf", JSON.stringify({ k: gmEntwurfKeyJetzt(), l: ["A", "B", "C", "D", "E"].map((v) => f(v, "Z" + v)) })); normalize(); render(); await w(400);
+    for (let i = 0; i < 6; i++) { const ok1 = document.querySelector(".gm-pt-ok"); if (ok1) { ok1.click(); await w(300); } }
+    o.aufD = [...document.querySelectorAll("#result .auf-d")].map((t) => t.innerText.replace(/\s+/g, " ")).join(" || "); o.gratis = !!(typeof calc === "function" && window.__x); o.kopf = (document.querySelector("#result .auf-z") || { innerText: "" }).innerText.replace(/\s+/g, " ");
+    return o;
+  });
+  ok("Bonus bei vielen Freunden (Mindestpreis), in Gold", /Bonus/.test(r.aufD), r.kopf + " || " + r.aufD.slice(0, 500));
+}
 async function tPaar(b) {
   const p = await seite(b, { ls: kind("Manuel"), heute: "2026-11-27", familie: { liste: { Manuel: { p: "Sarah", k: [] } } } });
   const r = await p.evaluate(async () => {
@@ -406,7 +433,7 @@ async function tNamenAufraeumen(b) {
 
 (async () => {
   const s = await server(); const b = await chromium.launch();
-  const lauf = [["Dateien", tDateien], ["Start", tStart], ["Control Panel", tControlPanel], ["Gültig ab", tGueltigAb], ["Gültig bis", tGueltigBis], ["Trinkgeld", tTrinkgeld], ["Rechnung an Freunde", tRechnungSchalter], ["Ansicht als", tAnsichtAls], ["Anfrage und Namen", tSchnappschuss], ["Sonderbuchungen", tSonder], ["SondAuf", tSondAufteilung], ["SondListe", tSondListe], ["SondNaechte", tSondNaechte], ["Paar", tPaar], ["SondNaechte2", (b) => tSondNaechte(b, true)], ["Preise", tPreise], ["Alte Namen aufräumen", tNamenAufraeumen]];
+  const lauf = [["Dateien", tDateien], ["Start", tStart], ["Control Panel", tControlPanel], ["Gültig ab", tGueltigAb], ["Gültig bis", tGueltigBis], ["Trinkgeld", tTrinkgeld], ["Rechnung an Freunde", tRechnungSchalter], ["Ansicht als", tAnsichtAls], ["Anfrage und Namen", tSchnappschuss], ["Sonderbuchungen", tSonder], ["SondAuf", tSondAufteilung], ["SondListe", tSondListe], ["SondNaechte", tSondNaechte], ["Paar", tPaar], ["Bonus", tBonus], ["Familienrabatt", tFamRabatt], ["SondNaechte2", (b) => tSondNaechte(b, true)], ["Preise", tPreise], ["Alte Namen aufräumen", tNamenAufraeumen]];
   const nur = process.argv[2];
   for (const [n, f] of lauf) { if (nur && !n.toLowerCase().includes(nur.toLowerCase())) continue; try { await f(b); } catch (e) { ok(n + ": Lauf abgebrochen", false, e.message); } }
   await b.close(); s.close();
