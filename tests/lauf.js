@@ -272,6 +272,23 @@ async function tMarke(b) {
   await p.ctx.close();
 }
 
+async function tSondGeschw(b) {
+  const p = await seite(b, { ls: kind("Manuel"), heute: "2026-11-27", familie: { liste: { Manuel: { p: "Sarah", k: [] }, Jerome: { p: "Rahel", k: [] } } } });
+  const r = await p.evaluate(async () => {
+    const w = (ms) => new Promise((z) => setTimeout(z, ms)); const o = {};
+    sondStart({ id: "a", name: "Manuel", arr: "2027-01-07", dep: "2027-01-10", t: 1, pa: true, preis: 600, reinB: 120 }); await w(300);
+    S.famSel = ["Sarah"]; S.ichMit = true; werZuMFG(); S.mfg = ["Sarah", "Jerome", "Rahel"]; S.gaeste = 0; S.reinig = REINIG[0]; S.zimmer = "Nein"; S.spar = "Nein"; S.waesche = S.waesche || "Persönlich bringen"; normalize(); render(); await w(500);
+    o.rows = [...document.querySelectorAll("#result .auf-tab tr.auf-d")].map((t) => t.innerText.replace(/\s+/g, " "));
+    o.sum = [...document.querySelectorAll("#result .auf-tab tr.auf-z")].map((t) => { const m = [...t.innerText.matchAll(/CHF\s([\d’]+\.\d\d)/g)]; return m.length ? parseFloat(m[m.length - 1][1].replace(/’/g, "")) : 0; }).reduce((a, v) => a + v, 0);
+    o.bar = (document.querySelector("#bar") || { innerText: "" }).innerText.replace(/\s+/g, " ").slice(0, 150); o.wer = [S.werArt, JSON.stringify(S.mfg), S.fam, S.gaeste]; o.tot = (document.querySelector("#result .big") || { innerText: "" }).innerText;
+    return o;
+  });
+  ok("Sonderbuchung mit Geschwistern: jede Zeile mit Übernachtung (Anteil an CHF 600.– pro Nacht), nicht nur Reinigung", r.rows.length >= 2 && r.rows.every((t) => /Übernachtung 3 Nächte \(Anteil an CHF 600\.– pro Nacht\)/.test(t)), JSON.stringify([r.rows, r.bar, r.wer]));
+  ok("Sonderbuchung mit Geschwistern: Summe der Zeilen = Total", /1.\d{3}/.test(r.tot) && Math.abs(r.sum - parseFloat(r.tot.replace(/[^\d.]/g, ""))) < 0.5, r.sum + " " + r.tot);
+  ok("Sonderbuchung mit Geschwistern: keine Fehler", p.fehler.length === 0, p.fehler.join("|"));
+  await p.ctx.close();
+}
+
 async function tWeltcup(b) {
   const p = await seite(b, { ls: kind("Manuel"), heute: "2026-11-27", familie: { liste: { Manuel: { p: "Sarah", k: [] } } } });
   const r = await p.evaluate(async () => {
@@ -532,7 +549,7 @@ async function tNamenAufraeumen(b) {
 
 (async () => {
   const s = await server(); const b = await chromium.launch();
-  const lauf = [["Dateien", tDateien], ["Start", tStart], ["VerNeu", tVerNeu], ["Control Panel", tControlPanel], ["Gültig ab", tGueltigAb], ["Gültig bis", tGueltigBis], ["Trinkgeld", tTrinkgeld], ["Rechnung an Freunde", tRechnungSchalter], ["Ansicht als", tAnsichtAls], ["Anfrage und Namen", tSchnappschuss], ["Sonderbuchungen", tSonder], ["SondAuf", tSondAufteilung], ["SondListe", tSondListe], ["SondNaechte", tSondNaechte], ["Paar", tPaar], ["Bonus", tBonus], ["Familienrabatt", tFamRabatt], ["FamEigen", tFamEigen], ["SondNaechte2", (b) => tSondNaechte(b, true)], ["SondNotfall", (b) => tSondNaechte(b, false, true)], ["Marke", tMarke], ["Weltcup", tWeltcup], ["VorlageForm", tVorlageForm], ["Preise", tPreise], ["Alte Namen aufräumen", tNamenAufraeumen]];
+  const lauf = [["Dateien", tDateien], ["Start", tStart], ["VerNeu", tVerNeu], ["Control Panel", tControlPanel], ["Gültig ab", tGueltigAb], ["Gültig bis", tGueltigBis], ["Trinkgeld", tTrinkgeld], ["Rechnung an Freunde", tRechnungSchalter], ["Ansicht als", tAnsichtAls], ["Anfrage und Namen", tSchnappschuss], ["Sonderbuchungen", tSonder], ["SondAuf", tSondAufteilung], ["SondListe", tSondListe], ["SondNaechte", tSondNaechte], ["Paar", tPaar], ["Bonus", tBonus], ["Familienrabatt", tFamRabatt], ["FamEigen", tFamEigen], ["SondNaechte2", (b) => tSondNaechte(b, true)], ["SondNotfall", (b) => tSondNaechte(b, false, true)], ["Marke", tMarke], ["SondGeschw", tSondGeschw], ["Weltcup", tWeltcup], ["VorlageForm", tVorlageForm], ["Preise", tPreise], ["Alte Namen aufräumen", tNamenAufraeumen]];
   const nur = process.argv[2];
   for (const [n, f] of lauf) { if (nur && !n.toLowerCase().includes(nur.toLowerCase())) continue; try { await f(b); } catch (e) { ok(n + ": Lauf abgebrochen", false, e.message); } }
   await b.close(); s.close();
