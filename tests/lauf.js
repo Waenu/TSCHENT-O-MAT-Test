@@ -284,6 +284,7 @@ async function tSondGeschw(b) {
     return o;
   });
   ok("Sonderbuchung mit Geschwistern: jede Zeile mit Übernachtung (Anteil an CHF 600.– pro Nacht), nicht nur Reinigung", r.rows.length >= 2 && r.rows.every((t) => /Übernachtung 3 Nächte \(Anteil an CHF 600\.– pro Nacht\)/.test(t)), JSON.stringify([r.rows, r.bar, r.wer]));
+  ok("Sonderbuchung mit Geschwistern: jede Partei trägt ihren Anteil Reinigung (4 Personen, CHF 120 = je Paar CHF 60)", r.rows.length >= 2 && r.rows.every((t) => /Reinigung CHF 60\.0\d/.test(t)), JSON.stringify(r.rows));
   ok("Sonderbuchung mit Geschwistern: Summe der Zeilen = Total", /1.\d{3}/.test(r.tot) && Math.abs(r.sum - parseFloat(r.tot.replace(/[^\d.]/g, ""))) < 0.5, r.sum + " " + r.tot);
   ok("Sonderbuchung mit Geschwistern: keine Fehler", p.fehler.length === 0, p.fehler.join("|"));
   await p.ctx.close();
