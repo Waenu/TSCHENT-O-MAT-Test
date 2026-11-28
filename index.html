@@ -1735,7 +1735,7 @@ if (TEST_MODUS) {
   const start = () => { rahmen(document.body); new MutationObserver((ms) => ms.forEach((m) => m.addedNodes.forEach(rahmen))).observe(document.body, { childList: true, subtree: true }); };
   if (document.body) start(); else document.addEventListener("DOMContentLoaded", start);
 })();
-let VERSION = "3.40.2.0";
+let VERSION = "3.40.2.1";
 let NEU_VERSION = "";   // Version laut einstellungen.json (Netz); VERSION ist die Fassung, die wirklich läuft (seit 3.37.0.14)
 let GUELTIG_AB = "01.01.2027";
 let IBAN = "CH25 0878 4046 4374 6612 8";
@@ -5814,7 +5814,7 @@ const SCH_DEF = [
   { k: "reinigung", t: "Reinigung durch die Eltern (pro Aufenthalt)", e: "CHF", min: 0, max: 1000 },
   { k: "hochMinNaechte", t: "Hochsaison: Mindestnächte mit Vorbehalt", e: "Nächte", min: 2, max: 14 },
   { k: "verbMin", t: "Hochsaison: verbindlich ab", e: "Nächten", min: 2, max: 14 },
-  { k: "sondMin", t: "Sonderbuchung (Weltcup): jede Person bleibt mindestens", e: "Nächte", min: 1, max: 3 },
+  { k: "sondMin", t: "Sonderbuchung (Weltcup): jede Person bleibt mindestens", e: "Nächte", min: 1, max: 3, h: "Gilt nur für die eigene An- und Abreise einzelner Personen. Die Sonderbuchung selbst darf beliebig lang sein. Bei 3 kann niemand nur 2 Nächte wählen." },
   { k: "eigeneMin", t: "Eigene An- und Abreise von Freunden und Familie: mindestens", e: "Nächte", min: 1, max: 3 },
   { k: "zahlTage", t: "Zahlungsfrist nach der Abreise", e: "Tage", min: 0, max: 30 },
   { k: "mindestpreisAbNaechte", t: "Mindestpreis gilt ab", e: "Nächten", min: 1, max: 14 },
@@ -8501,8 +8501,8 @@ function sondHtml() {
     '<div class="sond-f"><div class="field"><label for="sondName">Für wen?</label><select id="sondName" data-sf="name"><option value="">– wählen –</option>' + absOpt(f.name) + "</select></div>" +
     '<div class="field ' + (f.arr && f.dep ? "done" : "missing") + '"><label>Anreise und Abreise</label><div class="sond-d"><label>Anreise<input type="date" data-sf="arr" min="' + heuteKey() + '" value="' + esc(f.arr) + '"></label><label>Abreise<input type="date" data-sf="dep" min="' + heuteKey() + '" value="' + esc(f.dep) + '"></label></div><p class="sond-dat" id="sondInfo">' + sondInfo(f) + '</p><button type="button" class="btn" data-sond-kal="1">📅 Im Kalender wählen</button></div>' +
     '<div class="field"><label for="sondPreis">Pauschale pro Nacht für die ganze Wohnung (CHF)</label><input type="text" inputmode="numeric" id="sondPreis" data-sf="preis" maxlength="5" placeholder="leer = normaler Preis, z. B. 600" value="' + esc(f.preis) + '"></div>' +
-    '<div class="field"><label class="sond-chk"><input type="checkbox" data-sf="notfall"' + (f.notfall ? " checked" : "") + '> <span>Notfall: Einzelne dürfen nur 2 Nächte bleiben (Standard: ' + P.sondMin + ')</span></label></div>' +
-    '<div class="field sond-rh"><label>🧮 Verhandeln: Rechenhilfe</label><div id="sondRhIn">' + sondRhIn(f) + '</div><div class="hint" id="sondRhOut">' + sondRech(f) + "</div></div>" +
+    '<div class="field"><label class="sond-chk"><input type="checkbox" data-sf="notfall"' + (f.notfall ? " checked" : "") + '> <span>Notfall: Einzelne dürfen nur 2 Nächte bleiben</span></label><p class="hint">Nur für diese Vorlage. Ohne Haken gilt die Mindestdauer aus dem Control Panel (jetzt ' + P.sondMin + (P.sondMin === 1 ? " Nacht" : " Nächte") + ') pro Person.</p></div>' +
+    '<div class="field sond-rh"><label>🧮 Verhandeln: Rechenhilfe</label><p class="hint">Nur zum Rechnen für dich: Personen pro Nacht eintragen, dann siehst du den Preis pro Person. Wird nicht gespeichert und hat beim Buchen keine Wirkung.</p><div id="sondRhIn">' + sondRhIn(f) + '</div><div class="hint" id="sondRhOut">' + sondRech(f) + "</div></div>" +
     '<div class="field"><label for="sondRein">Reinigung pro Aufenthalt (CHF)</label><input type="text" inputmode="numeric" id="sondRein" data-sf="reinB" maxlength="5" placeholder="' + esc(sondReinPh(f)) + '" value="' + esc(f.reinB) + '"></div>' +
     '<p class="hint" id="sondHint">' + sondHint(f) + "</p>" +
     '<button type="button" class="btn main full" data-sond-neu="1">💾 Vorlage speichern</button>' + (SOND_MSG ? '<p class="hint sond-msg">' + SOND_MSG + "</p>" : "") + "</div>" +
@@ -8552,7 +8552,7 @@ const schFaTxt = (v) => (Number.isFinite(v) ? "Der Anteil der Familie im Zimmer 
 function schalterHtml() {
   const anz = SCH_DEF.filter((d) => schAkt(d.k) !== schStd(d.k)).length;
   const zeilen = SCH_DEF.map((d) => { const std = schStd(d.k), v = schZahl(d), anders = v !== std;
-    return '<div class="field sch-z" data-schz="' + d.k + '"><label for="sch-' + d.k + '">' + esc(d.t) + '</label><div class="sch-i"><input type="text" inputmode="numeric" id="sch-' + d.k + '" data-sch="' + d.k + '" maxlength="5" value="' + esc(schWert(d.k)) + '"><span class="sch-e">' + esc(d.e) + '</span></div><p class="hint sch-h"><span>Standard: ' + std + " " + esc(d.e) + ' (erlaubt ' + d.min + " bis " + d.max + ')' + (d.k === "gastZimmer" ? '<br><b id="sch-fa">' + schFaTxt(v) + "</b>" : "") + '</span><button type="button" class="btn" data-sch-std="' + d.k + '"' + (anders ? "" : " hidden") + '>↩︎ Standard</button></p></div>'; }).join("");
+    return '<div class="field sch-z" data-schz="' + d.k + '"><label for="sch-' + d.k + '">' + esc(d.t) + '</label><div class="sch-i"><input type="text" inputmode="numeric" id="sch-' + d.k + '" data-sch="' + d.k + '" maxlength="5" value="' + esc(schWert(d.k)) + '"><span class="sch-e">' + esc(d.e) + '</span></div><p class="hint sch-h"><span>Standard: ' + std + " " + esc(d.e) + ' (erlaubt ' + d.min + " bis " + d.max + ')' + (d.h ? "<br>" + esc(d.h) : "") + (d.k === "gastZimmer" ? '<br><b id="sch-fa">' + schFaTxt(v) + "</b>" : "") + '</span><button type="button" class="btn" data-sch-std="' + d.k + '"' + (anders ? "" : " hidden") + '>↩︎ Standard</button></p></div>'; }).join("");
   const pl = SCH_PLAN.filter((e) => (e.bis ? e.bis >= heuteKey() : e.ab > heuteKey())), plan = pl.length ? '<div class="note sch-plan"><b>📅 Geplante Änderungen</b>' + pl.map((e) => '<p class="hint">Ab Anreise ' + schDat(e.ab) + ' ' + esc(schPlanTxt(e)) + ' <button type="button" class="btn" data-sch-planweg="' + schKey(e) + '">✕ Entfernen</button></p>').join("") + "</div>" : "";
   const inh = '<p class="hint">Hier änderst du Werte, ohne eine Datei zu bearbeiten. Der Standard ist der Wert aus <code>einstellungen.json</code>. Hinter jeder Änderung steht «↩︎ Standard». Neue Werte sehen alle nach etwa einer Minute. Bestätigte Buchungen ändern sich nicht, ihr Betrag ist gespeichert.</p>' +
     '<div class="sond-f">' + zeilen + '<div class="field sch-ab"><label for="sch-ab">Gültig ab (Anreisetag, leer = sofort)</label><input type="date" id="sch-ab" class="sond-d" value="' + esc(SCH_AB) + '" min="' + esc(heuteKey()) + '"><label for="sch-bis">Gültig bis (Anreisetag, leer = unbefristet)</label><input type="date" id="sch-bis" class="sond-d" value="' + esc(SCH_BIS) + '" min="' + esc(heuteKey()) + '"><p class="hint">Mit Datum gelten die geänderten Werte nur für Aufenthalte mit Anreise in diesem Zeitraum, zum Beispiel fürs Skirennen. Danach gilt wieder der bisherige Wert. Frühere Aufenthalte und Anfragen rechnen mit dem bisherigen Wert.</p></div>' + plan + '<button type="button" class="btn main full" data-sch-save="1">💾 Control Panel speichern</button>' + (SCH_MSG ? '<p class="hint sond-msg">' + SCH_MSG + "</p>" : "") + "</div>";

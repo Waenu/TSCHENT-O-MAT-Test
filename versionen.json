@@ -2,6 +2,19 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.40.2.1",
+      "datum": "2026-11-28",
+      "titel": "Sonderbuchung: Erklärungen im Control Panel und in der Vorlage",
+      "arten": [
+        "Text"
+      ],
+      "punkte": [
+        "Control Panel: Hinweis, dass die Mindestdauer nur die eigene An- und Abreise einzelner Personen betrifft und die Sonderbuchung beliebig lang sein darf.",
+        "Vorlage: Notfall-Haken erklärt (gilt nur für diese Vorlage), falscher Text «Standard: 1» durch den aktuellen Wert aus dem Control Panel ersetzt.",
+        "Rechenhilfe «Verhandeln»: Hinweis, dass sie nur zum Rechnen dient und beim Buchen nichts bewirkt."
+      ]
+    },
+    {
       "v": "3.40.2.0",
       "datum": "2026-11-28",
       "titel": "Sonderbuchung: alle Beträge der Aufschlüsselung auf 5 Rappen",
