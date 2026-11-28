@@ -194,9 +194,10 @@ async function tSondAufteilung(b) {
     o.bal = [...document.querySelectorAll("#result .ueb-b")].map((e) => [...e.children].map((c) => c.className + ":" + Math.round(parseFloat(c.style.flex))).join(","));
     const text = "Gesendet am Mo 26.11.2026, 18:27 Uhr. App-Version x.\n#Preisberechnung\n" + SNAP_BER.join("\n"); o.snapN = SNAP_BER.length;
     const h = rechAufHtml(text, { name: "Papi", arr: "2027-01-07", dep: "2027-01-10", betrag: 1920, rechnung: text, bestaetigt: "2026-11-26T12:00" });
-    const d = document.createElement("div"); d.innerHTML = h || ""; o.gesp = [...d.querySelectorAll("tr.auf-d")].map((t) => t.innerText.replace(/\s+/g, " "));
+    const d = document.createElement("div"); d.innerHTML = h || ""; o.gesp = [...d.querySelectorAll("tr.auf-d")].map((t) => t.innerText.replace(/\s+/g, " ")); d.className = "rechd"; document.body.appendChild(d); o.ws = [...d.querySelectorAll("tr.auf-d > td")].map((c) => getComputedStyle(c).whiteSpace); d.remove();
     return o;
   });
+  ok("Gespeicherte Aufteilung: aufgeklappte Zeile bricht um (kein nowrap, sonst läuft die Zeile über den Rand)", r.ws.length > 0 && r.ws.every((v) => v !== "nowrap"), JSON.stringify(r.ws));
   const gut = (t) => /Übernachtung 3 Nächte \(Anteil an CHF 600\.– pro Nacht\) CHF 600\.00/.test(t) && /Reinigung CHF 40\.00/.test(t) && !/Pauschale/.test(t) && !/CHF 0\.0\d/.test(t);
   ok("Sonderbuchung mit Pauschale: Aufteilung live = Übernachtung (3 × Anteil von CHF 600) + Reinigungsanteil, ohne Rundungsreste", r.live.length === 3 && r.live.every(gut), JSON.stringify(r.live[0]));
   ok("Sonderbuchung mit Pauschale: Balken grün (Übernachtung) und violett (Reinigung), Legende «Reinigung»", r.bal.every((t) => t === "su:600,sr:40") && r.legende.every((t) => /Übernachtung/.test(t) && /Reinigung/.test(t)), JSON.stringify([r.bal, r.legende]));
