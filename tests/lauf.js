@@ -198,7 +198,7 @@ async function tSondAufteilung(b) {
     return o;
   });
   ok("Gespeicherte Aufteilung: aufgeklappte Zeile bricht um (kein nowrap, sonst läuft die Zeile über den Rand)", r.ws.length > 0 && r.ws.every((v) => v !== "nowrap"), JSON.stringify(r.ws));
-  const gut = (t) => /Übernachtung 3 Nächte ?CHF 600\.00/.test(t) && /Reinigung.*CHF 40\.00/.test(t) && /Nacht 1 \(07\.01\.\) · 3 Personen · je CHF 200\.00/.test(t) && !/Pauschale/.test(t) && !/CHF 0\.0\d/.test(t);
+  const gut = (t) => /Übernachtung 3 Nächte ?CHF 600\.00/.test(t) && /Reinigung.*CHF 40\.00/.test(t) && /Nacht 1 \(07\.01\.\) · 3 Personen \(CHF 600\.– ÷ 3\) ?CHF 200\.00/.test(t) && !/Pauschale/.test(t) && !/CHF 0\.0\d/.test(t);
   ok("Sonderbuchung mit Pauschale: Aufteilung live = Übernachtung (3 × Anteil von CHF 600) + Reinigungsanteil, ohne Rundungsreste", r.live.length === 3 && r.live.every(gut), JSON.stringify(r.live[0]));
   ok("Sonderbuchung mit Pauschale: Balken grün (Übernachtung) und violett (Reinigung), Legende «Reinigung»", r.bal.every((t) => t === "su:600,sr:40") && r.legende.every((t) => /Übernachtung/.test(t) && /Reinigung/.test(t)), JSON.stringify([r.bal, r.legende]));
   ok("Sonderbuchung mit Pauschale: gespeicherte Berechnung zeigt dasselbe", r.gesp.length === 3 && r.gesp.every(gut), JSON.stringify(r.gesp));
@@ -262,7 +262,7 @@ async function tSondGeschw(b) {
     o.bar = (document.querySelector("#bar") || { innerText: "" }).innerText.replace(/\s+/g, " ").slice(0, 150); o.wer = [S.werArt, JSON.stringify(S.mfg), S.fam, S.gaeste]; o.tot = (document.querySelector("#result .big") || { innerText: "" }).innerText;
     return o;
   });
-  ok("Sonderbuchung mit Geschwistern: jede Zeile mit Übernachtung (Anteil an CHF 600.– pro Nacht), nicht nur Reinigung", r.rows.length >= 2 && r.rows.every((t) => /Übernachtung \d+ Nächte/.test(t) && /Nacht 1 \(07\.01\.\) · 4 Personen · je CHF 150\.00/.test(t)), JSON.stringify([r.rows, r.bar, r.wer]));
+  ok("Sonderbuchung mit Geschwistern: jede Zeile mit Übernachtung (Anteil an CHF 600.– pro Nacht), nicht nur Reinigung", r.rows.length >= 2 && r.rows.every((t) => /Übernachtung \d+ Nächte/.test(t) && /Nacht 1 \(07\.01\.\) · 4 Personen \(CHF 600\.– ÷ 4\)/.test(t)), JSON.stringify([r.rows, r.bar, r.wer]));
   ok("Sonderbuchung mit Geschwistern: jede Partei trägt ihren Anteil Reinigung (4 Personen, CHF 120 = je Paar CHF 60)", r.rows.length >= 2 && r.rows.every((t) => /Reinigung.*CHF 60\.0\d/.test(t)), JSON.stringify(r.rows));
   ok("Sonderbuchung mit Geschwistern: Summe der Zeilen = Total", /1.\d{3}/.test(r.tot) && Math.abs(r.sum - parseFloat(r.tot.replace(/[^\d.]/g, ""))) < 0.5, r.sum + " " + r.tot);
   ok("Sonderbuchung mit Geschwistern: keine Fehler", p.fehler.length === 0, p.fehler.join("|"));
@@ -286,12 +286,14 @@ async function tWeltcup(b) {
     return o;
   });
   const all = r.rows.join(" | ");
-  ok("Weltcup (D Nacht 1+2, E Nacht 2+3): A, B, C zahlen je 285.71 (100 + 85.71 + 100)", (all.match(/3 Nächte ?CHF 285\.71/g) || []).length === 3, all);
-  ok("Weltcup: aufgeschlüsselt pro Nacht (Nacht 1: 6 Personen je 100.00, Nacht 2: 7 Personen je 85.71) und Partei «6 Nächte (2 Personen × 3 Nächte)»", /6 Nächte \(2 Personen × 3 Nächte\)/.test(all) && /Nacht 1 \(07\.01\.\) · 6 Personen · je CHF 100\.00/.test(all) && /Nacht 2 \(08\.01\.\) · 7 Personen · je CHF 85\.71/.test(all), all.slice(0, 400));
+  ok("Weltcup (D Nacht 1+2, E Nacht 2+3): A, B, C zahlen je 285.75 (100 + 85.71 + 100, auf 5 Rappen)", (all.match(/3 Nächte ?CHF 285\.75/g) || []).length === 3, all);
+  ok("Weltcup: aufgeschlüsselt pro Nacht (Nacht 1: 6 Personen CHF 600 ÷ 6, Nacht 2: 7 Personen CHF 600 ÷ 7) und Partei «6 Nächte (2 Personen × 3 Nächte)»", /6 Nächte \(2 Personen × 3 Nächte\)/.test(all) && /Nacht 1 \(07\.01\.\) · 6 Personen \(CHF 600\.– ÷ 6\)/.test(all) && /Nacht 2 \(08\.01\.\) · 7 Personen \(CHF 600\.– ÷ 7\)/.test(all), all.slice(0, 400));
   ok("Weltcup: auch die Familie wird auf 5 Rappen gerundet (571.43 → 571.45)", /Ich \(Manuel\) & SarahCHF 571\.45/.test(all), all.slice(0, 120));
-  ok("Weltcup gespeichert (Verwaltung): gleiche Aufschlüsselung pro Nacht, Familie «6 Nächte (2 Personen × 3 Nächte)», D nur 2 Nächte", /6 Nächte \(2 Personen × 3 Nächte\)/.test(r.gesp) && /Nacht 2 \(08\.01\.\) · 7 Personen · je CHF 85\.71/.test(r.gesp) && /2 Nächte ?CHF 185\.71/.test(r.gesp), r.gesp.slice(1000, 2600));
-  ok("Weltcup: D und E mit 2 Nächten zahlen je CHF 185.71", (all.match(/2 Nächte ?CHF 185\.71/g) || []).length === 2, all);
-  ok("Weltcup: die Familie (2 Personen) zahlt 571.43, das Total ist 3 × CHF 600", /571\.43/.test(all) && /1.800/.test(r.tot), r.tot + " " + all.slice(0, 200));
+  ok("Weltcup gespeichert (Verwaltung): gleiche Aufschlüsselung pro Nacht, Familie «6 Nächte (2 Personen × 3 Nächte)», D nur 2 Nächte", /6 Nächte \(2 Personen × 3 Nächte\)/.test(r.gesp) && /Nacht 2 \(08\.01\.\) · 7 Personen \(CHF 600\.– ÷ 7\)/.test(r.gesp) && /2 Nächte ?CHF 185\.75/.test(r.gesp), r.gesp.slice(1000, 2600));
+  const rap = (s2) => (String(s2).match(/CHF\s[\d’]+\.(\d\d)/g) || []).map((m) => m.slice(-2)).filter((v) => !/[05]$/.test(v));
+  ok("Weltcup: alle Beträge in den Zeilen (Rechner und gespeichert) auf 5 Rappen (.00 oder .05, nie .03)", rap(all).length === 0 && rap(r.gesp).length === 0, JSON.stringify([rap(all), rap(r.gesp)]));
+  ok("Weltcup: D und E mit 2 Nächten zahlen je CHF 185.75", (all.match(/2 Nächte ?CHF 185\.75/g) || []).length === 2, all);
+  ok("Weltcup: die Familie (2 Personen) zahlt 571.45, das Total ist 3 × CHF 600", /571\.45/.test(all) && /1.800/.test(r.tot), r.tot + " " + all.slice(0, 200));
   ok("Rechenhilfe 6, 7, 6 Personen: je 100.00 / 85.71 / 100.00, alle Nächte 285.75, Total 1’800", /100\.00/.test(r.rh) && /85\.71/.test(r.rh) && /285\.75/.test(r.rh) && /1.800/.test(r.rh), r.rh);
   ok("Rechenhilfe mit Notfall: ohne erste Nacht 185.75, ohne letzte Nacht 185.75", /185\.75/.test(r.rh) && /erste Nacht auslässt/.test(r.rh), r.rh);
   ok("Rechenhilfe ohne Notfall: keine Zeile für ausgelassene Nächte", !/auslässt/.test(r.rh2) && /Wer alle 3 Nächte bleibt/.test(r.rh2), r.rh2);
