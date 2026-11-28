@@ -198,10 +198,10 @@ async function tSondAufteilung(b) {
     return o;
   });
   ok("Gespeicherte Aufteilung: aufgeklappte Zeile bricht um (kein nowrap, sonst läuft die Zeile über den Rand)", r.ws.length > 0 && r.ws.every((v) => v !== "nowrap"), JSON.stringify(r.ws));
-  const gut = (t) => /Übernachtung 3 Nächte \(Anteil an CHF 600\.– pro Nacht\) CHF 600\.00/.test(t) && /Reinigung CHF 40\.00/.test(t) && !/Pauschale/.test(t) && !/CHF 0\.0\d/.test(t);
+  const gut = (t) => /Übernachtung 3 Nächte ?CHF 600\.00/.test(t) && /Reinigung.*CHF 40\.00/.test(t) && /Nacht 1 \(07\.01\.\) · 3 Personen · je CHF 200\.00/.test(t) && !/Pauschale/.test(t) && !/CHF 0\.0\d/.test(t);
   ok("Sonderbuchung mit Pauschale: Aufteilung live = Übernachtung (3 × Anteil von CHF 600) + Reinigungsanteil, ohne Rundungsreste", r.live.length === 3 && r.live.every(gut), JSON.stringify(r.live[0]));
   ok("Sonderbuchung mit Pauschale: Balken grün (Übernachtung) und violett (Reinigung), Legende «Reinigung»", r.bal.every((t) => t === "su:600,sr:40") && r.legende.every((t) => /Übernachtung/.test(t) && /Reinigung/.test(t)), JSON.stringify([r.bal, r.legende]));
-  ok("Sonderbuchung mit Pauschale: gespeicherte Berechnung zeigt dasselbe", r.gesp.length === 3 && r.gesp.every(gut), JSON.stringify(r.gesp[0]));
+  ok("Sonderbuchung mit Pauschale: gespeicherte Berechnung zeigt dasselbe", r.gesp.length === 3 && r.gesp.every(gut), JSON.stringify(r.gesp));
   ok("Sonderbuchung mit Pauschale: keine Fehler", p.fehler.length === 0, p.fehler.join("|"));
   await p.ctx.close();
 }
@@ -240,36 +240,14 @@ async function tSondNaechte(b, sm, nf) {
     return o;
   }, !!nf);
   if (sm || nf) {
-    ok("Pauschale pro Nacht geteilt: Du/Anna 3 Nächte CHF 700, Bea 2 Nächte CHF 400 (Nacht 1: 2 Personen je 300, Nacht 2 und 3: 3 Personen je 200)", r.rows.length === 3 && (r.rows.join("|").match(/3 Nächte \(Anteil an CHF 600\.– pro Nacht\) CHF 700\.00/g) || []).length === 2 && /2 Nächte \(Anteil an CHF 600\.– pro Nacht\) CHF 400\.00/.test(r.rows.join("|")), JSON.stringify(r.rows) + " " + r.leiste);
+    ok("Pauschale pro Nacht geteilt: Du/Anna 3 Nächte CHF 700, Bea 2 Nächte CHF 400 (Nacht 1: 2 Personen je 300, Nacht 2 und 3: 3 Personen je 200)", r.rows.length === 3 && (r.rows.join("|").match(/3 Nächte ?CHF 700\.00/g) || []).length === 2 && /2 Nächte ?CHF 400\.00/.test(r.rows.join("|")), JSON.stringify(r.rows) + " " + r.leiste);
     ok("Pauschale pro Nacht geteilt: Summe der Zeilen = Total CHF 1’920 (3 × 600 + Reinigung 120)", Math.abs(r.sum - 1920) < 0.3 && /1.920/.test(r.tot), r.sum + " " + r.tot + " " + JSON.stringify(r.zr));
     ok(nf ? "Notfall-Schalter der Vorlage: 2 Nächte erlaubt, Control Panel bleibt bei 3" : "Schalter Weltcup auf 2 Nächte: kein Hinweis «ganze Zeit», Wert 2", !r.hint && r.pm === (nf ? 3 : 2), JSON.stringify([r.hint, r.pm]));
   } else {
-    ok("Schalter Weltcup (Standard 3): eigene Daten mit 2 Nächten werden nicht übernommen, alle 3 Nächte", r.rows.length === 3 && r.rows.every((t) => /3 × CHF 225\.00|3 × CHF 200\.00|Anteil an CHF 600\.–/.test(t)) && !r.rows.some((t) => /\(2 Nächte\)/.test(t)) && Math.abs(r.sum - 1920) < 0.3, JSON.stringify(r.rows) + " " + r.sum);
+    ok("Schalter Weltcup (Standard 3): eigene Daten mit 2 Nächten werden nicht übernommen, alle 3 Nächte", r.rows.length === 3 && r.rows.every((t) => /Übernachtung 3 Nächte ?CHF/.test(t)) && !r.rows.some((t) => /\(2 Nächte\)/.test(t)) && Math.abs(r.sum - 1920) < 0.3, JSON.stringify(r.rows) + " " + r.sum);
     ok("Schalter Weltcup (Standard 3): Hinweis «ganze Zeit» statt Aufenthalts-Feld, Wert 3", r.hint && r.pm === 3, JSON.stringify([r.hint, r.pm]));
   }
   ok("Pauschale nach Personennächten: keine Fehler", p.fehler.length === 0, p.fehler.join("|"));
-  await p.ctx.close();
-}
-
-async function tMarke(b) {
-  const p = await seite(b, { ls: kind("Manuel"), heute: "2026-11-27" });
-  const r = await p.evaluate(async () => {
-    const w = (ms) => new Promise((z) => setTimeout(z, ms)); const o = {};
-    const lauf = async (papi) => {
-      sondStart({ id: "a", name: "Manuel", arr: "2027-01-07", dep: "2027-01-10", t: 1, pa: true, preis: 600, reinB: 0, notfall: true }); await w(300);
-      S.werArt = EIGEN; S.famSel = []; S.ichMit = true; S.gaeste = 2; S.reinig = REINIG[0]; S.zimmer = "Nein"; S.spar = "Nein"; S.waesche = S.waesche || "Persönlich bringen";
-      const f = (v, n, a2, b2) => Object.assign({ vorname: v, name: n, geschlecht: "w", geb: "1990-01-01", nat: "Schweiz" }, a2 ? { an: a2, ab: b2 } : {});
-      localStorage.setItem("tm2t_gmEntwurf", JSON.stringify({ k: gmEntwurfKeyJetzt(), l: [f("Anna", "Meier"), f("Bea", "Zeller", "2027-01-08", "2027-01-10")] })); normalize(); render(); await w(400);
-      for (let i = 0; i < 4; i++) { const ok1 = document.querySelector(".gm-pt-ok"); if (ok1) { ok1.click(); await w(300); } }
-      return [...document.querySelectorAll("#result .auf-tab small.dg")].map((t) => t.className.replace(/.*(dg-\w).*/, "$1") + ":" + t.innerText.replace(/\s+/g, " "));
-    };
-    o.kind = await lauf(false);
-    return o;
-  });
-  ok("Marke Ø pro Nacht: beim Kind keine Marke", r.kind.length === 0, JSON.stringify(r.kind));
-  const r2 = await p.evaluate(async () => { TOKEN = "test"; ABSENDER = ""; render(); await new Promise((z) => setTimeout(z, 400)); return [...document.querySelectorAll("#result .auf-tab small.dg")].map((t) => t.className.replace(/.*(dg-\w).*/, "$1") + ":" + t.innerText.replace(/\s+/g, " ")); });
-  ok("Marke Ø pro Nacht: Papi sieht sie (Beispiel mit 2 und 3 Personen: Du/Anna über 100, Bea unter 100 oder gleich)", r2.length >= 2 && r2.some((t) => /^dg-r:.*▲ über CHF 100/.test(t)) , JSON.stringify(r2));
-  ok("Marke Ø pro Nacht: keine Fehler", p.fehler.length === 0, p.fehler.join("|"));
   await p.ctx.close();
 }
 
@@ -284,8 +262,8 @@ async function tSondGeschw(b) {
     o.bar = (document.querySelector("#bar") || { innerText: "" }).innerText.replace(/\s+/g, " ").slice(0, 150); o.wer = [S.werArt, JSON.stringify(S.mfg), S.fam, S.gaeste]; o.tot = (document.querySelector("#result .big") || { innerText: "" }).innerText;
     return o;
   });
-  ok("Sonderbuchung mit Geschwistern: jede Zeile mit Übernachtung (Anteil an CHF 600.– pro Nacht), nicht nur Reinigung", r.rows.length >= 2 && r.rows.every((t) => /Übernachtung 3 Nächte \(Anteil an CHF 600\.– pro Nacht\)/.test(t)), JSON.stringify([r.rows, r.bar, r.wer]));
-  ok("Sonderbuchung mit Geschwistern: jede Partei trägt ihren Anteil Reinigung (4 Personen, CHF 120 = je Paar CHF 60)", r.rows.length >= 2 && r.rows.every((t) => /Reinigung CHF 60\.0\d/.test(t)), JSON.stringify(r.rows));
+  ok("Sonderbuchung mit Geschwistern: jede Zeile mit Übernachtung (Anteil an CHF 600.– pro Nacht), nicht nur Reinigung", r.rows.length >= 2 && r.rows.every((t) => /Übernachtung \d+ Nächte/.test(t) && /Nacht 1 \(07\.01\.\) · 4 Personen · je CHF 150\.00/.test(t)), JSON.stringify([r.rows, r.bar, r.wer]));
+  ok("Sonderbuchung mit Geschwistern: jede Partei trägt ihren Anteil Reinigung (4 Personen, CHF 120 = je Paar CHF 60)", r.rows.length >= 2 && r.rows.every((t) => /Reinigung.*CHF 60\.0\d/.test(t)), JSON.stringify(r.rows));
   ok("Sonderbuchung mit Geschwistern: Summe der Zeilen = Total", /1.\d{3}/.test(r.tot) && Math.abs(r.sum - parseFloat(r.tot.replace(/[^\d.]/g, ""))) < 0.5, r.sum + " " + r.tot);
   ok("Sonderbuchung mit Geschwistern: keine Fehler", p.fehler.length === 0, p.fehler.join("|"));
   await p.ctx.close();
@@ -302,13 +280,17 @@ async function tWeltcup(b) {
     for (let i = 0; i < 6; i++) { const ok1 = document.querySelector(".gm-pt-ok"); if (ok1) { ok1.click(); await w(300); } }
     o.rows = [...document.querySelectorAll("#result .auf-tab tr.auf-d")].map((t) => t.innerText.replace(/\s+/g, " "));
     o.zr = [...document.querySelectorAll("#result .auf-tab tr.auf-z")].map((t) => t.innerText.replace(/\s+/g, " ")); o.tot = (document.querySelector("#result .big") || { innerText: "" }).innerText;
+    const text = "Gesendet am Mo 26.11.2026, 18:27 Uhr. App-Version x.\nFreund/in 4: Fr 7.01.2028 bis So 9.01.2028 (2 Nächte)\nFreund/in 5: Sa 8.01.2028 bis Mo 10.01.2028 (2 Nächte)\n#Preisberechnung\n" + SNAP_BER.join("\n"), hh = rechAufHtml(text, { name: "Manuel", arr: "2028-01-07", dep: "2028-01-10", betrag: 1800, rechnung: text, bestaetigt: "2026-11-26T12:00" }), dd = document.createElement("div"); dd.innerHTML = hh || ""; o.gesp = [...dd.querySelectorAll("tr.auf-d")].map((q) => q.innerText.replace(/\s+/g, " ")).join(" | ");
     const rh = (extra) => { SOND_F = Object.assign(SOND_LEER(), { arr: "2028-01-07", dep: "2028-01-10", preis: "600", rhP: ["6", "7", "6"] }, extra); return sondRech(SOND_F).replace(/<[^>]+>/g, " ").replace(/\s+/g, " "); };
     o.rh = rh({ notfall: true }); o.rh2 = rh({ notfall: false }); o.rh3 = rh({ notfall: true, rhP: ["4", "", ""] }); o.rh4 = rh({ preis: "570", notfall: true });
     return o;
   });
   const all = r.rows.join(" | ");
-  ok("Weltcup (D Nacht 1+2, E Nacht 2+3): A, B, C zahlen je 285.71 (100 + 85.71 + 100)", (all.match(/3 Nächte \(Anteil an CHF 600\.– pro Nacht\) CHF 285\.71/g) || []).length === 3, all);
-  ok("Weltcup: D und E mit 2 Nächten zahlen je CHF 185.71", (all.match(/2 Nächte \(Anteil an CHF 600\.– pro Nacht\) CHF 185\.71/g) || []).length === 2, all);
+  ok("Weltcup (D Nacht 1+2, E Nacht 2+3): A, B, C zahlen je 285.71 (100 + 85.71 + 100)", (all.match(/3 Nächte ?CHF 285\.71/g) || []).length === 3, all);
+  ok("Weltcup: aufgeschlüsselt pro Nacht (Nacht 1: 6 Personen je 100.00, Nacht 2: 7 Personen je 85.71) und Partei «6 Nächte (2 Personen × 3 Nächte)»", /6 Nächte \(2 Personen × 3 Nächte\)/.test(all) && /Nacht 1 \(07\.01\.\) · 6 Personen · je CHF 100\.00/.test(all) && /Nacht 2 \(08\.01\.\) · 7 Personen · je CHF 85\.71/.test(all), all.slice(0, 400));
+  ok("Weltcup: auch die Familie wird auf 5 Rappen gerundet (571.43 → 571.45)", /Ich \(Manuel\) & SarahCHF 571\.45/.test(all), all.slice(0, 120));
+  ok("Weltcup gespeichert (Verwaltung): gleiche Aufschlüsselung pro Nacht, Familie «6 Nächte (2 Personen × 3 Nächte)», D nur 2 Nächte", /6 Nächte \(2 Personen × 3 Nächte\)/.test(r.gesp) && /Nacht 2 \(08\.01\.\) · 7 Personen · je CHF 85\.71/.test(r.gesp) && /2 Nächte ?CHF 185\.71/.test(r.gesp), r.gesp.slice(1000, 2600));
+  ok("Weltcup: D und E mit 2 Nächten zahlen je CHF 185.71", (all.match(/2 Nächte ?CHF 185\.71/g) || []).length === 2, all);
   ok("Weltcup: die Familie (2 Personen) zahlt 571.43, das Total ist 3 × CHF 600", /571\.43/.test(all) && /1.800/.test(r.tot), r.tot + " " + all.slice(0, 200));
   ok("Rechenhilfe 6, 7, 6 Personen: je 100.00 / 85.71 / 100.00, alle Nächte 285.75, Total 1’800", /100\.00/.test(r.rh) && /85\.71/.test(r.rh) && /285\.75/.test(r.rh) && /1.800/.test(r.rh), r.rh);
   ok("Rechenhilfe mit Notfall: ohne erste Nacht 185.75, ohne letzte Nacht 185.75", /185\.75/.test(r.rh) && /erste Nacht auslässt/.test(r.rh), r.rh);
@@ -551,7 +533,7 @@ async function tNamenAufraeumen(b) {
 
 (async () => {
   const s = await server(); const b = await chromium.launch();
-  const lauf = [["Dateien", tDateien], ["Start", tStart], ["VerNeu", tVerNeu], ["Control Panel", tControlPanel], ["Gültig ab", tGueltigAb], ["Gültig bis", tGueltigBis], ["Trinkgeld", tTrinkgeld], ["Rechnung an Freunde", tRechnungSchalter], ["Ansicht als", tAnsichtAls], ["Anfrage und Namen", tSchnappschuss], ["Sonderbuchungen", tSonder], ["SondAuf", tSondAufteilung], ["SondListe", tSondListe], ["SondNaechte", tSondNaechte], ["Paar", tPaar], ["Bonus", tBonus], ["Familienrabatt", tFamRabatt], ["FamEigen", tFamEigen], ["SondNaechte2", (b) => tSondNaechte(b, true)], ["SondNotfall", (b) => tSondNaechte(b, false, true)], ["Marke", tMarke], ["SondGeschw", tSondGeschw], ["Weltcup", tWeltcup], ["VorlageForm", tVorlageForm], ["Preise", tPreise], ["Alte Namen aufräumen", tNamenAufraeumen]];
+  const lauf = [["Dateien", tDateien], ["Start", tStart], ["VerNeu", tVerNeu], ["Control Panel", tControlPanel], ["Gültig ab", tGueltigAb], ["Gültig bis", tGueltigBis], ["Trinkgeld", tTrinkgeld], ["Rechnung an Freunde", tRechnungSchalter], ["Ansicht als", tAnsichtAls], ["Anfrage und Namen", tSchnappschuss], ["Sonderbuchungen", tSonder], ["SondAuf", tSondAufteilung], ["SondListe", tSondListe], ["SondNaechte", tSondNaechte], ["Paar", tPaar], ["Bonus", tBonus], ["Familienrabatt", tFamRabatt], ["FamEigen", tFamEigen], ["SondNaechte2", (b) => tSondNaechte(b, true)], ["SondNotfall", (b) => tSondNaechte(b, false, true)], ["SondGeschw", tSondGeschw], ["Weltcup", tWeltcup], ["VorlageForm", tVorlageForm], ["Preise", tPreise], ["Alte Namen aufräumen", tNamenAufraeumen]];
   const nur = process.argv[2];
   for (const [n, f] of lauf) { if (nur && !n.toLowerCase().includes(nur.toLowerCase())) continue; try { await f(b); } catch (e) { ok(n + ": Lauf abgebrochen", false, e.message); } }
   await b.close(); s.close();

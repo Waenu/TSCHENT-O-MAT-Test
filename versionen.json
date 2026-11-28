@@ -2,6 +2,18 @@
   "_hinweis": "Neueste Version zuoberst. Ziffern: 1. Hauptversion (3 = freigegebene App), 2. neue Funktionen, 3. funktionelle Änderungen, 4. Layout, Texte und Fehlerkorrekturen. Optional «arten»: Neu, Funktion, Fehler, Layout, Text (ohne Angabe wird sie aus der Versionsnummer abgeleitet). Keine geheimen Zugänge hier eintragen.",
   "versionen": [
     {
+      "v": "3.40.1.0",
+      "datum": "2026-11-28",
+      "titel": "Sonderbuchung: Übernachtung pro Nacht aufgeschlüsselt",
+      "arten": [
+        "Funktion"
+      ],
+      "punkte": [
+        "Bei Sonderbuchungen mit Pauschale steht in jeder aufgeklappten Zeile, wie viele Personen in welcher Nacht da waren und was jede Person pro Nacht zahlt (z. B. Nacht 1: 5 Personen je CHF 120.00, Nacht 2: 7 Personen je CHF 85.71). Paare und Familien: «6 Nächte (2 Personen × 3 Nächte)». Im Rechner und in der gespeicherten Berechnung.",
+        "Die Familie wird bei Sonderbuchungen mit Pauschale wie alle anderen auf 5 Rappen gerundet (das Total kann um ein paar Rappen abweichen). Die Marke «Ø pro Nacht» entfällt."
+      ]
+    },
+    {
       "v": "3.40.0.4",
       "datum": "2026-11-28",
       "titel": "Gespeicherte Aufteilung: aufgeklappte Zeile bricht um",
