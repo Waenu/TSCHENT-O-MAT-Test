@@ -250,6 +250,28 @@ async function tSondNaechte(b, sm, nf) {
   await p.ctx.close();
 }
 
+async function tMarke(b) {
+  const p = await seite(b, { ls: kind("Manuel"), heute: "2026-11-27" });
+  const r = await p.evaluate(async () => {
+    const w = (ms) => new Promise((z) => setTimeout(z, ms)); const o = {};
+    const lauf = async (papi) => {
+      sondStart({ id: "a", name: "Manuel", arr: "2027-01-07", dep: "2027-01-10", t: 1, pa: true, preis: 600, reinB: 0, notfall: true }); await w(300);
+      S.werArt = EIGEN; S.famSel = []; S.ichMit = true; S.gaeste = 2; S.reinig = REINIG[0]; S.zimmer = "Nein"; S.spar = "Nein"; S.waesche = S.waesche || "Persönlich bringen";
+      const f = (v, n, a2, b2) => Object.assign({ vorname: v, name: n, geschlecht: "w", geb: "1990-01-01", nat: "Schweiz" }, a2 ? { an: a2, ab: b2 } : {});
+      localStorage.setItem("tm2t_gmEntwurf", JSON.stringify({ k: gmEntwurfKeyJetzt(), l: [f("Anna", "Meier"), f("Bea", "Zeller", "2027-01-08", "2027-01-10")] })); normalize(); render(); await w(400);
+      for (let i = 0; i < 4; i++) { const ok1 = document.querySelector(".gm-pt-ok"); if (ok1) { ok1.click(); await w(300); } }
+      return [...document.querySelectorAll("#result .auf-tab small.dg")].map((t) => t.className.replace(/.*(dg-\w).*/, "$1") + ":" + t.innerText.replace(/\s+/g, " "));
+    };
+    o.kind = await lauf(false);
+    return o;
+  });
+  ok("Marke Ø pro Nacht: beim Kind keine Marke", r.kind.length === 0, JSON.stringify(r.kind));
+  const r2 = await p.evaluate(async () => { TOKEN = "test"; ABSENDER = ""; render(); await new Promise((z) => setTimeout(z, 400)); return [...document.querySelectorAll("#result .auf-tab small.dg")].map((t) => t.className.replace(/.*(dg-\w).*/, "$1") + ":" + t.innerText.replace(/\s+/g, " ")); });
+  ok("Marke Ø pro Nacht: Papi sieht sie (Beispiel mit 2 und 3 Personen: Du/Anna über 100, Bea unter 100 oder gleich)", r2.length >= 2 && r2.some((t) => /^dg-r:.*▲ über CHF 100/.test(t)) , JSON.stringify(r2));
+  ok("Marke Ø pro Nacht: keine Fehler", p.fehler.length === 0, p.fehler.join("|"));
+  await p.ctx.close();
+}
+
 async function tWeltcup(b) {
   const p = await seite(b, { ls: kind("Manuel"), heute: "2026-11-27", familie: { liste: { Manuel: { p: "Sarah", k: [] } } } });
   const r = await p.evaluate(async () => {
@@ -510,7 +532,7 @@ async function tNamenAufraeumen(b) {
 
 (async () => {
   const s = await server(); const b = await chromium.launch();
-  const lauf = [["Dateien", tDateien], ["Start", tStart], ["VerNeu", tVerNeu], ["Control Panel", tControlPanel], ["Gültig ab", tGueltigAb], ["Gültig bis", tGueltigBis], ["Trinkgeld", tTrinkgeld], ["Rechnung an Freunde", tRechnungSchalter], ["Ansicht als", tAnsichtAls], ["Anfrage und Namen", tSchnappschuss], ["Sonderbuchungen", tSonder], ["SondAuf", tSondAufteilung], ["SondListe", tSondListe], ["SondNaechte", tSondNaechte], ["Paar", tPaar], ["Bonus", tBonus], ["Familienrabatt", tFamRabatt], ["FamEigen", tFamEigen], ["SondNaechte2", (b) => tSondNaechte(b, true)], ["SondNotfall", (b) => tSondNaechte(b, false, true)], ["Weltcup", tWeltcup], ["VorlageForm", tVorlageForm], ["Preise", tPreise], ["Alte Namen aufräumen", tNamenAufraeumen]];
+  const lauf = [["Dateien", tDateien], ["Start", tStart], ["VerNeu", tVerNeu], ["Control Panel", tControlPanel], ["Gültig ab", tGueltigAb], ["Gültig bis", tGueltigBis], ["Trinkgeld", tTrinkgeld], ["Rechnung an Freunde", tRechnungSchalter], ["Ansicht als", tAnsichtAls], ["Anfrage und Namen", tSchnappschuss], ["Sonderbuchungen", tSonder], ["SondAuf", tSondAufteilung], ["SondListe", tSondListe], ["SondNaechte", tSondNaechte], ["Paar", tPaar], ["Bonus", tBonus], ["Familienrabatt", tFamRabatt], ["FamEigen", tFamEigen], ["SondNaechte2", (b) => tSondNaechte(b, true)], ["SondNotfall", (b) => tSondNaechte(b, false, true)], ["Marke", tMarke], ["Weltcup", tWeltcup], ["VorlageForm", tVorlageForm], ["Preise", tPreise], ["Alte Namen aufräumen", tNamenAufraeumen]];
   const nur = process.argv[2];
   for (const [n, f] of lauf) { if (nur && !n.toLowerCase().includes(nur.toLowerCase())) continue; try { await f(b); } catch (e) { ok(n + ": Lauf abgebrochen", false, e.message); } }
   await b.close(); s.close();
